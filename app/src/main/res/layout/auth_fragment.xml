@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/auth_fragment_scene"
+    tools:context=".AuthFragment">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_marginTop="@dimen/_82sdp"
+        android:src="@drawable/background_splash"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
+
+    <TextView
+        android:id="@+id/auth_with_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_100sdp"
+        android:text="@string/auth_with_text"
+        android:textAppearance="@style/BodyText16"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/logo"
+        app:layout_constraintVertical_bias="0" />
+
+
+    <Button
+        android:id="@+id/facebook_auth"
+        style="@style/ButtonStyle"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="add"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:text="@string/facebook_text"
+        android:textAllCaps="false"
+        app:icon="@drawable/ic_facebook_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/auth_with_text"
+        app:layout_constraintVertical_bias="0" />
+
+    <Button
+        android:id="@+id/google_auth"
+        style="@style/ButtonStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="add"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:text="@string/google_text"
+        app:icon="@drawable/ic_google_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/facebook_auth"
+        app:layout_constraintVertical_bias="0" />
+
+    <Button
+        android:id="@+id/vk_auth"
+        style="@style/ButtonStyle"
+        android:layout_width="0dp"
+        android:backgroundTintMode="add"
+        app:backgroundTintMode="add"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_24sdp"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_24sdp"
+        android:text="@string/vk_text"
+        app:icon="@drawable/ic_vc_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/google_auth"
+        app:layout_constraintVertical_bias="0" />
+
+
+    <TextView
+        android:id="@+id/auth_with_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/_32sdp"
+        android:text="@string/auth_with_phone"
+        android:textAlignment="center"
+        android:textAppearance="@style/BodyTextGray12"
+        android:textColorHighlight="#00FFFFFF"
+        android:textColorLink="@android:color/transparent"
+        android:textCursorDrawable="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1" />
+</androidx.constraintlayout.motion.widget.MotionLayout>

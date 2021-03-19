@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".PhoneAuthFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/frameLayout2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_minus25sdp"
+        android:backgroundTint="@android:color/transparent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:context=".PhoneAuthFragment">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_minus25sdp"
+            android:layout_marginEnd="@dimen/_minus25sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:background="@color/white"
+                android:minHeight="?attr/actionBarSize"
+                android:paddingStart="@dimen/_5sdp"
+                android:theme="?attr/actionBarTheme"
+                app:navigationIcon="@drawable/navigation_back_drawable">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/auth_title"
+                    android:textAppearance="@style/HeaderText"
+                    tools:layout_editor_absoluteX="163dp"
+                    tools:layout_editor_absoluteY="18dp" />
+            </androidx.appcompat.widget.Toolbar>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:id="@+id/your_phone_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_20sdp"
+            android:text="@string/your_phone_text"
+            android:textAppearance="@style/BodyText16"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/card_view"
+            app:layout_constraintVertical_bias="0" />
+
+        <Button
+            android:id="@+id/chose_code"
+            style="@style/ButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginTop="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:backgroundTintMode="add"
+            android:drawableEnd="@drawable/arrow_drop_down"
+            android:text="+7"
+            android:textSize="@dimen/_16sdp"
+            app:backgroundTint="@android:color/transparent"
+            app:backgroundTintMode="add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/your_phone_text"
+            app:layout_constraintVertical_bias="0" />
+
+        <TextView
+            android:id="@+id/error_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:textAppearance="@style/BodyText11"
+            android:textColor="@android:color/holo_red_dark"
+            app:layout_constraintEnd_toEndOf="@+id/edit_phone"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="@+id/edit_phone"
+            app:layout_constraintTop_toBottomOf="@+id/edit_phone" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edit_phone"
+            style="@style/EditTextStyle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/_10sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+
+            android:textColorHint="#66252627"
+            app:helperTextTextColor="#66252627"
+            app:hintEnabled="false"
+            app:hintTextColor="#66252627"
+            app:layout_constraintBottom_toBottomOf="@+id/chose_code"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintStart_toEndOf="@+id/chose_code"
+            app:layout_constraintTop_toTopOf="@+id/chose_code"
+            app:layout_constraintVertical_bias="1"
+            app:placeholderTextAppearance="@style/BodyText16"
+            app:placeholderTextColor="#66252627"
+            app:prefixTextColor="#66252627"
+            app:suffixTextColor="#66252627">
+
+            <com.google.android.material.textfield.TextInputEditText
+                style="@style/BodyText16"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_48sdp"
+                android:background="@drawable/button_bg"
+                android:imeOptions="actionDone"
+                android:inputType="number|text"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:singleLine="true"
+                android:textColorHint="#66252627" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <Button
+            android:id="@+id/enter"
+            style="@style/PinkButtonStyle"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/_48sdp"
+            android:layout_marginStart="@dimen/_16sdp"
+            android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_10sdp"
+            android:backgroundTintMode="add"
+            android:enabled="false"
+            android:text="@string/enter"
+            app:backgroundTint="@android:color/transparent"
+            app:backgroundTintMode="add"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,9 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" android:opacity="opaque">
+
+    <!-- Цвет фона, предпочтительно как в главной теме -->
+    <item android:drawable="@android:color/white"/>
+
+    <!-- Лого приложения - 144dp версия иконки приложения -->
+    <item android:drawable="@drawable/background_splash" android:gravity="center"/>
+
+</layer-list>

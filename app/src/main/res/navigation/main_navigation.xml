@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_navigation"
+    app:startDestination="@id/authFragment">
+
+    <fragment
+        android:id="@+id/authFragment"
+        android:name="com.sergeenko.lookapp.AuthFragment"
+        android:label="auth_fragment"
+        tools:layout="@layout/auth_fragment" >
+        <action
+            android:id="@+id/action_authFragment_to_phoneAuthFragment"
+            app:destination="@id/phoneAuthFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:popUpTo="@id/authFragment" />
+        <action
+            android:id="@+id/action_authFragment_to_postTapeFragment"
+            app:destination="@id/postTapeFragment"
+            app:popUpTo="@id/postTapeFragment"
+            app:popUpToInclusive="true"
+            app:launchSingleTop="true" />
+        <action
+            android:id="@+id/action_authFragment_to_registerLoginFragment"
+            app:destination="@id/registerLoginFragment"
+            app:popUpTo="@id/authFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/phoneAuthFragment"
+        android:name="com.sergeenko.lookapp.PhoneAuthFragment"
+        android:label="phone_auth_fragment"
+        tools:layout="@layout/phone_auth_fragment" >
+        <action
+            android:id="@+id/action_phoneAuthFragment_to_choseCodeFragment"
+            app:destination="@id/choseCodeFragment"
+            app:popUpTo="@id/phoneAuthFragment" />
+        <action
+            android:id="@+id/action_phoneAuthFragment_to_phoneCodeEnterFragment"
+            app:destination="@id/phoneCodeEnterFragment"
+            app:popUpTo="@id/phoneAuthFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/choseCodeFragment"
+        android:name="com.sergeenko.lookapp.ChoseCodeFragment"
+        android:label="chose_code_fragment"
+
+        tools:layout="@layout/chose_code_fragment" />
+    <fragment
+        android:id="@+id/phoneCodeEnterFragment"
+        android:name="com.sergeenko.lookapp.PhoneCodeEnterFragment"
+        android:label="phone_code_enter_fragment"
+        tools:layout="@layout/phone_code_enter_fragment" >
+        <action
+            android:id="@+id/action_phoneCodeEnterFragment_to_registerLoginFragment"
+            app:destination="@id/registerLoginFragment"
+            app:popUpTo="@id/phoneAuthFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registerLoginFragment"
+        android:name="com.sergeenko.lookapp.RegisterLoginFragment"
+        android:label="register_login_fragment"
+        tools:layout="@layout/register_login_fragment" >
+        <action
+            android:id="@+id/action_registerLoginFragment_to_registrationStepOneFragment"
+            app:destination="@id/registrationStepOneFragment"
+            app:popUpTo="@id/registerLoginFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/postTapeFragment"
+        android:name="com.sergeenko.lookapp.PostTapeFragment"
+        android:label="post_tape_fragment"
+        tools:layout="@layout/post_tape_fragment" />
+    <fragment
+        android:id="@+id/registrationStepOneFragment"
+        android:name="com.sergeenko.lookapp.RegistrationStepOneFragment"
+        android:label="registration_step_one_fragment"
+        tools:layout="@layout/registration_step_one_fragment" >
+        <action
+            android:id="@+id/action_registrationStepOneFragment_to_registrationStepTwoFragment"
+            app:destination="@id/registrationStepTwoFragment"
+            app:popUpTo="@id/registrationStepOneFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationStepTwoFragment"
+        android:name="com.sergeenko.lookapp.RegistrationStepTwoFragment"
+        android:label="registration_step_two_fragment"
+        tools:layout="@layout/registration_step_two_fragment" >
+        <action
+            android:id="@+id/action_registrationStepTwoFragment_to_registrationStepThreeFragment"
+            app:destination="@id/registrationStepThreeFragment"
+            app:popUpTo="@id/registrationStepTwoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationStepThreeFragment"
+        android:name="com.sergeenko.lookapp.RegistrationStepThreeFragment"
+        android:label="registration_step_three_fragment"
+        tools:layout="@layout/registration_step_three_fragment" >
+        <action
+            android:id="@+id/action_registrationStepThreeFragment_to_registrationStepFourFragment"
+            app:destination="@id/registrationStepFourFragment"
+            app:popUpTo="@id/registrationStepThreeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationStepFourFragment"
+        android:name="com.sergeenko.lookapp.RegistrationStepFourFragment"
+        android:label="registration_step_four_fragment"
+        tools:layout="@layout/registration_step_four_fragment" >
+        <action
+            android:id="@+id/action_registrationStepFourFragment_to_postTapeFragment"
+            app:destination="@id/postTapeFragment"
+            app:enterAnim="@anim/fragment_fade_enter"
+            app:launchSingleTop="true"
+            />
+    </fragment>
+</navigation>

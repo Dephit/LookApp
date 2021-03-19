@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".NewPostFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_minus25sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_minus25sdp"
+            android:layout_marginEnd="@dimen/_minus25sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:layout_marginEnd="@dimen/_25sdp"
+                android:background="@color/white"
+                android:minHeight="?attr/actionBarSize"
+                android:paddingStart="@dimen/_5sdp"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0"
+                app:navigationIcon="@drawable/navigation_back_drawable">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/new_post"
+                    android:textAppearance="@style/HeaderText"
+                    tools:layout_editor_absoluteX="163dp"
+                    tools:layout_editor_absoluteY="18dp" />
+
+                <TextView
+                    android:id="@+id/skip_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginEnd="@dimen/_16sdp"
+                    android:text="@string/next"
+                    android:textAppearance="@style/BodyText11"
+                    android:textColor="@color/pink_pressed"
+                    app:layout_constraintBottom_toBottomOf="@+id/toolbar"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/toolbar" />
+            </androidx.appcompat.widget.Toolbar>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/header_text_input"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:boxBackgroundMode="none"
+            app:boxCollapsedPaddingTop="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/divider3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_view"
+            app:layout_constraintVertical_bias="0">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:maxLength="100"
+                android:maxLines="1"
+                android:paddingStart="@dimen/_16sdp"
+                android:paddingTop="0dp"
+                android:paddingEnd="@dimen/_16sdp" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/header_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:text="@string/new_post_header_hint"
+            android:textAppearance="@style/BodyText13"
+            app:layout_constraintBottom_toBottomOf="@id/header_text_input"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@id/header_text_input" />
+
+        <View
+            android:id="@+id/divider3"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_56sdp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/card_view"
+            app:layout_constraintVertical_bias="0" />
+
+        <TextView
+            android:id="@+id/photo_hint"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:text="@string/new_post_phonto_hint"
+            android:textAppearance="@style/BodyText13"
+            app:layout_constraintBottom_toTopOf="@+id/divider4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+        <TextView
+            android:id="@+id/photo_chose_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            android:text="@string/not_chosen"
+            android:textAppearance="@style/BodyText13"
+            android:textColor="@color/black_40"
+            app:layout_constraintBottom_toTopOf="@+id/divider4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider3" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/botton_line"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_42sdp"
+            android:background="@color/white"
+            android:elevation="@dimen/_10sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1">
+
+            <ImageView
+                android:id="@+id/emojy_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:src="@drawable/emojy_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/add_picture_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/add_picture_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@+id/emojy_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/add_link_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/add_link_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/add_picture_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/add_look_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/add_look_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/add_link_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/mark_user_icon"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginStart="@dimen/_15sdp"
+                android:src="@drawable/mark_user_icon"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toEndOf="@id/add_look_icon"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <View
+            android:id="@+id/divider4"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="@dimen/_44sdp"
+            android:background="?android:attr/listDivider"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/divider3"
+            app:layout_constraintVertical_bias="0" />
+
+        <com.vanniktech.emoji.EmojiEditText
+            android:id="@+id/body_text_input"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@android:color/transparent"
+            android:gravity="top"
+            android:maxLines="2200"
+            android:paddingStart="@dimen/_16sdp"
+            android:paddingTop="@dimen/_12sdp"
+            android:paddingEnd="@dimen/_16sdp"
+            app:layout_constraintBottom_toTopOf="@+id/botton_line"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/divider4" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

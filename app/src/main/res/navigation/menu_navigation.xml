@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/menu_navigation"
+    app:startDestination="@id/lookScrollingFragment">
+
+    <fragment
+        android:id="@+id/lookScrollingFragment"
+        android:name="com.sergeenko.lookapp.LookScrollingFragment"
+        android:label="look_scrolling_fragment"
+        tools:layout="@layout/look_scrolling_fragment" >
+        <action
+            android:id="@+id/action_lookScrollingFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment"
+            app:popUpTo="@id/lookScrollingFragment" />
+        <action
+            android:id="@+id/action_lookScrollingFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/lookScrollingFragment" />
+        <action
+            android:id="@+id/action_lookScrollingFragment_to_postFragment"
+            app:destination="@id/postFragment"
+            app:popUpTo="@id/lookScrollingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="com.sergeenko.lookapp.CommentsFragment"
+        android:label="comments_fragment"
+        tools:layout="@layout/comments_fragment" >
+        <action
+            android:id="@+id/action_commentsFragment_to_profileFragment"
+            app:destination="@id/profileFragment"
+            app:popUpTo="@id/commentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.sergeenko.lookapp.ProfileFragment"
+        android:label="profile_fragment"
+        tools:layout="@layout/profile_fragment" />
+    <fragment
+        android:id="@+id/postFragment"
+        android:name="com.sergeenko.lookapp.PostFragment"
+        android:label="post_fragment"
+        tools:layout="@layout/post_fragment" />
+    <fragment
+        android:id="@+id/newLookFragment"
+        android:name="com.sergeenko.lookapp.NewLookFragment"
+        android:label="new_look_fragment"
+        tools:layout="@layout/new_look_fragment" />
+    <action
+        android:id="@+id/action_global_newLookFragment"
+        app:destination="@id/newLookFragment"
+        app:popUpToInclusive="true" />
+    <action
+        android:id="@+id/action_global_lookScrollingFragment"
+        app:destination="@id/lookScrollingFragment"
+        app:popUpToInclusive="true" />
+    <fragment
+        android:id="@+id/newPostFragment"
+        android:name="com.sergeenko.lookapp.NewPostFragment"
+        android:label="new_post_fragment"
+        tools:layout="@layout/new_post_fragment" />
+    <action
+        android:id="@+id/action_global_newPostFragment"
+        app:destination="@id/newPostFragment"
+        app:popUpToInclusive="true" />
+</navigation>

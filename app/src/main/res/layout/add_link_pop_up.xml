@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="@dimen/_253sdp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/link_pop_up_bg">
+
+    <TextView
+        android:id="@+id/insert_link_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:text="@string/insert_link_text"
+        android:textAppearance="@style/BodyText13"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/link_input_layout"
+        style="@style/EditTextStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_10sdp"
+
+        android:layout_marginTop="@dimen/_12sdp"
+        android:layout_marginEnd="@dimen/_16sdp"
+        android:hint="@string/link"
+        android:textColorHint="#66252627"
+        app:helperTextTextColor="#66252627"
+        app:hintEnabled="false"
+        app:hintTextColor="#66252627"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/chose_code"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/insert_link_text"
+        app:layout_constraintVertical_bias="0"
+        app:placeholderTextAppearance="@style/BodyText16"
+        app:placeholderTextColor="#66252627"
+        app:prefixTextColor="#66252627"
+        app:suffixTextColor="#66252627">
+
+        <com.google.android.material.textfield.TextInputEditText
+            style="@style/BodyText16"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            android:background="@drawable/button_bg"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:paddingTop="0dp"
+            android:paddingBottom="0dp"
+            android:singleLine="true"
+            android:textColorHint="#66252627" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <View
+        android:id="@+id/divider6"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/_1sdp"
+        android:layout_marginTop="@dimen/_20sdp"
+        android:background="@color/black_20"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/link_input_layout"
+        app:layout_constraintVertical_bias="0" />
+
+    <View
+        android:id="@+id/divider7"
+        android:layout_width="@dimen/_1sdp"
+        android:layout_height="@dimen/_36sdp"
+        android:background="?android:attr/listDivider"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/divider6"
+        app:layout_constraintVertical_bias="0" />
+
+    <TextView
+        android:id="@+id/cancel"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/cancel"
+        android:textAlignment="center"
+        android:textAppearance="@style/BodyText13"
+        android:textColor="@color/black_pressed"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/divider7"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/divider7" />
+
+    <TextView
+        android:id="@+id/save"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:text="@string/save"
+        android:textAlignment="center"
+        android:textAppearance="@style/BodyText13"
+        android:textColor="@color/pink_pressed"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/divider7"
+        app:layout_constraintTop_toTopOf="@+id/divider7" />
+</androidx.constraintlayout.widget.ConstraintLayout>

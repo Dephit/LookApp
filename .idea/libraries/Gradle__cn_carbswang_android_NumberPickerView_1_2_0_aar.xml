@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: cn.carbswang.android:NumberPickerView:1.2.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5aab97acf14149f45b34ce912b003fb/jetified-NumberPickerView-1.2.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5aab97acf14149f45b34ce912b003fb/jetified-NumberPickerView-1.2.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/a5aab97acf14149f45b34ce912b003fb/jetified-NumberPickerView-1.2.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/cn.carbswang.android/NumberPickerView/1.2.0/6c1ab72eaac9dedc8c2f9a6f880bc93abc53120/NumberPickerView-1.2.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/cn.carbswang.android/NumberPickerView/1.2.0/46ecaad76ba5259d68b9cb9eb00bedc21977c6f4/NumberPickerView-1.2.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

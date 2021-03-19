@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/_19sdp">
+
+    <ImageView
+        android:id="@+id/post_like"
+        android:layout_width="@dimen/_17sdp"
+        android:layout_height="@dimen/_17sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:srcCompat="@drawable/post_like_drawable" />
+
+    <TextView
+        android:id="@+id/post_likes_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:textAppearance="@style/BodyText11"
+        app:layout_constraintBottom_toBottomOf="@+id/post_like"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@+id/post_like"
+        app:layout_constraintTop_toTopOf="@+id/post_like" />
+
+    <ImageView
+        android:id="@+id/post_dilsike"
+        android:layout_width="@dimen/_17sdp"
+        android:layout_height="@dimen/_17sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/post_likes_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:srcCompat="@drawable/post_dislike_drawabl" />
+
+    <TextView
+        android:id="@+id/post_dislikes_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:textAppearance="@style/BodyText11"
+        app:layout_constraintBottom_toBottomOf="@id/post_dilsike"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/post_dilsike"
+        app:layout_constraintTop_toTopOf="@id/post_dilsike" />
+
+    <ImageView
+        android:id="@+id/post_comments"
+        android:layout_width="@dimen/_17sdp"
+        android:layout_height="@dimen/_17sdp"
+        android:layout_marginStart="@dimen/_16sdp"
+        android:layout_marginTop="@dimen/_16sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/post_dislikes_text"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:srcCompat="@drawable/post_comments_drawable" />
+
+    <TextView
+        android:id="@+id/post_comments_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/_6sdp"
+        android:textAppearance="@style/BodyText11"
+        app:layout_constraintBottom_toBottomOf="@id/post_comments"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintStart_toEndOf="@id/post_comments"
+        app:layout_constraintTop_toTopOf="@id/post_comments" />
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,15 @@
+<component name="libraryTable">
+  <library name="Gradle: com.vk:androidsdk:2.4.0@aar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b929d0d4339bf0e2d5f5c78e0ed3d071/jetified-androidsdk-2.4.0/jars/classes.jar!/" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b929d0d4339bf0e2d5f5c78e0ed3d071/jetified-androidsdk-2.4.0/res" />
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-2/files-2.1/b929d0d4339bf0e2d5f5c78e0ed3d071/jetified-androidsdk-2.4.0/AndroidManifest.xml" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.vk/androidsdk/2.4.0/327d853e518f3e2d8e48f4244a897edc35d5d34b/androidsdk-2.4.0-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.vk/androidsdk/2.4.0/ab58dc1dcbf5961d061e41576c2e4722b936388/androidsdk-2.4.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
