@@ -124,6 +124,15 @@ interface Api {
     ): AddToFavMessage
 
     @FormUrlEncoded
+    @POST("claims")
+    suspend fun claims(
+            @Header("Authorization") auth: String,
+            @Field("post_id")postId: Int,
+            @Field("comment_id")commentId: Int? = null,
+            @Field("type")type: String
+    ): AuthMessage
+
+    @FormUrlEncoded
     @POST("comments")
     suspend  fun createComment(
             @Header("Authorization") auth: String,

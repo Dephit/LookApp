@@ -21,7 +21,7 @@ abstract class PaggingListViewModel<U>(repository: Repository, savedStateHandle:
 
     val errorState = MutableStateFlow<ModelState>(ModelState.Success(null))
     lateinit var lookList: Flow<PagedList<U>>
-    val pageSize = 20
+    val pageSize = 10
     val newsDataSourceFactory: MyDataSource<U> by lazy{
         getDataSourceFactory()
     }

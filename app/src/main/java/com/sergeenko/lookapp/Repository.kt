@@ -33,5 +33,7 @@ interface Repository {
     fun dislike(dislike: Boolean, postID: Int): Flow<Boolean>
     fun like(like: Boolean, postID: Int): Flow<Boolean>
     fun favorite(like: Boolean, post: Look): Flow<Boolean>
+    fun claim(type: String, postId: Int, commentId: Int? = null): Flow<AuthMessage>
+
     fun addComment(text: String, postId: Int, commentId: Int? = null): Flow<Comment>
 }

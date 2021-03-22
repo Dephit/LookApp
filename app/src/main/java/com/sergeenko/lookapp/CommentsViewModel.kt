@@ -44,6 +44,7 @@ class CommentsViewModel  @ViewModelInject constructor(
                 look = look!!,
                 onCommentPress = {
                     viewModelScope.launch {
+                        selectedComment = it
                         modelState.emit(ModelState.Success(it))
                     }
                 },

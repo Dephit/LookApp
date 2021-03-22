@@ -76,5 +76,7 @@
     <string name="cancel">Отмена</string>
     <string name="save">Сохранить</string>
     <string name="cant_send_query">Не удалось отправить запрос</string>
+    <string name="youve_sent_claim">Не удалось отправить запрос</string>
     <string name="answer">Ответить</string>
+    <string name="no_items">Похоже, закончились луки, обновить?</string>
 </resources>

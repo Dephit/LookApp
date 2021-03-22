@@ -261,6 +261,16 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }.flowOn(IO)
     }
 
+    override fun claim(type: String, postId: Int, commentId: Int?): Flow<AuthMessage> {
+        return flow {
+            val data = api.claims(auth = token, type = type, postId = postId, commentId = commentId)
+            if(!data.ok){
+                throw Exception("HTTP 400 Bad Request")
+            }
+            emit(data)
+        }.flowOn(IO)
+    }
+
     override fun addComment(text: String, postId: Int, commentId: Int?): Flow<Comment> {
         return flow {
             val data = api.createComment(token, text, postId, commentId)

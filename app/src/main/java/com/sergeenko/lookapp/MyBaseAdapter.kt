@@ -17,12 +17,11 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
     }
 
     private fun hasFooter(): Boolean {
-        Log.i("ASDASDSTATE", state.toString())
         return super.getItemCount() == 0 || state is ModelState.Loading || state is ModelState.Error<*>
     }
 
     override fun getItemCount(): Int {
-        return super.getItemCount() //+ if (hasFooter()) 1 else 0
+        return super.getItemCount() + if (hasFooter()) 1 else 0
     }
     
     

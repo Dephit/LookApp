@@ -2,6 +2,10 @@ package com.sergeenko.lookapp
 
 import android.animation.Animator
 import android.annotation.SuppressLint
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Handler
@@ -14,7 +18,11 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.os.bundleOf
@@ -24,6 +32,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.sergeenko.lookapp.databinding.AdditionActionsLayoutBinding
 import com.sergeenko.lookapp.databinding.LookViewBinding
 import com.sergeenko.lookapp.models.Look
 import com.squareup.picasso.Picasso
@@ -232,10 +241,32 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 manageLike(it, look)
             }
 
-            more.setOnClickListener {
-                showAdditionalActions(it, more.x, look){view, look->
-                    manageFavorite(view, look)
-                }
+            more.setOnClickListener {v->
+                showAdditionalPostActions(
+                        view = v,
+                        x = more.x,
+                        img = look,
+                        onClaim = {
+                            look.is_claim = true
+                            viewModelScope?.launch {
+                                repository?.claim(it, look.id)
+                                        ?.catch {
+                                            look.is_claim = false
+                                            if(it.message == "HTTP 400 Bad Request"){
+                                                Toast.makeText(v.context, getString(R.string.youve_sent_claim), Toast.LENGTH_SHORT).show()
+                                            }else{
+                                                Toast.makeText(v.context, getString(R.string.cant_send_query), Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                        ?.collect {
+
+                                        }
+                            }
+                        },
+                        onFavPressed = {view, look ->
+                            manageFavorite(view, look)
+                        }
+                )
             }
 
             favorite.setOnClickListener {
@@ -358,3 +389,93 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
+inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinline onClaim: (String)-> Unit, crossinline onFavPressed: (View, Look)-> Unit) {
+
+    val customLayout = AdditionActionsLayoutBinding.inflate(LayoutInflater.from(view.context))
+
+    // create an alert builder
+    val width = LinearLayout.LayoutParams.WRAP_CONTENT
+    val height = LinearLayout.LayoutParams.WRAP_CONTENT
+    val focusable = true // lets taps outside the popup also dismiss it
+
+    val window = PopupWindow(customLayout.root, width, height, focusable)
+    window.isOutsideTouchable = true
+
+
+    customLayout.complain.setOnClickListener {
+        if(img.is_claim){
+            customLayout.actions.visibility = View.GONE
+            customLayout.complainDetailed.visibility = View.GONE
+            customLayout.complainSend.visibility = View.VISIBLE
+        }else{
+            customLayout.actions.visibility = View.GONE
+            customLayout.complainDetailed.visibility = View.VISIBLE
+            customLayout.complainSend.visibility = View.GONE
+        }
+    }
+
+    customLayout.back.setOnClickListener {
+        customLayout.actions.visibility = View.VISIBLE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainSend.visibility = View.GONE
+    }
+
+    customLayout.backToActions.setOnClickListener {
+        customLayout.actions.visibility = View.VISIBLE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainSend.visibility = View.GONE
+    }
+
+    customLayout.spam.setOnClickListener {
+        onClaim("Спам")
+        customLayout.actions.visibility = View.GONE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainSend.visibility = View.VISIBLE
+        window.dismiss()
+    }
+
+    customLayout.shockContent.setOnClickListener {
+        onClaim("Шокирующий контент")
+        customLayout.actions.visibility = View.GONE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainSend.visibility = View.VISIBLE
+        window.dismiss()
+    }
+
+    customLayout.incorrectInformation.setOnClickListener {
+        onClaim("Некорректная информация")
+        customLayout.actions.visibility = View.GONE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainSend.visibility = View.VISIBLE
+        window.dismiss()
+    }
+
+    customLayout.sharePost.setOnClickListener {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        it.context.startActivity(shareIntent)
+        window.dismiss()
+    }
+
+    customLayout.copyLink.setOnClickListener {
+        val clipboard: ClipboardManager? = it.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
+        val clip = ClipData.newPlainText("label", "link")
+        clipboard?.setPrimaryClip(clip)
+        Toast.makeText(it.context, it.context.getString(R.string.link_is_copied), Toast.LENGTH_SHORT).show()
+        window.dismiss()
+    }
+
+    customLayout.addToFav.isActivated = img.is_favorite
+    customLayout.addToFav.setOnClickListener {
+        onFavPressed(it, img)
+        window.dismiss()
+    }
+
+    window.contentView = customLayout.root
+    window.showAtLocation(view, Gravity.TOP, x.toInt(), 0)
+}
