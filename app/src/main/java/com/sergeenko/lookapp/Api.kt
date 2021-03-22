@@ -121,7 +121,7 @@ interface Api {
     suspend fun addToFavorite(
             @Header("Authorization") auth: String,
             @Field("post_id")postId: Int
-    ): AuthMessage
+    ): AddToFavMessage
 
     @FormUrlEncoded
     @POST("comments")
