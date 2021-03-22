@@ -116,7 +116,14 @@ class CommentViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView) {
 
         val flag = Spannable.SPAN_INCLUSIVE_INCLUSIVE
 
+        try {
+            val boldSpan = ForegroundColorSpan(getColor(heightText.context, R.color.pink))
+            val start: Int = textID.indexOf("#")
+            val end: Int = textID.indexOf(" ", startIndex = start)
+            spannable.setSpan(boldSpan, start, end, flag)
+        }catch (e: Exception){
 
+        }
 
         try {
             val boldSpan = ForegroundColorSpan(getColor(heightText.context, R.color.pink))
