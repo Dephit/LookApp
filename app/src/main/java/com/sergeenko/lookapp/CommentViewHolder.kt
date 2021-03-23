@@ -67,7 +67,8 @@ class CommentViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView) {
             bg.isActivated = isSelected == comment.id
 
             if(level == 0){
-                addComments(level = level + 1, comment = comment, repository = repository, viewModelScope = viewModelScope, onRespond= onRespond)
+                if(comment.count_comments > 0)
+                    addComments(level = level + 1, comment = comment, repository = repository, viewModelScope = viewModelScope, onRespond= onRespond)
             }else if(level > 0){
                 binding.comment.setPadding(itemView.context.resources.getDimension(R.dimen._40sdp).roundToInt(), 0,0,0)
             }else{

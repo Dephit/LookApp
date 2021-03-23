@@ -22,6 +22,8 @@ class CommentDataSource(
 
     var links: Links? = null
     var lastID: CommentResponse? = null
+    var last: Map<Int, CommentResponse>? = mapOf()
+
 
     override fun load(key: Int, requestedLoadSize: Int, onDone: (List<Comment>) -> Unit, onError: () -> Unit) {
         viewModelScope.launch {
@@ -45,6 +47,7 @@ class CommentDataSource(
                             com.text = post.title ?: ""
                             list.add(0, com)
                         }
+                        //  lastID = it
                         links = it.links
                         updateState(ModelState.Success(null))
                         onDone(list)
