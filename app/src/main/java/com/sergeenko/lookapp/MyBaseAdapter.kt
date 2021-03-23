@@ -27,4 +27,8 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
     override fun getItemCount(): Int {
         return super.getItemCount() 
     }
+
+    fun scrollTo(position: Int) {
+
+    }
 }

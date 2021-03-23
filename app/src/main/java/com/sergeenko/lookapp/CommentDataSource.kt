@@ -1,8 +1,6 @@
 package com.sergeenko.lookapp
 
-import android.util.Log
-import com.sergeenko.lookapp.models.Comment
-import com.sergeenko.lookapp.models.Look
+import com.sergeenko.lookapp.models.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -11,43 +9,50 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class CommentDataSource(
-        private val post: Look,
+        private val post: Look? = null,
+        private val comment: Comment? = null,
         private val repository: Repository,
         private val viewModelScope: CoroutineScope,
         private val errorState: MutableStateFlow<ModelState>
 ) : MyPageKeyedDataSource<Comment>(errorState) {
 
     fun addComment() {
-        lastID = null
         invalidate()
     }
 
-    var lastID: Int? = null
+    var links: Links? = null
+    var lastID: CommentResponse? = null
 
     override fun load(key: Int, requestedLoadSize: Int, onDone: (List<Comment>) -> Unit, onError: () -> Unit) {
         viewModelScope.launch {
-            repository.getComments(post.id, key, requestedLoadSize)
-                    .onStart {}
-                    .catch {
-                        updateState(ModelState.Error(null))
-                        onError()
-                    }
-                    .collect {
-                        val list = it.toMutableList()
-                        if (it.last().id != lastID) {
-                            if (lastID == null) {
-                                val com = Comment()
-                                com.isPost = true
-                                com.user = post.user
-                                com.created = post.created
-                                com.text = post.title
-                                list.add(0, com)
-                            }
-                            lastID = it.last().id
-                            updateState(ModelState.Success(null))
-                            onDone(list)
+            if(lastID != null && lastID!!.data.size  < requestedLoadSize){
+                updateState(ModelState.Success(null))
+                onDone(lastID!!.data)
+            }else {
+                val flow = repository.getComments(postID = post?.id, page = key, commentId = comment?.id, url = links?.next)
+                flow.onStart {
+                }.catch {
+                    //updateState(ModelState.Error(null))
+                    //onError()
+                }.collect {
+                    val list = it.data.toMutableList()
+                    if (it.links.last != links?.prev) {
+                        if (links == null && post != null) {
+                            val com = Comment()
+                            com.isPost = true
+                            com.user = post.user ?: Data()
+                            com.created = post.created ?: ""
+                            com.text = post.title ?: ""
+                            list.add(0, com)
                         }
+                        links = it.links
+                        updateState(ModelState.Success(null))
+                        onDone(list)
                     }
+                }
+            }
         }
     }
 }
+
+

@@ -1,6 +1,7 @@
 package com.sergeenko.lookapp
 
-import com.sergeenko.lookapp.models.Look
+import android.util.Log
+import com.sergeenko.lookapp.models.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.catch
@@ -14,33 +15,35 @@ class LookDataSource(
     errorState: MutableStateFlow<ModelState>
 ) : MyPageKeyedDataSource<Look>(errorState) {
 
-    var lastID: Int? = null
+    var lastID: PostResponse? = null
 
     override fun load(key: Int, requestedLoadSize: Int, onDone: (List<Look>) -> Unit, onError: () -> Unit) {
         viewModelScope.launch {
-            repository.getLooks(key, requestedLoadSize)
-                .onStart { updateState(ModelState.Loading) }
-                .catch {
-                    updateState(ModelState.Error(null))
-                    onError()
-                }
-                .collect {
-                    if(it.isEmpty()){
-                        updateState(ModelState.Error(null))
-                    }else{
-                        if(it.last().id != lastID && it.isNotEmpty()) {
-                            lastID = it.last().id
-                            updateState(ModelState.Success(null))
-                            onDone(it)
-                        }else{
-                            updateState(ModelState.Error("NoItems"))
+            Log.i("ASDASDASD", "${key - 1} ${lastID?.meta?.current_page}")
+            if(lastID != null && lastID!!.data.size  < requestedLoadSize){
+                updateState(ModelState.Success(null))
+                onDone(lastID!!.data)
+            }else{
+                repository.getLooks(key, requestedLoadSize)
+                        .onStart { updateState(ModelState.Loading) }
+                        .catch {
+                            updateState(ModelState.Error(null))
                             onError()
                         }
-                    }
-                }
+                        .collect {
+                            if (lastID?.meta?.current_page != it.meta.current_page && it.data.isNotEmpty()) {
+                                lastID = it
+                                updateState(ModelState.Success(null))
+                                onDone(it.data)
+                            } else {
+                                updateState(ModelState.Error("NoItems"))
+                                onDone(it.data)
+                            }
+                        }
             }
         }
     }
+}
 
 
 

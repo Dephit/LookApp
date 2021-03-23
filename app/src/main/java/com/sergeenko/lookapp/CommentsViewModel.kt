@@ -33,7 +33,7 @@ class CommentsViewModel  @ViewModelInject constructor(
         adapter = createAdapter()
         val config = PagedList.Config.Builder()
                 .setPageSize(pageSize)
-                .setInitialLoadSizeHint(pageSize * 2)
+                .setInitialLoadSizeHint(pageSize)
                 .setEnablePlaceholders(false)
                 .build()
         lookList = LivePagedListBuilder(newsDataSourceFactory, config).build().asFlow()
@@ -41,31 +41,31 @@ class CommentsViewModel  @ViewModelInject constructor(
 
     override fun createAdapter(): MyBaseAdapter<Comment> {
         return CommentsAdapter(
-                look = look!!,
-                onCommentPress = {
+                repository = repository,
+                viewModelScope = viewModelScope,
+                onCommentSelected = {com->
                     viewModelScope.launch {
-                        selectedComment = it
-                        modelState.emit(ModelState.Success(it))
+                        selectedComment = com
+                        modelState.emit(ModelState.Success(com.id))
                     }
                 },
-                onCommentSelected = {
+                onCommentPress = {
                     viewModelScope.launch {
                         modelState.emit(ModelState.Success(it))
                     }
                 },
                 onError = { retry() },
-                onRespond = {adapter, comment ->
+                onRespond = {comment, position ->
                     commentToRespond = comment
-                    commentAdapter = adapter
                     viewModelScope.launch {
-                        modelState.emit(ModelState.Success("@${comment.user.username}"))
+                        modelState.emit(ModelState.Success(Pair("@${comment.user.username}", position)))
                     }
                 }
         )
     }
 
     override fun getDataSourceFactory(): MyDataSource<Comment> {
-        return CommentDataSourceFactory(look!!, repository, viewModelScope, errorState)
+        return CommentDataSourceFactory(post = look!!, repository = repository, viewModelScope = viewModelScope, errorState = errorState)
     }
 
     @ExperimentalCoroutinesApi

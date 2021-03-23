@@ -1,21 +1,22 @@
 package com.sergeenko.lookapp
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import androidx.paging.PagedList
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.models.Comment
-import com.sergeenko.lookapp.models.Image
 import com.sergeenko.lookapp.models.Look
+import kotlinx.coroutines.CoroutineScope
+import java.util.logging.Level
 
 class CommentsAdapter(
-        val look: Look,
+        val repository: Repository,
+        val level: Int = 0,
+        val viewModelScope: CoroutineScope,
         private val onError: () -> Unit,
         val onCommentPress: (Comment) -> Unit,
-        val onCommentSelected: (Int) -> Unit,
-        val onRespond: (CommentsListAdapter, Comment) -> Unit) : MyBaseAdapter<Comment>(
+        val onCommentSelected: (Comment) -> Unit,
+        val onRespond: (Comment, Int) -> Unit) : MyBaseAdapter<Comment>(
     DIFF_CALLBACK
 ) {
 
@@ -33,19 +34,22 @@ class CommentsAdapter(
             is CommentViewHolder -> {
                 getItem(position)?.let { comment ->
                         holder.bind(
-                            comment,
-                            onCommentPress = { onCommentPress(it) },
-                            onRespond = { commentsAdapter, com ->
-                                selectedComment = com.id
-                                onRespond(commentsAdapter, com)
-                                notifyDataSetChanged()
-                                        },
-                            scrollToParent = {
-                                selectedComment = it
-                                onCommentSelected(position)
-                                notifyDataSetChanged()
-                                             },
-                            isSelected = selectedComment?: -1
+                                comment = comment,
+                                repository = repository,
+                                viewModelScope = viewModelScope,
+                                level = level,
+                                onCommentPress = {onCommentPress},
+                                onRespond = { com ->
+                                    selectedComment = com.id
+                                    onRespond(com, position)
+                                    notifyDataSetChanged()
+                                            },
+                                onCommentSelected = {com->
+                                    selectedComment = com.id
+                                    onCommentSelected(com)
+                                    notifyDataSetChanged()
+                                },
+                                isSelected = selectedComment?: -1
                         )
                 }
             }
@@ -83,7 +87,16 @@ class CommentsAdapter(
     }
 }
 
-class CommentsListAdapter(var selectedComment: Int, var list: List<Comment>, private val onCommentPress: (Comment) -> Unit,  val onRespond: (CommentsListAdapter, Comment) -> Unit,val scrollToParent: (Int)-> Unit) : RecyclerView.Adapter<CommentViewHolder>() {
+
+class CommentsListAdapter(var selectedComment: Int,
+                          var list: List<Comment> ,
+                          val repository: Repository,
+                          val level: Int = 0,
+                          val viewModelScope: CoroutineScope,
+                          private val onError: () -> Unit,
+                          val onCommentPress: (Comment) -> Unit,
+                          val onCommentSelected: (Comment) -> Unit,
+                          val onRespond: (Comment) -> Unit) : RecyclerView.Adapter<CommentViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
         return CommentViewHolder(
@@ -110,12 +123,22 @@ class CommentsListAdapter(var selectedComment: Int, var list: List<Comment>, pri
 
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         holder.bind(
-            list[position],
-            onCommentPress = { onCommentPress(it) },
-            onRespond = { commentsAdapter, com -> onRespond(commentsAdapter, com) },
-            level = true,
-            scrollToParent = { scrollToParent(it) },
-            isSelected = selectedComment
+                list[position],
+                repository = repository,
+                viewModelScope = viewModelScope,
+                level = level ,
+                onCommentPress = {onCommentPress},
+                onRespond = { com ->
+                    selectedComment = com.id
+                    onRespond(com)
+                    notifyDataSetChanged()
+                },
+                onCommentSelected = {com->
+                    selectedComment = com.id
+                    onCommentSelected(com)
+                    notifyDataSetChanged()
+                },
+                isSelected = selectedComment?: -1
         )
     }
 

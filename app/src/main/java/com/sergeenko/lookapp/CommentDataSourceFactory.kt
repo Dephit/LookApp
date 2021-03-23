@@ -8,7 +8,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 class CommentDataSourceFactory(
-        val look: Look,
+        private val post: Look? = null,
+        private val comment: Comment? = null,
         private val repository: Repository,
         private val viewModelScope: CoroutineScope,
         private val errorState: MutableStateFlow<ModelState>
@@ -21,7 +22,7 @@ class CommentDataSourceFactory(
     }
 
     override fun create(): DataSource<Int, Comment> {
-        lookDataSource = CommentDataSource(look, repository, viewModelScope, errorState)
+        lookDataSource = CommentDataSource(post = post, comment = comment, repository = repository, viewModelScope = viewModelScope, errorState = errorState)
         viewModelScope.launch {
             lookDataSourceFlow.emit(lookDataSource)
         }

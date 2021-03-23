@@ -45,7 +45,7 @@ class LookAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading) LookViewHolder(
+        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0) LookViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_view, parent, false),
         )else LookErrorViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false)

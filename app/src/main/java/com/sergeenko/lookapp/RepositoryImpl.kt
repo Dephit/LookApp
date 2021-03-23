@@ -215,10 +215,10 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }
     }
 
-    override fun getLooks(i: Int, requestedLoadSize: Int): Flow<List<Look>> {
+    override fun getLooks(i: Int, requestedLoadSize: Int): Flow<PostResponse> {
         return flow {
-            val data = api.posts(token).data
-            data.forEach {
+            val data = api.posts(token)
+            data.data.forEach {
                 it.images.forEach {img->
                     Picasso.get()
                         .load(img.url)
@@ -229,16 +229,21 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }.flowOn(IO)
     }
 
-    override fun getComments(postID: Int, key: Int, requestedLoadSize: Int): Flow<List<Comment>> {
+    override fun getComments(postID: Int?, page: Int, commentId: Int?, url: String?): Flow<CommentResponse> {
         return flow {
-            val data = api.comments(token, postID)
-            emit(data.data)
+            val data = when {
+                postID != null -> api.comments(auth = token, postId = postID, page = page)
+                commentId != null -> api.commentsBranch(auth = token, commentId = commentId, page = page)
+                else -> throw Exception()
+            }
+            emit(data)
         }.flowOn(IO)
     }
 
+
     override fun dislike(dislike: Boolean, postID: Int): Flow<Boolean> {
         return flow {
-            api.dislike(auth = token, postId = postID,dislike = if(dislike) 1 else 0)
+            api.dislike(auth = token, postId = postID, dislike = if(dislike) 1 else 0)
             emit(true)
         }.flowOn(IO)
     }

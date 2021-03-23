@@ -64,8 +64,9 @@ class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
             is Int ->{
                 binding.commentsView.scrollToPosition(obj)
             }
-            is String -> {
-                setAnswerToSelectedComment(obj)
+            is Pair<*, *> -> {
+                setAnswerToSelectedComment(obj.first as String)
+                binding.commentsView.smoothScrollToPosition(obj.second as Int)
             }
             is Comment -> {
                 binding.toolbarTitle.text = getString(R.string.comment_chosen)
@@ -85,7 +86,7 @@ class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
     private fun setAnswerToSelectedComment(obj: String) {
         binding.commentInput.editText?.setText("$obj ")
         val boldSpan = ForegroundColorSpan(getColor(requireContext(), R.color.pink))
-        val start: Int = 0
+        val start = 0
         val end: Int = binding.commentInput.editText?.editableText.toString().length
         val flag = Spannable.SPAN_INCLUSIVE_INCLUSIVE
         binding.commentInput.editText?.editableText?.setSpan(boldSpan, start, end, flag)
@@ -132,8 +133,6 @@ class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
     private fun setRV(rv: RecyclerView) {
         rv.layoutManager = LinearLayoutManager(context)
         rv.adapter = viewModel.collectData()
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(rv)
         viewModel.collectState()
     }
 
