@@ -16,14 +16,15 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
         notifyItemChanged(super.getItemCount())
     }
 
-    private fun hasFooter(): Boolean {
+    override fun getItemId(position: Int): Long {
+        return position.toLong()
+    }
+
+    protected fun hasFooter(): Boolean {
         return super.getItemCount() == 0 || state is ModelState.Loading || state is ModelState.Error<*>
     }
 
     override fun getItemCount(): Int {
-        return super.getItemCount() + if (hasFooter()) 1 else 0
+        return super.getItemCount() 
     }
-    
-    
-    
 }

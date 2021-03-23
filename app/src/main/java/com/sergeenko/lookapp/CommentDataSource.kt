@@ -34,8 +34,8 @@ class CommentDataSource(
                     }
                     .collect {
                         val list = it.toMutableList()
-                        if(it.last().id != lastID) {
-                            if(lastID == null){
+                        if (it.last().id != lastID) {
+                            if (lastID == null) {
                                 val com = Comment()
                                 com.isPost = true
                                 com.user = post.user
@@ -47,9 +47,7 @@ class CommentDataSource(
                             updateState(ModelState.Success(null))
                             onDone(list)
                         }
-
                     }
         }
     }
-
 }

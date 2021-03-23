@@ -23,6 +23,10 @@ class LookAdapter(
         }
     }
 
+    override fun getItemCount(): Int {
+        return super.getItemCount() + if (hasFooter()) 1 else 0
+    }
+
     override fun getItemId(position: Int): Long {
         return position.toLong()
     }

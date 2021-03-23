@@ -10,7 +10,12 @@ import com.sergeenko.lookapp.models.Comment
 import com.sergeenko.lookapp.models.Image
 import com.sergeenko.lookapp.models.Look
 
-class CommentsAdapter(val look: Look, private val onError: () -> Unit, val onCommentPress: (Comment) -> Unit,  val onCommentSelected: (Int) -> Unit,  val onRespond: (CommentsListAdapter, Comment) -> Unit) : MyBaseAdapter<Comment>(
+class CommentsAdapter(
+        val look: Look,
+        private val onError: () -> Unit,
+        val onCommentPress: (Comment) -> Unit,
+        val onCommentSelected: (Int) -> Unit,
+        val onRespond: (CommentsListAdapter, Comment) -> Unit) : MyBaseAdapter<Comment>(
     DIFF_CALLBACK
 ) {
 
@@ -48,7 +53,6 @@ class CommentsAdapter(val look: Look, private val onError: () -> Unit, val onCom
         }
     }
 
-
     override fun getItemId(position: Int): Long {
         return position.toLong()
     }
@@ -62,16 +66,20 @@ class CommentsAdapter(val look: Look, private val onError: () -> Unit, val onCom
         }
     }
 
+
+    override fun getItemCount(): Int {
+        return super.getItemCount() //+ if (hasFooter()) 1 else 0
+    }
+
     override fun getItemViewType(position: Int): Int {
         return if (position < super.getItemCount()) DATA_VIEW_TYPE else FOOTER_VIEW_TYPE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0) CommentViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.comment_view, parent, false)
-        ) else LookErrorViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false)
-        )
+        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0)
+            CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.comment_view, parent, false))
+        else
+            LookErrorViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false))
     }
 }
 
