@@ -6,7 +6,7 @@ data class Comment(
     var comments: List<Comment> = listOf(),
     var created: String = "",
     var parent_id: Int? = null,
-    var id: Int = 0,
+    var id: Int = -10,
     var text: String = "",
     var has_comments: Boolean =  true,
     var count_comments: Int = 1,

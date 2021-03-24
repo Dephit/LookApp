@@ -28,6 +28,7 @@ class CommentsAdapter(
     private val FOOTER_VIEW_TYPE = 2
 
     var selectedComment: Pair<CommentViewBinding?, Comment>? = null
+    var selectedState: Int = 0
 
     fun clearSelection(){
         manageActivation(null, null, true)
@@ -42,18 +43,21 @@ class CommentsAdapter(
                                 repository = repository,
                                 viewModelScope = viewModelScope,
                                 onCommentPress = {view, com->
+                                    selectedState = 1
                                     manageActivation(view, com, false)
                                     onCommentPress(com)
                                                  },
                                 onRespond = {view, com ->
+                                    selectedState = 3
                                     manageActivation(view, com, true)
                                     onRespond(com, position)
                                             },
                                 onCommentSelected = {view, com->
-                                    onCommentSelected(com)
+                                    selectedState = 2
                                     manageActivation(view, com, true)
+                                    onCommentSelected(com)
                                 },
-                                isSelected = selectedComment?.second
+                                isSelected = Pair(selectedComment?.second, selectedState)
                         )
                 }
             }
@@ -69,7 +73,8 @@ class CommentsAdapter(
             notifyDataSetChanged()
         }
         if(com == null){
-                selectedComment = null
+            selectedComment = null
+            selectedState = 0
         }else{
             selectedComment = Pair(com, comment!!)
             if(!selection)

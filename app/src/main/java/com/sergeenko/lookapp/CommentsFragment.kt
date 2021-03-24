@@ -9,9 +9,16 @@ import android.graphics.Color
 import android.os.Build
 import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Spannable
 import android.text.style.ForegroundColorSpan
+import android.util.AttributeSet
 import android.view.*
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputConnection
+import android.view.inputmethod.InputConnectionWrapper
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -24,6 +31,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.textfield.TextInputEditText
 import com.sergeenko.lookapp.databinding.AdditionActionsLayoutBinding
 import com.sergeenko.lookapp.databinding.AdditionalActionsCommentLayoutBinding
 import com.sergeenko.lookapp.databinding.CommentsFragmentBinding
@@ -59,20 +67,22 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
         return CommentsFragmentBinding.inflate(inflater)
     }
 
+    var userText = ""
+
     @SuppressLint("SetTextI18n")
     override fun <T> manageSuccess(obj: T?) {
         when (obj) {
             is Int ->{
-                //binding.commentsView.scrollToPosition(obj)
-
+                if(obj > 0){
+                    binding.commentsView.scrollToPosition(obj)
+                }
             }
             is Pair<*, *> -> {
+                userText = obj.first as String
+                (binding.commentInput.editText as ZanyDoubleText).setPrevView(userText)
                 setAnswerToSelectedComment(obj.first as String)
                 //binding.commentsView.smoothScrollToPosition(obj.second as Int)
-                binding.toolbarTitle.text = getString(R.string.comments)
-                binding.toolbar.menu.findItem(R.id.report).isVisible = false
-                binding.commentSection.visibility = View.VISIBLE
-                binding.commentInput.editText?.setText("")
+                showComments()
             }
             is Comment -> {
                 binding.toolbarTitle.text = getString(R.string.comment_chosen)
@@ -81,6 +91,7 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
             }
             null -> {
                 showComments()
+                binding.commentInput.editText?.setText("")
             }
         }
     }
@@ -89,12 +100,11 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
         binding.toolbarTitle.text = getString(R.string.comments)
         binding.toolbar.menu.findItem(R.id.report).isVisible = false
         binding.commentSection.visibility = View.VISIBLE
-        binding.commentInput.editText?.setText("")
     }
 
     @SuppressLint("SetTextI18n")
     private fun setAnswerToSelectedComment(obj: String) {
-        binding.commentInput.editText?.setText("$obj ")
+        binding.commentInput.editText!!.setText("$obj ")
         val boldSpan = ForegroundColorSpan(getColor(requireContext(), R.color.pink))
         val start = 0
         val end: Int = binding.commentInput.editText?.editableText.toString().length
@@ -104,6 +114,7 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
         val boldSpan2 = ForegroundColorSpan(getColor(requireContext(), R.color.black))
         binding.commentInput.editText!!.editableText.setSpan(boldSpan2, end, end, flag)
         binding.commentInput.editText!!.requestFocusFromTouch()
+
         showKeyBoard(binding.commentInput.editText!!)
         binding.commentInput.editText!!.setSelection(binding.commentInput.editText?.editableText.toString().length)
     }
@@ -132,7 +143,11 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
             }
 
             commentInput.editText?.addTextChangedListener {
-                sendButton.isEnabled = it?.isEmpty() != true
+                if(it.toString() != "$userText " && it.toString() != userText)
+                    sendButton.isEnabled = it?.isEmpty() != true
+                else {
+                    sendButton.isEnabled = false
+                }
             }
 
             sendButton.isEnabled = false
@@ -182,4 +197,55 @@ fun showAdditionalActions(view: View, x: Float, img: Comment) {
 
     window.contentView = customLayout.root
     window.showAtLocation(view, Gravity.TOP, x.toInt(), 0)
+}
+
+class ZanyDoubleText : TextInputEditText {
+
+    var textToDel: String = ""
+
+    constructor(context: Context?, attrs: AttributeSet?, defStyle: Int) : super(
+            context!!,
+            attrs,
+            defStyle
+    ) {
+    }
+
+    constructor(context: Context?, attrs: AttributeSet?) : super(context!!, attrs) {}
+    constructor(context: Context?) : super(context!!) {}
+
+    fun focusPrev() {
+        setText("")
+    }
+
+    override fun onCreateInputConnection(outAttrs: EditorInfo): InputConnection {
+        return ZanyInputConnection(
+                super.onCreateInputConnection(outAttrs),
+                true
+        )
+    }
+
+    fun setPrevView(_textToDel: String) {
+        textToDel = _textToDel
+    }
+
+    var canDoDoubleTap = false
+
+    private inner class ZanyInputConnection(target: InputConnection?, mutable: Boolean) :
+            InputConnectionWrapper(target, mutable) {
+
+        override fun sendKeyEvent(event: KeyEvent): Boolean {
+            if (event.action == KeyEvent.ACTION_DOWN
+                    && event.keyCode == KeyEvent.KEYCODE_DEL
+            ) {
+                Toast.makeText(context, "sadsd", Toast.LENGTH_SHORT).show()
+                if(canDoDoubleTap)
+                    focusPrev()
+                canDoDoubleTap = true
+                Handler(Looper.myLooper()!!).postDelayed({
+                    canDoDoubleTap = false
+                }, 5000)
+            }
+            return super.sendKeyEvent(event)
+        }
+    }
 }

@@ -33,6 +33,11 @@ abstract class BaseFragment<T : ViewBinding>: Fragment(), FragmentInterface<T> {
         return binding.root
     }
 
+    override fun onResume() {
+        super.onResume()
+        hideKeyboard()
+    }
+
     fun showKeyBoard(view: View){
         val keyboard = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
         keyboard!!.showSoftInput(view, 0)

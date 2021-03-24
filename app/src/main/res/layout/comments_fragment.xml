@@ -94,7 +94,7 @@
             app:layout_constraintTop_toTopOf="@+id/avatar"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.ZanyDoubleText
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_32sdp"
                 android:background="@drawable/button_bg"
