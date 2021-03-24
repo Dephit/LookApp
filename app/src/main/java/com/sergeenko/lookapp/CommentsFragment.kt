@@ -17,6 +17,7 @@ import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
@@ -33,7 +34,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.stream.StreamSupport
 
 @AndroidEntryPoint
-class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
+class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
 
     override val viewModel: CommentsViewModel  by viewModels()
 
@@ -62,11 +63,16 @@ class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
     override fun <T> manageSuccess(obj: T?) {
         when (obj) {
             is Int ->{
-                binding.commentsView.scrollToPosition(obj)
+                //binding.commentsView.scrollToPosition(obj)
+
             }
             is Pair<*, *> -> {
                 setAnswerToSelectedComment(obj.first as String)
-                binding.commentsView.smoothScrollToPosition(obj.second as Int)
+                //binding.commentsView.smoothScrollToPosition(obj.second as Int)
+                binding.toolbarTitle.text = getString(R.string.comments)
+                binding.toolbar.menu.findItem(R.id.report).isVisible = false
+                binding.commentSection.visibility = View.VISIBLE
+                binding.commentInput.editText?.setText("")
             }
             is Comment -> {
                 binding.toolbarTitle.text = getString(R.string.comment_chosen)
@@ -74,12 +80,16 @@ class CommentsFragment() : BaseFragment<CommentsFragmentBinding>() {
                 binding.commentSection.visibility = View.GONE
             }
             null -> {
-                binding.toolbarTitle.text = getString(R.string.comments)
-                binding.toolbar.menu.findItem(R.id.report).isVisible = false
-                binding.commentSection.visibility = View.VISIBLE
-                binding.commentInput.editText?.setText("")
+                showComments()
             }
         }
+    }
+
+    private fun showComments() {
+        binding.toolbarTitle.text = getString(R.string.comments)
+        binding.toolbar.menu.findItem(R.id.report).isVisible = false
+        binding.commentSection.visibility = View.VISIBLE
+        binding.commentInput.editText?.setText("")
     }
 
     @SuppressLint("SetTextI18n")

@@ -1,9 +1,13 @@
 package com.sergeenko.lookapp
 
+import android.os.Handler
+import android.os.Looper
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.sergeenko.lookapp.databinding.CommentViewBinding
 import com.sergeenko.lookapp.models.Comment
 import com.sergeenko.lookapp.models.Look
 import kotlinx.coroutines.CoroutineScope
@@ -11,7 +15,7 @@ import java.util.logging.Level
 
 class CommentsAdapter(
         val repository: Repository,
-        val level: Int = 0,
+        private val level: Int = 0,
         val viewModelScope: CoroutineScope,
         private val onError: () -> Unit,
         val onCommentPress: (Comment) -> Unit,
@@ -23,10 +27,10 @@ class CommentsAdapter(
     private val DATA_VIEW_TYPE = 1
     private val FOOTER_VIEW_TYPE = 2
 
-    var selectedComment: Int? = null
+    var selectedComment: Pair<CommentViewBinding?, Comment>? = null
 
     fun clearSelection(){
-        selectedComment = 0
+        manageActivation(null, null, true)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -37,24 +41,46 @@ class CommentsAdapter(
                                 comment = comment,
                                 repository = repository,
                                 viewModelScope = viewModelScope,
-                                level = level,
-                                onCommentPress = {onCommentPress},
-                                onRespond = { com ->
-                                    selectedComment = com.id
+                                onCommentPress = {view, com->
+                                    manageActivation(view, com, false)
+                                    onCommentPress(com)
+                                                 },
+                                onRespond = {view, com ->
+                                    manageActivation(view, com, true)
                                     onRespond(com, position)
-                                    notifyDataSetChanged()
                                             },
-                                onCommentSelected = {com->
-                                    selectedComment = com.id
+                                onCommentSelected = {view, com->
                                     onCommentSelected(com)
-                                    notifyDataSetChanged()
+                                    manageActivation(view, com, true)
                                 },
-                                isSelected = selectedComment?: -1
+                                isSelected = selectedComment?.second
                         )
                 }
             }
             is LookErrorViewHolder -> { holder.bind(getState(), onError) }
         }
+    }
+
+    private fun manageActivation(com: CommentViewBinding?, comment: Comment?, selection: Boolean) {
+        selectedComment?.first?.bg?.apply {
+            isSelected = false
+            isActivated = false
+        } ?: run {
+            notifyDataSetChanged()
+        }
+        if(com == null){
+                selectedComment = null
+        }else{
+            selectedComment = Pair(com, comment!!)
+            if(!selection)
+                com.bg.isSelected = true
+            else
+                com.bg.isActivated = true
+        }
+    }
+
+    override fun getItem(position: Int): Comment? {
+        return super.getItem(position)
     }
 
     override fun getItemId(position: Int): Long {
@@ -85,65 +111,4 @@ class CommentsAdapter(
         else
             LookErrorViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false))
     }
-}
-
-
-class CommentsListAdapter(var selectedComment: Int,
-                          var list: List<Comment> ,
-                          val repository: Repository,
-                          val level: Int = 0,
-                          val viewModelScope: CoroutineScope,
-                          private val onError: () -> Unit,
-                          val onCommentPress: (Comment) -> Unit,
-                          val onCommentSelected: (Comment) -> Unit,
-                          val onRespond: (Comment) -> Unit) : RecyclerView.Adapter<CommentViewHolder>() {
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-        return CommentViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.comment_view, parent, false)
-        )
-    }
-
-    private fun updateList(_list: List<Comment>){
-        list = _list
-        notifyDataSetChanged()
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
-    }
-
-    override fun getItemViewType(position: Int): Int {
-        return position
-    }
-
-    override fun getItemCount(): Int {
-        return list.size
-    }
-
-    override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
-        holder.bind(
-                list[position],
-                repository = repository,
-                viewModelScope = viewModelScope,
-                level = level ,
-                onCommentPress = {onCommentPress},
-                onRespond = { com ->
-                    selectedComment = com.id
-                    onRespond(com)
-                    notifyDataSetChanged()
-                },
-                onCommentSelected = {com->
-                    selectedComment = com.id
-                    onCommentSelected(com)
-                    notifyDataSetChanged()
-                },
-                isSelected = selectedComment?: -1
-        )
-    }
-
-    fun addComment(it: Comment) {
-        updateList(list.toMutableList().apply { add(it) })
-    }
-
 }

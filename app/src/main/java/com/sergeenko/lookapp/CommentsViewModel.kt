@@ -23,7 +23,6 @@ class CommentsViewModel  @ViewModelInject constructor(
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : PaggingListViewModel<Comment>(repository, savedStateHandle) {
 
-    private var commentAdapter: CommentsListAdapter? = null
     private var commentToRespond: Comment? = null
     var selectedComment: Comment? = null
     var look: Look? = null
@@ -78,7 +77,6 @@ class CommentsViewModel  @ViewModelInject constructor(
                         .collect {
                             modelState.emit(ModelState.Success(null))
                             commentToRespond = null
-                            commentAdapter = null
                             (adapter as CommentsAdapter).clearSelection()
                             newsDataSourceFactory.invalidate()
                         }
