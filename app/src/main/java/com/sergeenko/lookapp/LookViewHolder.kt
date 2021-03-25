@@ -453,7 +453,7 @@ inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinlin
     customLayout.sharePost.setOnClickListener {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(Intent.EXTRA_TEXT, "This is my text to send.")
+            putExtra(Intent.EXTRA_TEXT, "https://lookatback.com/api/posts/${img.id}")
             type = "text/plain"
         }
 
@@ -464,7 +464,7 @@ inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinlin
 
     customLayout.copyLink.setOnClickListener {
         val clipboard: ClipboardManager? = it.context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager?
-        val clip = ClipData.newPlainText("label", "link")
+        val clip = ClipData.newPlainText("label", "https://lookatback.com/api/posts/${img.id}")
         clipboard?.setPrimaryClip(clip)
         Toast.makeText(it.context, it.context.getString(R.string.link_is_copied), Toast.LENGTH_SHORT).show()
         window.dismiss()

@@ -81,11 +81,15 @@ class CommentsViewModel  @ViewModelInject constructor(
                             modelState.emit(ModelState.Success(null))
                             withContext(Main){
                                 clearSelection()
-                                newsDataSourceFactory.invalidate()
+                                invalidate()
                             }
                         }
             }
         }
+    }
+
+    private fun invalidate() {
+        newsDataSourceFactory.invalidate()
     }
 
 
@@ -117,11 +121,12 @@ class CommentsViewModel  @ViewModelInject constructor(
         viewModelScope.launch {
             repository.deleteComment(selectedComment)
                     .onStart { modelState.emit(ModelState.Loading) }
-                    .catch { modelState.emit(ModelState.Error(it.message)) }
+                    //.catch { modelState.emit(ModelState.Error(it.message)) }
                     .collect {
                         withContext(Main){
                             (adapter as CommentsAdapter).deleteComment()
                         }
+                        invalidate()
                         modelState.emit(ModelState.Success(null))
                     }
         }
