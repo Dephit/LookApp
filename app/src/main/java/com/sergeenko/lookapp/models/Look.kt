@@ -9,6 +9,7 @@ data class Look(
     var count_likes: Int = 0,
     var count_comments: Int = 0,
     var id: Int = 0,
+    var preview: String? = null,
     var images: List<Image> = listOf(),
     var user: Data = Data(),
     var is_dislike: Boolean = false,
@@ -25,6 +26,7 @@ data class Look(
             parcel.readInt(),
             parcel.readInt(),
             parcel.readInt(),
+            parcel.readString(),
             parcel.createTypedArrayList(Image)!!,
             parcel.readParcelable(Data::class.java.classLoader)!!,
             parcel.readByte() != 0.toByte(),
@@ -42,6 +44,7 @@ data class Look(
         parcel.writeInt(count_likes)
         parcel.writeInt(count_comments)
         parcel.writeInt(id)
+        parcel.writeString(preview)
         parcel.writeTypedList(images)
         parcel.writeParcelable(user, flags)
         parcel.writeByte(if (is_dislike) 1 else 0)

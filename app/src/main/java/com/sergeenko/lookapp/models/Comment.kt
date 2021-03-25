@@ -11,6 +11,7 @@ data class Comment(
     var has_comments: Boolean =  true,
     var count_comments: Int = 1,
     var isPost: Boolean = false,
+    var parent: Comment? = null,
     var isSelected: Int = 0,
     var user: Data = Data()
 ): Serializable

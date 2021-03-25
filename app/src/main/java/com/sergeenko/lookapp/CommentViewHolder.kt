@@ -150,6 +150,7 @@ class CommentViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView) {
         binding.commentList.removeAllViews()
         comment.comments.forEach {
             val commentViewBinding = CommentViewHolder(inflayer.inflate(R.layout.comment_view, null,false))
+            it.parent = comment
             commentViewBinding.bind(
                 comment = it,
                 repository = repository,

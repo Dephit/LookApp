@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.Flow
 interface Repository {
 
     fun getDB(): AppDatabase
+    fun getUserFromDb(): SocialResponse?
 
     fun authByPhone(phone: String): Flow<AuthMessage>
     suspend fun getCountryCodes()
@@ -33,7 +34,8 @@ interface Repository {
     fun dislike(dislike: Boolean, postID: Int): Flow<Boolean>
     fun like(like: Boolean, postID: Int): Flow<Boolean>
     fun favorite(like: Boolean, post: Look): Flow<Boolean>
-    fun claim(type: String, postId: Int, commentId: Int? = null): Flow<AuthMessage>
+    fun claim(type: String, postId: Int? = null, commentId: Int? = null): Flow<AuthMessage>
 
     fun addComment(text: String, postId: Int, commentId: Int? = null): Flow<Comment>
+    fun deleteComment(selectedComment: Comment?): Flow<AuthMessage>
 }

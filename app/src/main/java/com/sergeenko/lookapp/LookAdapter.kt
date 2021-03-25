@@ -41,11 +41,11 @@ class LookAdapter(
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (position < super.getItemCount()) DATA_VIEW_TYPE else FOOTER_VIEW_TYPE
+        return if (position < itemCount) DATA_VIEW_TYPE else FOOTER_VIEW_TYPE
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0) LookViewHolder(
+        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && viewType == DATA_VIEW_TYPE) LookViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_view, parent, false),
         )else LookErrorViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false)

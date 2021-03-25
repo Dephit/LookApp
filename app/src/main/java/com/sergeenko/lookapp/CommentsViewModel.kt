@@ -26,6 +26,7 @@ class CommentsViewModel  @ViewModelInject constructor(
     private var commentToRespond: Comment? = null
     var selectedComment: Comment? = null
     var look: Look? = null
+    var userText = ""
 
     fun set(look: Look){
         this.look = look
@@ -48,16 +49,18 @@ class CommentsViewModel  @ViewModelInject constructor(
                         modelState.emit(ModelState.Success(com.id))
                     }
                 },
-                onCommentPress = {
+                onCommentPress = {com->
                     viewModelScope.launch {
-                        modelState.emit(ModelState.Success(it))
+                        selectedComment = com
+                        modelState.emit(ModelState.Success(com))
                     }
                 },
                 onError = { retry() },
                 onRespond = {comment, position ->
                     commentToRespond = comment
                     viewModelScope.launch {
-                        modelState.emit(ModelState.Success(Pair("@${comment.user.username}", position)))
+                        userText = "@${comment.user.username}"
+                        modelState.emit(ModelState.Success(Pair(userText, position)))
                     }
                 }
         )
@@ -76,12 +79,59 @@ class CommentsViewModel  @ViewModelInject constructor(
                         .catch { modelState.emit(ModelState.Error(it.message)) }
                         .collect {
                             modelState.emit(ModelState.Success(null))
-                            commentToRespond = null
-                            (adapter as CommentsAdapter).clearSelection()
-                            newsDataSourceFactory.invalidate()
+                            withContext(Main){
+                                clearSelection()
+                                newsDataSourceFactory.invalidate()
+                            }
                         }
             }
         }
+    }
+
+
+    fun clearSelection() {
+        commentToRespond = null
+        (adapter as CommentsAdapter).clearSelection()
+        userText = ""
+    }
+
+    suspend fun isMyAnswer(): Boolean {
+        if(repository.getUserFromDb()?.data?.id == selectedComment?.parent?.user?.id){
+            return true
+        }
+        return false
+    }
+
+    fun claim(string: String){
+        viewModelScope.launch {
+            repository.claim(type = string, commentId = selectedComment?.id)
+                    .onStart { modelState.emit(ModelState.Loading) }
+                    .catch { modelState.emit(ModelState.Error(it.message)) }
+                    .collect {
+                        modelState.emit(ModelState.Success(null))
+                    }
+        }
+    }
+
+    fun deleteComment(){
+        viewModelScope.launch {
+            repository.deleteComment(selectedComment)
+                    .onStart { modelState.emit(ModelState.Loading) }
+                    .catch { modelState.emit(ModelState.Error(it.message)) }
+                    .collect {
+                        withContext(Main){
+                            (adapter as CommentsAdapter).deleteComment()
+                        }
+                        modelState.emit(ModelState.Success(null))
+                    }
+        }
+    }
+
+    suspend fun isMyPost(): Boolean {
+        if(repository.getUserFromDb()?.data?.id == selectedComment?.user?.id){
+            return true
+        }
+        return false
     }
 
 }

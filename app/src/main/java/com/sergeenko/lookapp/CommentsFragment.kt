@@ -27,6 +27,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.view.ViewCompat
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -38,7 +39,11 @@ import com.sergeenko.lookapp.databinding.CommentsFragmentBinding
 import com.sergeenko.lookapp.models.Comment
 import com.sergeenko.lookapp.models.Look
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.stream.StreamSupport
 
 @AndroidEntryPoint
@@ -67,8 +72,6 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
         return CommentsFragmentBinding.inflate(inflater)
     }
 
-    var userText = ""
-
     @SuppressLint("SetTextI18n")
     override fun <T> manageSuccess(obj: T?) {
         when (obj) {
@@ -78,16 +81,13 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
                 }
             }
             is Pair<*, *> -> {
-                userText = obj.first as String
-                (binding.commentInput.editText as ZanyDoubleText).setPrevView(userText)
+                (binding.commentInput.editText as ZanyDoubleText).setPrevView(obj.first.toString())
                 setAnswerToSelectedComment(obj.first as String)
                 //binding.commentsView.smoothScrollToPosition(obj.second as Int)
                 showComments()
             }
             is Comment -> {
-                binding.toolbarTitle.text = getString(R.string.comment_chosen)
-                binding.toolbar.menu.findItem(R.id.report).isVisible = true
-                binding.commentSection.visibility = View.GONE
+                showCommentEdit()
             }
             null -> {
                 showComments()
@@ -96,9 +96,15 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
         }
     }
 
+    private fun showCommentEdit() {
+        binding.toolbar.visibility = View.GONE
+        binding.toolbarEditTitle.visibility = View.VISIBLE
+        binding.commentSection.visibility = View.GONE
+    }
+
     private fun showComments() {
-        binding.toolbarTitle.text = getString(R.string.comments)
-        binding.toolbar.menu.findItem(R.id.report).isVisible = false
+        binding.toolbar.visibility = View.VISIBLE
+        binding.toolbarEditTitle.visibility = View.GONE
         binding.commentSection.visibility = View.VISIBLE
     }
 
@@ -124,10 +130,24 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
     override fun setListeners() {
         withBinding {
             avatar.clipToOutline = true
-            toolbar.menu.findItem(R.id.report).isVisible = false
-            toolbar.menu.findItem(R.id.report).setOnMenuItemClickListener {
-                showAdditionalActions(toolbar, toolbar.x + toolbar.width / 2, viewModel.selectedComment!!)
+            toolbarEdit.menu.findItem(R.id.report).setOnMenuItemClickListener {
+                lifecycleScope.launch(IO) {
+                    val isMyComment = viewModel.isMyPost()
+                    val isMyAnswer = viewModel.isMyAnswer()
+                    withContext(Main){
+                        showAdditionalActions(toolbar, toolbar.x + toolbar.width / 2,
+                                isYourComment = isMyComment,
+                                isYorsAnswer = isMyAnswer,
+                                onClaim = viewModel::claim,
+                                onDelete = viewModel::deleteComment)
+                    }
+                }
                 return@setOnMenuItemClickListener true
+            }
+
+            toolbarEdit.setNavigationOnClickListener {
+                showComments()
+                viewModel.clearSelection()
             }
 
             toolbar.setNavigationOnClickListener {
@@ -141,10 +161,24 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
                     viewModel.addComment(text)
                 }
             }
-
+            var lastLength = 0
+            var canDoDoubleTap = 0
             commentInput.editText?.addTextChangedListener {
-                if(it.toString() != "$userText " && it.toString() != userText)
-                    sendButton.isEnabled = it?.isEmpty() != true
+                if(lastLength > it!!.length){
+                    if(canDoDoubleTap == 1 && it.toString() <= viewModel.userText) {
+                        canDoDoubleTap = 0
+                        commentInput.editText?.setText("")
+                        viewModel.clearSelection()
+                    }
+                    canDoDoubleTap++
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        canDoDoubleTap = 0
+                    }, 2000)
+                }
+                lastLength = it.length
+
+                if(it.toString() != "${viewModel.userText} " && it.toString() != viewModel.userText)
+                    sendButton.isEnabled = it.isEmpty() != true
                 else {
                     sendButton.isEnabled = false
                 }
@@ -163,13 +197,29 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
 
 }
 
-fun showAdditionalActions(view: View, x: Float, img: Comment) {
-
+fun showAdditionalActions(
+        view: View,
+        x: Float,
+        isYourComment: Boolean,
+        isYorsAnswer: Boolean,
+        onClaim: (String) -> Unit,
+        onDelete: () -> Unit,
+) {
     val customLayout = AdditionalActionsCommentLayoutBinding.inflate(LayoutInflater.from(view.context))
 
-    fun checkFavorite(){
-        //customLayout.addToFavImg.isActivated = img.isFavorite
+    customLayout.deleteConfirm.visibility = View.GONE
+    if(isYourComment || isYorsAnswer){
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainMyPostDetailed.visibility = View.VISIBLE
+        if(isYourComment){
+            customLayout.claim.visibility = View.GONE
+        }else{
+            customLayout.claim.visibility = View.VISIBLE
+        }
+    }else {
+        customLayout.complainDetailed.visibility = View.VISIBLE
     }
+
 
     // create an alert builder
     val width = LinearLayout.LayoutParams.WRAP_CONTENT
@@ -179,20 +229,42 @@ fun showAdditionalActions(view: View, x: Float, img: Comment) {
     val window = PopupWindow(customLayout.root, width, height, focusable)
     window.isOutsideTouchable = true
 
-    checkFavorite()
+    customLayout.claim.setOnClickListener {
+        customLayout.complainDetailed.visibility = View.VISIBLE
+        customLayout.complainMyPostDetailed.visibility = View.GONE
+        customLayout.deleteConfirm.visibility = View.GONE
+    }
+
+    customLayout.no.setOnClickListener {
+        window.dismiss()
+    }
+
+    customLayout.yes.setOnClickListener {
+        onDelete()
+        window.dismiss()
+    }
+
+    customLayout.deleteComment.setOnClickListener {
+        customLayout.deleteConfirm.visibility = View.VISIBLE
+        customLayout.complainDetailed.visibility = View.GONE
+        customLayout.complainMyPostDetailed.visibility = View.GONE
+    }
 
     customLayout.complainSend.setOnClickListener {
         window.dismiss()
     }
 
     customLayout.spam.setOnClickListener {
+        onClaim("Спам")
         customLayout.complainDetailed.visibility = View.GONE
         customLayout.complainSend.visibility = View.VISIBLE
     }
 
     customLayout.shockContent.setOnClickListener {
+        onClaim("Шокирующий контент")
         customLayout.complainDetailed.visibility = View.GONE
         customLayout.complainSend.visibility = View.VISIBLE
+        customLayout.deleteConfirm.visibility = View.GONE
     }
 
     window.contentView = customLayout.root
@@ -228,22 +300,14 @@ class ZanyDoubleText : TextInputEditText {
         textToDel = _textToDel
     }
 
-    var canDoDoubleTap = false
+
 
     private inner class ZanyInputConnection(target: InputConnection?, mutable: Boolean) :
             InputConnectionWrapper(target, mutable) {
 
         override fun sendKeyEvent(event: KeyEvent): Boolean {
-            if (event.action == KeyEvent.ACTION_DOWN
-                    && event.keyCode == KeyEvent.KEYCODE_DEL
-            ) {
-                Toast.makeText(context, "sadsd", Toast.LENGTH_SHORT).show()
-                if(canDoDoubleTap)
-                    focusPrev()
-                canDoDoubleTap = true
-                Handler(Looper.myLooper()!!).postDelayed({
-                    canDoDoubleTap = false
-                }, 5000)
+            if (event.action == KeyEvent.ACTION_DOWN && event.keyCode == KeyEvent.KEYCODE_DEL) {
+                //Toast.makeText(context, "sadsd", Toast.LENGTH_SHORT).show()
             }
             return super.sendKeyEvent(event)
         }

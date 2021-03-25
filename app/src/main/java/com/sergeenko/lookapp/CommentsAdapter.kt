@@ -1,3 +1,4 @@
+
 package com.sergeenko.lookapp
 
 import android.os.Handler
@@ -115,5 +116,9 @@ class CommentsAdapter(
             CommentViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.comment_view, parent, false))
         else
             LookErrorViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false))
+    }
+
+    fun deleteComment() {
+        clearSelection()
     }
 }

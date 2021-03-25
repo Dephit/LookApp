@@ -141,11 +141,12 @@ interface Api {
             @Field("post_id") postId: Int
     ): AddToFavMessage
 
+
     @FormUrlEncoded
     @POST("claims")
     suspend fun claims(
             @Header("Authorization") auth: String,
-            @Field("post_id") postId: Int,
+            @Field("post_id") postId: Int? = null,
             @Field("comment_id") commentId: Int? = null,
             @Field("type") type: String
     ): AuthMessage
@@ -157,6 +158,11 @@ interface Api {
             @Field("text") text: String,
             @Field("post_id") postId: Int,
             @Field("comment_id") commentId: Int?): CommentResponse2
+
+    @DELETE("comments/{comment}")
+    suspend  fun deleteComment(
+            @Header("Authorization") auth: String,
+            @Path("comment") commentId: Int?): AuthMessage
 
 
 }

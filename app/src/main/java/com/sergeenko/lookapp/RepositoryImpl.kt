@@ -18,6 +18,9 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
     private var token: String = ""
         get() = if(field == "") getTokenFromDB() else field
 
+    private var user: SocialResponse? = null
+        get() = if(field == null) database.socialResponseDao().get() else field
+
     private fun getTokenFromDB(): String {
         val tok = database.socialResponseDao().get()?.data?.token
         return "${tok?.type} ${tok?.value}"
@@ -37,6 +40,10 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
 
     override fun getDB(): AppDatabase {
         return database
+    }
+
+    override fun getUserFromDb(): SocialResponse? {
+        return user
     }
 
     override fun authByPhone(phone: String): Flow<AuthMessage> {
@@ -266,7 +273,7 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }.flowOn(IO)
     }
 
-    override fun claim(type: String, postId: Int, commentId: Int?): Flow<AuthMessage> {
+    override fun claim(type: String, postId: Int?, commentId: Int?): Flow<AuthMessage> {
         return flow {
             val data = api.claims(auth = token, type = type, postId = postId, commentId = commentId)
             if(!data.ok){
@@ -282,6 +289,13 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
             emit(data.data)
         }.flowOn(IO)
 
+    }
+
+    override fun deleteComment(selectedComment: Comment?): Flow<AuthMessage> {
+        return flow {
+            val data = api.deleteComment(token, selectedComment?.id)
+            emit(data)
+        }.flowOn(IO)
     }
 
 
