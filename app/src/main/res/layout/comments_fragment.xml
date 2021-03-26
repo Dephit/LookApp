@@ -7,146 +7,175 @@
     android:layout_height="match_parent"
     tools:context=".CommentsFragment">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar_edit"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="10dp"
-        android:minHeight="?attr/actionBarSize"
-        android:paddingStart="@dimen/_5sdp"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:menu="@menu/comment_menu"
-        app:navigationIcon="@drawable/ic_baseline_close_24">
-
-        <TextView
-            android:id="@+id/toolbar_edit_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/comment_chosen"
-            android:textAppearance="@style/HeaderText"
-            tools:layout_editor_absoluteX="163dp"
-            tools:layout_editor_absoluteY="18dp" />
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white"
-        android:elevation="10dp"
-        android:minHeight="?attr/actionBarSize"
-        android:paddingStart="@dimen/_5sdp"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0"
-        app:navigationIcon="@drawable/navigation_back_drawable">
-
-        <TextView
-            android:id="@+id/toolbar_title"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/comments"
-            android:textAppearance="@style/HeaderText"
-            tools:layout_editor_absoluteX="163dp"
-            tools:layout_editor_absoluteY="18dp" />
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/comments_view"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/comment_section"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/comment_section"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/_48sdp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/_minus25sdp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1">
+        tools:context=".CommentsFragment">
 
-        <ImageView
-            android:id="@+id/avatar"
-            android:layout_width="@dimen/_32sdp"
-            android:layout_height="@dimen/_32sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_8sdp"
-            android:layout_marginBottom="@dimen/_8sdp"
-            android:background="@drawable/avatar_img_background"
-            android:scaleType="centerCrop"
-            android:src="@drawable/look_mock_bg"
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/_minus25sdp"
+            android:layout_marginEnd="@dimen/_minus25sdp"
+            app:cardCornerRadius="@dimen/_15sdp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/comment_input"
-            style="@style/EditTextStyle"
-            android:layout_width="0dp"
-
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_8sdp"
-            android:layout_marginEnd="@dimen/_16sdp"
-            android:layout_marginBottom="@dimen/_16sdp"
-            android:foregroundGravity="center"
-            android:gravity="center"
-            android:paddingTop="0dp"
-            app:boxCollapsedPaddingTop="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/avatar"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5"
-            app:layout_constraintStart_toEndOf="@+id/avatar"
-            app:layout_constraintTop_toTopOf="@+id/avatar"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyDoubleText
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar_edit"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/_32sdp"
-                android:background="@drawable/button_bg"
-                android:gravity="center|start"
-                android:inputType="text"
-                android:paddingStart="@dimen/_16sdp"
-                android:paddingTop="0dp"
-                android:paddingBottom="0dp"
-                android:textAlignment="textStart"
-                android:textAppearance="@style/BodyText16" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:background="@color/white"
+                android:elevation="10dp"
+                android:minHeight="?attr/actionBarSize"
+                android:paddingStart="@dimen/_5sdp"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0"
+                app:menu="@menu/comment_menu"
+                app:navigationIcon="@drawable/ic_baseline_close_24">
 
-        <ImageView
-            android:id="@+id/send_button"
-            android:layout_width="@dimen/_16sdp"
-            android:layout_height="@dimen/_16sdp"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginEnd="@dimen/_10sdp"
+                <TextView
+                    android:id="@+id/toolbar_edit_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/comment_chosen"
+                    android:textAppearance="@style/HeaderText"
+                    tools:layout_editor_absoluteX="163dp"
+                    tools:layout_editor_absoluteY="18dp" />
+            </androidx.appcompat.widget.Toolbar>
 
-            android:src="@drawable/send_button_drawable"
-            app:layout_constraintBottom_toBottomOf="@+id/comment_input"
-            app:layout_constraintEnd_toEndOf="@+id/comment_input"
-            app:layout_constraintHorizontal_bias="1"
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_25sdp"
+                android:background="@color/white"
+                android:elevation="10dp"
+                android:minHeight="?attr/actionBarSize"
+                android:paddingStart="@dimen/_5sdp"
+                android:theme="?attr/actionBarTheme"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0"
+                app:navigationIcon="@drawable/navigation_back_drawable">
+
+                <TextView
+                    android:id="@+id/toolbar_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:text="@string/comments"
+                    android:textAppearance="@style/HeaderText"
+                    tools:layout_editor_absoluteX="163dp"
+                    tools:layout_editor_absoluteY="18dp" />
+            </androidx.appcompat.widget.Toolbar>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/comments_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/comment_section"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/comment_input" />
+            app:layout_constraintTop_toBottomOf="@+id/card_view" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/comment_section"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_48sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="1">
+
+            <ImageView
+                android:id="@+id/avatar"
+                android:layout_width="@dimen/_32sdp"
+                android:layout_height="@dimen/_32sdp"
+                android:layout_marginStart="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_8sdp"
+                android:layout_marginBottom="@dimen/_8sdp"
+                android:background="@drawable/avatar_img_background"
+                android:scaleType="centerCrop"
+                android:src="@drawable/look_mock_bg"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/comment_input"
+                style="@style/EditTextStyle"
+                android:layout_width="0dp"
+
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_8sdp"
+                android:layout_marginEnd="@dimen/_16sdp"
+                android:layout_marginBottom="@dimen/_16sdp"
+                android:foregroundGravity="center"
+                android:gravity="center"
+                android:paddingTop="0dp"
+                app:boxCollapsedPaddingTop="0dp"
+                app:layout_constraintBottom_toBottomOf="@+id/avatar"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/avatar"
+                app:layout_constraintTop_toTopOf="@+id/avatar"
+                app:layout_constraintVertical_bias="0">
+
+                <com.sergeenko.lookapp.ZanyDoubleText
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_32sdp"
+                    android:background="@drawable/button_bg"
+                    android:gravity="center|start"
+                    android:inputType="text"
+                    android:paddingStart="@dimen/_16sdp"
+                    android:paddingTop="0dp"
+                    android:paddingBottom="0dp"
+                    android:textAlignment="textStart"
+                    android:textAppearance="@style/BodyText16" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <ImageView
+                android:id="@+id/send_button"
+                android:layout_width="@dimen/_16sdp"
+                android:layout_height="@dimen/_16sdp"
+                android:layout_marginTop="@dimen/_2sdp"
+                android:layout_marginEnd="@dimen/_10sdp"
+
+                android:src="@drawable/send_button_drawable"
+                app:layout_constraintBottom_toBottomOf="@+id/comment_input"
+                app:layout_constraintEnd_toEndOf="@+id/comment_input"
+                app:layout_constraintHorizontal_bias="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/comment_input" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

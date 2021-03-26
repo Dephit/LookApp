@@ -22,27 +22,15 @@ import com.vanniktech.emoji.EmojiPopup
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class NewPostFragment : BaseFragment<NewPostFragmentBinding>() {
+class NewPostFragment : WhiteStatusBarFragment<NewPostFragmentBinding>() {
+
+    override val statusBarColor: Int = Color.WHITE
 
      override val viewModel: NewPostViewModel by viewModels()
 
     override fun bind(inflater: LayoutInflater): NewPostFragmentBinding {
         return NewPostFragmentBinding.inflate(inflater)
     }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        setStatusBar()
-    }
-
-    private fun setStatusBar() {
-        val w: Window = requireActivity().window
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            w.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR //set status text  light
-        }
-        w.statusBarColor = Color.WHITE
-    }
-
 
     override fun setListeners() {
         withBinding {
@@ -245,3 +233,4 @@ class MarkUserAdapter(private val onSave: (String) -> Unit) : RecyclerView.Adapt
     }
 
 }
+

@@ -2,7 +2,10 @@ package com.sergeenko.lookapp.models
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.io.Serializable
+import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.io.File
+
 
 data class Look(
     var count_dislikes: Int = 0,
@@ -18,25 +21,36 @@ data class Look(
     var title: String = "",
     var type: String = "",
     var favorite_id: Int = 0,
+    var body: List<PostBodyItem> = listOf(),
     var is_claim: Boolean = false,
     var created: String = ""
 ) : Parcelable {
+
+    var previewPath = ""
+
+    fun setPath(){
+
+    }
+
+
     constructor(parcel: Parcel) : this(
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readInt(),
-            parcel.readString(),
-            parcel.createTypedArrayList(Image)!!,
-            parcel.readParcelable(Data::class.java.classLoader)!!,
-            parcel.readByte() != 0.toByte(),
-            parcel.readByte() != 0.toByte(),
-            parcel.readByte() != 0.toByte(),
-            parcel.readString().toString(),
-            parcel.readString().toString(),
-            parcel.readInt(),
-            parcel.readByte() != 0.toByte(),
-            parcel.readString().toString()) {
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readString(),
+        parcel.createTypedArrayList(Image)!!,
+        parcel.readParcelable(Data::class.java.classLoader)!!,
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readByte() != 0.toByte(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
+        parcel.readInt(),
+        parcel.createTypedArrayList(PostBodyItem)!!,
+        parcel.readByte() != 0.toByte(),
+        parcel.readString().toString()
+    ) {
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -53,6 +67,7 @@ data class Look(
         parcel.writeString(title)
         parcel.writeString(type)
         parcel.writeInt(favorite_id)
+        parcel.writeTypedList(body)
         parcel.writeByte(if (is_claim) 1 else 0)
         parcel.writeString(created)
     }

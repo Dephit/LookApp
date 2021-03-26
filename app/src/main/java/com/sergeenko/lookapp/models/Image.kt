@@ -9,6 +9,8 @@ data class Image(
     var url: String = "",
     var total: Int = 0,
 ) : Parcelable {
+    val imagePath: String = ""
+
     constructor(parcel: Parcel) : this(
             parcel.readInt(),
             parcel.createTypedArrayList(Mark)!!,

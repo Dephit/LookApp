@@ -92,7 +92,7 @@ class MenuActivity : AppCompatActivity() {
 
     private fun manageDestination(destination: NavDestination) {
         when (destination.id) {
-            R.id.commentsFragment, R.id.newPostFragment -> {
+            R.id.commentsFragment, R.id.newPostFragment, R.id.newLookFragment -> {
                 binding.bottomNavigationView.visibility = View.GONE
             }
             else -> {

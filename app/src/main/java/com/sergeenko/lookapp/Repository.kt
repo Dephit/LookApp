@@ -2,6 +2,7 @@ package com.sergeenko.lookapp
 
 import com.sergeenko.lookapp.models.*
 import kotlinx.coroutines.flow.Flow
+import okhttp3.Response
 
 interface Repository {
 
@@ -38,4 +39,7 @@ interface Repository {
 
     fun addComment(text: String, postId: Int, commentId: Int? = null): Flow<Comment>
     fun deleteComment(selectedComment: Comment?): Flow<AuthMessage>
+
+    fun createPost(look: Look): Flow<Response?>
+    fun createLook(look: Look): Flow<Response?>
 }
