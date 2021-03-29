@@ -3,6 +3,7 @@ package com.sergeenko.lookapp
 import android.net.Uri
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.sergeenko.lookapp.databinding.FilterImageViewBinding
 import com.sergeenko.lookapp.databinding.GallaryImageViewBinding
 import com.squareup.picasso.Picasso
 import java.io.File
@@ -33,6 +34,19 @@ class GallaryImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) 
         binding.img.setOnClickListener {
             onImageSelected(file.file)
         }
+    }
+
+}
+
+class FilterImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
+
+    val binding: FilterImageViewBinding = FilterImageViewBinding.bind(itemView)
+
+    fun bind(file: File){
+        Picasso.get()
+            .load(Uri.fromFile(file))
+            .placeholder(R.drawable.look_img_background)
+            .into(binding.img)
     }
 
 }

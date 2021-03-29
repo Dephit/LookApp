@@ -13,6 +13,7 @@ import android.view.View
 import androidx.camera.core.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -54,7 +55,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
     override fun <T> manageSuccess(obj: T?) {
         when (obj) {
             is Boolean -> {
-                findNavController().navigate(R.id.action_newLookFragment_to_filtersFragment)
+                findNavController().navigate(R.id.action_newLookFragment_to_filtersFragment, bundleOf("files" to viewModel.selectedList))
             }
             is List<*> -> {
                 setRV(obj as List<GallaryImage>)
@@ -164,7 +165,11 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
         withBinding {
             setCameraSelected()
             
-            toolbar.setNavigationOnClickListener { 
+            toolbar.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+
+            toolbarGallary.setNavigationOnClickListener {
                 findNavController().popBackStack()
             }
 

@@ -1,7 +1,16 @@
 package com.sergeenko.lookapp
 
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 
-class FiltersViewModel : ViewModel() {
-    // TODO: Implement the ViewModel
+class FiltersViewModel@ViewModelInject constructor(
+        private val repository: Repository,
+        @Assisted private val savedStateHandle: SavedStateHandle
+) : BaseViewModel(repository, savedStateHandle) {
+
+    val adapter: FilterImageAdapter by lazy{
+        FilterImageAdapter()
+    }
 }

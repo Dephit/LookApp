@@ -6,26 +6,61 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.view.forEachIndexed
+import androidx.fragment.app.viewModels
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.PagerSnapHelper
+import androidx.recyclerview.widget.RecyclerView
+import com.sergeenko.lookapp.databinding.FiltersFragmentBinding
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import dagger.hilt.android.AndroidEntryPoint
+import java.io.File
 
-class FiltersFragment : Fragment() {
+@AndroidEntryPoint
+class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
-    companion object {
-        fun newInstance() = FiltersFragment()
+    override val viewModel: FiltersViewModel by viewModels()
+
+    override fun bind(inflater: LayoutInflater): FiltersFragmentBinding = FiltersFragmentBinding.inflate(inflater)
+
+    private fun setRV(fileList: List<File>) {
+        val adapter = viewModel.adapter
+        adapter.setList(_fileList = fileList)
+        binding.rv.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        binding.rv.adapter = adapter
+        val snapHelper = PagerSnapHelper()
+        snapHelper.attachToRecyclerView(binding.rv)
     }
 
-    private lateinit var viewModel: FiltersViewModel
+    override fun setListeners() {
+        withBinding {
+            val file = arguments?.getSerializable("files") as List<File>
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.filters_fragment, container, false)
-    }
+            currentItemList.forEachIndexed { index, view ->
+                if(index < file.size)
+                    view.visibility = View.VISIBLE
+                else
+                    view.visibility = View.GONE
+            }
+            setRV(file)
+            /*binding.previewImage.visibility = View.GONE
+            binding.progressBar4.visibility = View.VISIBLE*/
+            /*Picasso.get()
+                    .load(file[0])
+                    .noPlaceholder()
+                    .into(binding.previewImage, object : Callback {
+                        override fun onSuccess() {
+                            binding.previewImage.visibility = View.VISIBLE
+                            binding.progressBar4.visibility = View.GONE
+                        }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        viewModel = ViewModelProvider(this).get(FiltersViewModel::class.java)
-        // TODO: Use the ViewModel
+                        override fun onError(e: Exception?) {
+
+                        }
+
+                    })*/
+        }
     }
 
 }

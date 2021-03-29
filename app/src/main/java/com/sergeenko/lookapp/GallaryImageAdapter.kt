@@ -44,3 +44,4 @@ class GallaryImageAdapter(val onImageSelected: (File) -> Unit, val onImageAdd: (
     }
 
 }
+

@@ -87,4 +87,6 @@
     <string name="gallary_text">Галерея</string>
     <string name="new_photo_text">Новое фото</string>
     <string name="new_look">Новый лук</string>
+    <string name="filters_text">Фильтры</string>
+    <string name="settings_text">Настройки</string>
 </resources>
