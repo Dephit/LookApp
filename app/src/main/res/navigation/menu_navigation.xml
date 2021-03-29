@@ -47,7 +47,12 @@
         android:id="@+id/newLookFragment"
         android:name="com.sergeenko.lookapp.NewLookFragment"
         android:label="new_look_fragment"
-        tools:layout="@layout/new_look_fragment" />
+        tools:layout="@layout/new_look_fragment" >
+        <action
+            android:id="@+id/action_newLookFragment_to_filtersFragment"
+            app:destination="@id/filtersFragment"
+            app:popUpTo="@id/newLookFragment" />
+    </fragment>
     <action
         android:id="@+id/action_global_newLookFragment"
         app:destination="@id/newLookFragment"
@@ -65,4 +70,9 @@
         android:id="@+id/action_global_newPostFragment"
         app:destination="@id/newPostFragment"
         app:popUpToInclusive="true" />
+    <fragment
+        android:id="@+id/filtersFragment"
+        android:name="com.sergeenko.lookapp.FiltersFragment"
+        android:label="filters_fragment"
+        tools:layout="@layout/filters_fragment" />
 </navigation>
