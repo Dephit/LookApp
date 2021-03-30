@@ -26,6 +26,7 @@ class App : Application(){
 
     override fun onCreate() {
         super.onCreate()
+
         initFB()
         initVK()
         EmojiManager.install(GoogleEmojiProvider())

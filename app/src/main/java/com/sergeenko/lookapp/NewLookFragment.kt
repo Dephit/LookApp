@@ -56,6 +56,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
         when (obj) {
             is Boolean -> {
                 findNavController().navigate(R.id.action_newLookFragment_to_filtersFragment, bundleOf("files" to viewModel.selectedList))
+                viewModel.restoreState()
             }
             is List<*> -> {
                 setRV(obj as List<GallaryImage>)

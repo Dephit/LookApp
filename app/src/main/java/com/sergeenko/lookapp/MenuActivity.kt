@@ -24,6 +24,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class MenuActivity : AppCompatActivity() {
 
+    init {
+        System.loadLibrary("NativeImageProcessor")
+    }
+
     private lateinit var binding: PostTapeFragmentBinding
     @Inject
     lateinit var repository: Repository
@@ -32,7 +36,6 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = PostTapeFragmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        System.loadLibrary("NativeImageProcessor");
 
         binding.newLook.setOnClickListener {
             navigateTo(R.id.action_global_newLookFragment)
@@ -97,7 +100,7 @@ class MenuActivity : AppCompatActivity() {
 
     private fun manageDestination(destination: NavDestination) {
         when (destination.id) {
-            R.id.commentsFragment, R.id.newPostFragment, R.id.newLookFragment -> {
+            R.id.commentsFragment, R.id.newPostFragment, R.id.newLookFragment, R.id.filtersFragment -> {
                 binding.bottomNavigationView.visibility = View.GONE
             }
             else -> {
