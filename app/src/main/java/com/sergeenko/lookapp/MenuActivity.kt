@@ -1,21 +1,25 @@
 package com.sergeenko.lookapp
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MotionEvent
 import android.view.View
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
 import com.sergeenko.lookapp.databinding.PostTapeFragmentBinding
+import com.zomato.photofilters.FilterPack
+import com.zomato.photofilters.imageprocessors.Filter
+import com.zomato.photofilters.utils.ThumbnailItem
+import com.zomato.photofilters.utils.ThumbnailsManager
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+
 
 @AndroidEntryPoint
 class MenuActivity : AppCompatActivity() {
@@ -28,6 +32,7 @@ class MenuActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = PostTapeFragmentBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        System.loadLibrary("NativeImageProcessor");
 
         binding.newLook.setOnClickListener {
             navigateTo(R.id.action_global_newLookFragment)
@@ -51,9 +56,9 @@ class MenuActivity : AppCompatActivity() {
                 R.id.person -> logOut()
                 R.id.scrolling -> navigateTo(R.id.action_global_lookScrollingFragment)
                 R.id.add -> {
-                    if(binding.newPostLook.visibility == View.VISIBLE){
+                    if (binding.newPostLook.visibility == View.VISIBLE) {
                         binding.newPostLook.visibility = View.GONE
-                    }else{
+                    } else {
                         binding.newPostLook.visibility = View.VISIBLE
                         binding.newPostLook.bringToFront()
                     }

@@ -105,6 +105,7 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         try {
             database.socialResponseDao().insert(login)
         }catch (e: Exception){
+            login.data.token = user!!.data.token
             database.socialResponseDao().update(login)
         }
         token = getTokenFromDB()

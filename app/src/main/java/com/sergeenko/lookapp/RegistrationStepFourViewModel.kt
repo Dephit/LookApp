@@ -60,7 +60,7 @@ class RegistrationStepFourViewModel @ViewModelInject constructor(
                 )
 
                 doCollect(
-                        repository.updateUser(login = bundle.getString("email", ""), profile = profile)
+                    repository.updateUser(login = bundle.getString("email", ""), profile = profile)
                 )
 
             }

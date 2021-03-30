@@ -95,7 +95,7 @@ class RegistrationStepFourFragment : BaseFragment<RegistrationStepFourFragmentBi
     }
 
      private fun toNextStep(chest: String? = null, waist: String? = null, hips: String? = null) {
-        viewModel.updateProfile(   bundleOf(
+        viewModel.updateProfile(bundleOf(
                 "email" to arguments?.getString("email"),
                 "gender" to arguments?.getString("gender"),
                 "height" to arguments?.getString("height"),

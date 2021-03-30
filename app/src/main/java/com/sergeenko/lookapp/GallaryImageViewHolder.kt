@@ -5,18 +5,33 @@ import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.databinding.FilterImageViewBinding
 import com.sergeenko.lookapp.databinding.GallaryImageViewBinding
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import java.io.File
+import java.lang.Exception
 
 class GallaryImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     val binding: GallaryImageViewBinding = GallaryImageViewBinding.bind(itemView)
 
     fun bind(file: GallaryImage, onImageSelected: (File) -> Unit, onImageAdd: (GallaryImage) -> Unit, selectedCount: Int){
-        Picasso.get()
-                .load(Uri.fromFile(file.file))
-                .placeholder(R.drawable.look_img_background)
-                .into(binding.img)
+        if(file.drawable != null){
+            binding.img.setImageDrawable(file.drawable)
+        }else{
+            Picasso.get()
+                    .load(Uri.fromFile(file.file))
+                    .placeholder(R.drawable.look_img_background)
+                    .into(binding.img, object : Callback{
+                        override fun onSuccess() {
+                            file.drawable = binding.img.drawable
+                        }
+
+                        override fun onError(e: Exception?) {
+
+                        }
+
+                    })
+        }
 
         if(file.isSelected || selectedCount < 10){
             binding.selectedToggle.visibility = View.VISIBLE

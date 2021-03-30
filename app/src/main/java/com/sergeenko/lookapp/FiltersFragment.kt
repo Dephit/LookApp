@@ -14,6 +14,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.databinding.FiltersFragmentBinding
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import com.zomato.photofilters.FilterPack
+import com.zomato.photofilters.imageprocessors.Filter
+import com.zomato.photofilters.utils.ThumbnailItem
+import com.zomato.photofilters.utils.ThumbnailsManager
 import dagger.hilt.android.AndroidEntryPoint
 import java.io.File
 
@@ -35,6 +39,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
     override fun setListeners() {
         withBinding {
+            setFilters()
             val file = arguments?.getSerializable("files") as List<File>
 
             currentItemList.forEachIndexed { index, view ->
@@ -61,6 +66,18 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
                     })*/
         }
+    }
+
+    private fun setFilters() {
+        /*val filters: List<Filter> = FilterPack.getFilterPack(this)
+
+        for (filter in filters) {
+            val item = ThumbnailItem()
+            item.image = thumbImage
+            item.filter = filter
+            item.filterName = filter.name
+            ThumbnailsManager.addThumb(tI)
+        }*/
     }
 
 }
