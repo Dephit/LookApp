@@ -228,9 +228,9 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }
     }
 
-    override fun getLooks(i: Int, requestedLoadSize: Int): Flow<PostResponse> {
+    override fun getLooks(i: Int): Flow<PostResponse> {
         return flow {
-            val data = api.posts(token)
+            val data = api.posts(token, i)
             data.data.forEach {
                 it.images.forEach { img->
                     Picasso.get()

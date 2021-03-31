@@ -49,7 +49,6 @@ class FilterImageAdapter : RecyclerView.Adapter<FilterImageViewHolder>() {
             }else{
                 file.bitmapFiltered = filter?.processFilter(file.bitmap?.copy(Bitmap.Config.ARGB_8888, true))
                 file.filter = filter
-
             }
             notifyItemChanged(position)
             file.filter != null

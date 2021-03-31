@@ -6,7 +6,6 @@ import androidx.lifecycle.*
 import androidx.paging.LivePagedListBuilder
 import androidx.paging.PagedList
 import com.sergeenko.lookapp.models.Look
-import kotlinx.coroutines.launch
 
 class LookScrollingViewModel @ViewModelInject constructor(
         val repository: Repository,
@@ -29,6 +28,10 @@ class LookScrollingViewModel @ViewModelInject constructor(
 
     override fun getDataSourceFactory(): MyDataSource<Look> {
         return LookDataSourceFactory(repository, viewModelScope, errorState)
+    }
+
+    fun setScreenHeight(height: Int) {
+        adapter.setHeight(height)
     }
 
 }

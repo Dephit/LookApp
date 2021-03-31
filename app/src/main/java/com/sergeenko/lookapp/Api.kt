@@ -80,7 +80,8 @@ interface Api {
     @Headers("Content-Type: application/json;charset=UTF-8")
     @GET("posts")
     suspend fun posts(
-            @Header("Authorization") auth: String
+            @Header("Authorization") auth: String,
+            @Query("page") page: Int,
     ): PostResponse
 
     @Headers("Content-Type: application/json;charset=UTF-8")

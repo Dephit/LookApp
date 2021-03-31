@@ -1,4 +1,4 @@
-package com.sergeenko.lookapp
+    package com.sergeenko.lookapp
 
 import android.animation.Animator
 import android.annotation.SuppressLint
@@ -18,13 +18,11 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
+import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.LinearLayout
-import android.widget.PopupWindow
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
@@ -32,9 +30,11 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.sergeenko.lookapp.databinding.AdditionActionsLayoutBinding
-import com.sergeenko.lookapp.databinding.LookViewBinding
+import com.google.gson.Gson
+import com.google.gson.stream.JsonReader
+import com.sergeenko.lookapp.databinding.*
 import com.sergeenko.lookapp.models.Look
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.catch
@@ -42,7 +42,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-
+import org.json.JSONObject
+import java.io.StringReader
 
 class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
@@ -79,8 +80,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private fun setLook(img: Look) {
         with(binding) {
-            /*dotsSection.visibility = View.VISIBLE
-            totalSection.visibility = View.VISIBLE*/
             postSection.visibility = View.GONE
 
             setAmount(likesAmount, img.count_likes)
@@ -108,7 +107,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private fun showLike(drawId: Int) {
         binding.likeBig.setImageResource(drawId)
         binding.likeBig.animate().scaleX(5f).scaleY(5f).setDuration(1000).setListener(object :
-            Animator.AnimatorListener {
+                Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) {
                 binding.likeBig.visibility = View.VISIBLE
 
@@ -139,9 +138,9 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         binding.favorite.visibility = View.VISIBLE
         handler.removeCallbacksAndMessages(null)
         handler.postDelayed(
-            {
-                hideFavorite()
-            }, 3000L
+                {
+                    hideFavorite()
+                }, 3000L
         )
     }
 
@@ -150,20 +149,26 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope){
+    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int){
         this.repository = repository
         this.viewModelScope = viewModelScope
         with(binding){
+            binding.pageList.removeAllViews()
+            hideWholePost()
+
+            val lp = imgView.layoutParams
+            lp.height = height
+            imgView.layoutParams = lp
+
+            val lp2 = header.layoutParams
+            lp2.height = height
+            header.layoutParams = lp2
+
             (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
 
-            if(look.type != "Лук"){
-                currentItemList.visibility = View.INVISIBLE
-            }else{
-                setLook(look)
-                currentItemList.visibility = View.VISIBLE
-            }
+            setLookPost(look)
 
-            setListeners(look)
+            setListeners(look, height)
             setAuthor(look)
             dislike.isActivated = look.is_dislike
             like.isActivated = look.is_like
@@ -176,6 +181,41 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 else
                     view.visibility = View.GONE
             }
+        }
+    }
+
+    private fun setLookPost(look: Look) {
+        if(look.type != "Лук"){
+            setPost(look)
+            binding.currentItemList.visibility = View.INVISIBLE
+        }else{
+            setLook(look)
+            binding.currentItemList.visibility = View.VISIBLE
+        }
+    }
+
+    private fun setPost(look: Look) {
+        with(binding){
+            imgView.visibility = View.GONE
+            toPost.visibility = View.VISIBLE
+            Picasso.get()
+                    .load(look.preview)
+                    .noPlaceholder()
+                    .error(R.drawable.background_splash)
+                    .into(preview, object : Callback {
+                        override fun onSuccess() {
+                            preview.post {
+                                preview.clipToOutline = true
+                            }
+                        }
+
+                        override fun onError(e: Exception?) {
+                        }
+
+                    })
+            setAmount(likesAmount, look.count_likes)
+            setAmount(commentsAmount, look.count_comments)
+            setAmount(dislikesAmount, look.count_dislikes)
         }
     }
 
@@ -222,9 +262,10 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 .into(binding.autorImg)
         binding.autorImg.clipToOutline = true
         if(look.type != "Лук"){
-            val lookText = "${look.user.username}\n${look.title}"
+            val lookText = "${look.user.username}\n${look.created}"
             binding.authorNick.text = lookText
             binding.authorNick.text = setWhiteStannable(lookText, look.user.username)
+            binding.postText.text = look.title
         }else {
             var t = look.title
             if (t.length + look.user.username.length > 50){
@@ -235,13 +276,13 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun setListeners(look: Look) {
+    private fun setListeners(look: Look, height: Int) {
         with(binding) {
             like.setOnClickListener {
                 manageLike(it, look)
             }
 
-            more.setOnClickListener {v->
+            more.setOnClickListener { v->
                 showAdditionalPostActions(
                         view = v,
                         x = more.x,
@@ -252,9 +293,9 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                                 repository?.claim(it, look.id)
                                         ?.catch {
                                             look.is_claim = false
-                                            if(it.message == "HTTP 400 Bad Request"){
+                                            if (it.message == "HTTP 400 Bad Request") {
                                                 Toast.makeText(v.context, getString(R.string.youve_sent_claim), Toast.LENGTH_SHORT).show()
-                                            }else{
+                                            } else {
                                                 Toast.makeText(v.context, getString(R.string.cant_send_query), Toast.LENGTH_SHORT).show()
                                             }
                                         }
@@ -263,7 +304,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                                         }
                             }
                         },
-                        onFavPressed = {view, look ->
+                        onFavPressed = { view, look ->
                             manageFavorite(view, look)
                         }
                 )
@@ -282,7 +323,11 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
               }
 
             toPost.setOnClickListener {
-                Navigation.findNavController(it).navigate(R.id.action_lookScrollingFragment_to_postFragment)
+                showWholePost(look, height = height)
+            }
+
+            back.setOnClickListener {
+                hideWholePost()
             }
 
             autorImg.setOnClickListener {
@@ -302,6 +347,60 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 }
             })
         }
+    }
+
+    private fun hideWholePost(){
+            binding.back.visibility = View.GONE
+            binding.toPost.visibility = View.VISIBLE
+            binding.pageList.visibility = View.GONE
+        }
+
+    private fun showWholePost(look: Look, height: Int) {
+        if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
+            val inflayer = LayoutInflater.from(itemView.context)
+            look.body.forEach {
+                when (it.type) {
+                    "text" -> {
+                        val tv = WholeTextViewBinding.inflate(inflayer)
+                        tv.text.text = it.content as String
+                        binding.pageList.addView(tv.root)
+                    }
+                    "image" -> {
+                        val tv = WholeImageBinding.inflate(inflayer)
+                        Picasso.get().load(it.content as String)
+                                .noPlaceholder()
+                                .into(tv.image, object : Callback{
+                                    override fun onSuccess() {
+                                        if(tv.image.height > height * 0.7){
+                                            val lp = tv.image.layoutParams
+                                            lp.height = (height * 0.7).toInt()
+                                            tv.image.layoutParams = lp
+                                        }
+                                        tv.image.clipToOutline = true
+                                        tv.pb.visibility = View.GONE
+                                    }
+
+                                    override fun onError(e: java.lang.Exception?) {
+                                        tv.image.visibility = View.GONE
+                                    }
+
+                                })
+                        binding.pageList.addView(tv.root)
+                    }
+                    "post" -> {
+                        val tv = LookViewHolder(LookViewBinding.inflate(inflayer).root)
+                        val tv1 = WholePostViewBinding.inflate(inflayer)
+                        val look1 = look.copy(type = "Лук")
+                        tv.bind(look1, repository!!, viewModelScope!!, height = height)
+                        tv1.root.addView(tv.binding.root)
+                        binding.pageList.addView(tv1.root)
+                    }
+                }
+            }
+        }
+        binding.back.visibility = View.VISIBLE
+        binding.pageList.visibility = View.VISIBLE
+        binding.toPost.visibility = View.GONE
     }
 
     private fun manageFavorite(view: View, look: Look) {
@@ -340,7 +439,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 look.count_likes--
                 hideFavorite()
             }
-            setLook(look)
+            setLookPost(look)
         }
 
         viewModelScope?.launch {
@@ -372,7 +471,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 look.count_dislikes--
                 hideFavorite()
             }
-            setLook(look)
+            setLookPost(look)//setLook(look)
         }
 
         viewModelScope?.launch {
@@ -389,7 +488,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 }
 
-inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinline onClaim: (String)-> Unit, crossinline onFavPressed: (View, Look)-> Unit) {
+inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinline onClaim: (String) -> Unit, crossinline onFavPressed: (View, Look) -> Unit) {
 
     val customLayout = AdditionActionsLayoutBinding.inflate(LayoutInflater.from(view.context))
 

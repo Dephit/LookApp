@@ -21,8 +21,7 @@ data class Data(
             parcel.readString(),
             parcel.readParcelable(Profile::class.java.classLoader)!!,
             parcel.readParcelable(Token::class.java.classLoader)!!,
-            parcel.readString().toString()) {
-    }
+            parcel.readString().toString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(avatar)

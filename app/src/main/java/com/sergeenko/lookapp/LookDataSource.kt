@@ -16,6 +16,7 @@ class LookDataSource(
 ) : MyPageKeyedDataSource<Look>(errorState) {
 
     var lastID: PostResponse? = null
+    var links: Links? = null
 
     override fun load(key: Int, requestedLoadSize: Int, onDone: (List<Look>) -> Unit, onError: () -> Unit) {
         viewModelScope.launch {
@@ -24,16 +25,19 @@ class LookDataSource(
                 updateState(ModelState.Success(null))
                 onDone(lastID!!.data)
             }else{
-                repository.getLooks(key, requestedLoadSize)
-                        .onStart { updateState(ModelState.Loading) }
+                repository.getLooks(key)
+                        .onStart {
+                        //    updateState(ModelState.Loading)
+                        }
                         .catch {
-                            updateState(ModelState.Error(null))
-                            onError()
+                            //updateState(ModelState.Error(null))
+                            //onError()
                         }
                         .collect {
-                            if (lastID?.meta?.current_page != it.meta.current_page && it.data.isNotEmpty()) {
-                                lastID = it
+                            if (it.links.last != links?.prev) {
+                                //lastID = it
                                 updateState(ModelState.Success(null))
+                                links = it.links
                                 onDone(it.data)
                             } else {
                                 updateState(ModelState.Error("NoItems"))

@@ -1,6 +1,5 @@
 package com.sergeenko.lookapp
 
-import android.util.Log
 import androidx.paging.PagedListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -30,5 +29,8 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
 
     fun scrollTo(position: Int) {
 
+    }
+
+    open fun setHeight(height: Int) {
     }
 }

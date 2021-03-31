@@ -6,10 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
 import android.view.WindowManager
+import androidx.core.view.forEachIndexed
+import androidx.core.view.get
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.databinding.LookScrollingFragmentBinding
@@ -49,11 +52,33 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
     }
 
     private fun setRV(rv: RecyclerView) {
-        rv.layoutManager = LinearLayoutManager(context)
+        val llm = LinearLayoutManager(context)
+        rv.layoutManager = llm
         rv.adapter = viewModel.collectData()
-        val snapHelper = PagerSnapHelper()
-        snapHelper.attachToRecyclerView(rv)
+        binding.rv.post {
+            viewModel.setScreenHeight(binding.rv.height)
+        }
+        /*val snapHelper = MySnapHelper()
+        snapHelper.attachToRecyclerView(rv)*/
+        var lastPostion = 0
+        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val first: Int = llm.findFirstVisibleItemPosition()
+                val last: Int = llm.findLastVisibleItemPosition()
+                val newPosition = (first + last) / 2
+                if(newPosition != lastPostion){
+                    lastPostion = newPosition
+                    binding.rv.smoothScrollToPosition(newPosition)
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
         viewModel.collectState()
     }
+
+}
+
+class MySnapHelper(): LinearSnapHelper() {
+
 
 }

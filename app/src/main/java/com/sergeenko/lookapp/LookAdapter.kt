@@ -13,22 +13,27 @@ class LookAdapter(
     private val onError: () -> Unit,
 ) : MyBaseAdapter<Look>(DIFF_CALLBACK) {
 
+    private var h: Int = 0
     private val DATA_VIEW_TYPE = 1
     private val FOOTER_VIEW_TYPE = 2
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository) } }
+            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository, height = h) } }
             is LookErrorViewHolder -> { holder.bind(getState(), onError) }
         }
     }
 
     override fun getItemCount(): Int {
-        return super.getItemCount() + if (hasFooter()) 1 else 0
+        return super.getItemCount()// + if (hasFooter()) 1 else 0
     }
 
     override fun getItemId(position: Int): Long {
         return position.toLong()
+    }
+
+    override fun setHeight(height: Int) {
+        h = height
     }
 
     companion object {
@@ -45,7 +50,7 @@ class LookAdapter(
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && viewType == DATA_VIEW_TYPE) LookViewHolder(
+        return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0) LookViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_view, parent, false),
         )else LookErrorViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false)

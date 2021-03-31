@@ -28,7 +28,7 @@ interface Repository {
 
     fun loadLooks(i: Int, requestedLoadSize: Int) : Flow<List<FakeLook>>
 
-    fun getLooks(i: Int, requestedLoadSize: Int) : Flow<PostResponse>
+    fun getLooks(page: Int) : Flow<PostResponse>
 
     fun getComments(postID: Int? = null, page: Int, commentId: Int? = null, url: String? = null): Flow<CommentResponse>
 
