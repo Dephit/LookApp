@@ -38,8 +38,10 @@ class FilterImageAdapter : RecyclerView.Adapter<FilterImageViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun applyFilter(position: Int, filter: Filter?) {
-        try {
+    fun getCurrentFile(position: Int) = fileList[position]
+
+    fun applyFilter(position: Int, filter: Filter?): Boolean {
+        return try {
             val file = fileList[position]
             if(file.filter == filter){
                 file.bitmapFiltered = null
@@ -47,10 +49,12 @@ class FilterImageAdapter : RecyclerView.Adapter<FilterImageViewHolder>() {
             }else{
                 file.bitmapFiltered = filter?.processFilter(file.bitmap?.copy(Bitmap.Config.ARGB_8888, true))
                 file.filter = filter
+
             }
             notifyItemChanged(position)
+            file.filter != null
         }catch (e: Exception){
-
+            false
         }
     }
 

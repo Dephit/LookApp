@@ -25,6 +25,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_4sdp"
         android:textAppearance="@style/BodyText11"
+        android:textColor="@color/black_40_pressed"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="@+id/filter_img"
         app:layout_constraintHorizontal_bias="0.5"

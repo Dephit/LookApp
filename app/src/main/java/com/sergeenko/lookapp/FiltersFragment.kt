@@ -8,8 +8,11 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.ImageView
+import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
+import androidx.core.view.get
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +32,7 @@ import java.io.File
 @AndroidEntryPoint
 class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
+    private var thumbs: MutableList<ThumbnailItem> = mutableListOf()
     override val viewModel: FiltersViewModel by viewModels()
 
     override fun bind(inflater: LayoutInflater): FiltersFragmentBinding = FiltersFragmentBinding.inflate(
@@ -46,6 +50,21 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rv)
         binding.rv.scrollToPosition(0)
+
+        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                val newPosition = currentPosition()
+                binding.currentItemList.forEachIndexed { _, view ->
+                    view.isSelected = false
+                }
+                binding.currentItemList[newPosition].isSelected = true
+                binding.filtersList.forEachIndexed { index, view ->
+                    val b = FilterViewBinding.bind(view)
+                    b.textView.isActivated = thumbs[index].filter == viewModel.adapter.getCurrentFile(newPosition).filter
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
     }
 
     override fun setListeners() {
@@ -53,29 +72,18 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             setFilters()
             val file = arguments?.getSerializable("files") as List<File>
 
+            toolbarGallary.setNavigationOnClickListener {
+                findNavController().popBackStack()
+            }
+
             currentItemList.forEachIndexed { index, view ->
                 if(index < file.size)
                     view.visibility = View.VISIBLE
                 else
                     view.visibility = View.GONE
             }
+
             setRV(file.map { FilterImage(it, null) })
-            /*binding.previewImage.visibility = View.GONE
-            binding.progressBar4.visibility = View.VISIBLE*/
-            /*Picasso.get()
-                    .load(file[0])
-                    .noPlaceholder()
-                    .into(binding.previewImage, object : Callback {
-                        override fun onSuccess() {
-                            binding.previewImage.visibility = View.VISIBLE
-                            binding.progressBar4.visibility = View.GONE
-                        }
-
-                        override fun onError(e: Exception?) {
-
-                        }
-
-                    })*/
         }
     }
 
@@ -96,14 +104,17 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                     ThumbnailsManager.addThumb(thumbnailItem);
                 }
 
-            val thumbs = ThumbnailsManager.processThumbs(context)
+            thumbs = ThumbnailsManager.processThumbs(context)
             thumbs.forEach {
                 val img = FilterViewBinding.inflate(inflater, null, false)
                 img.filterImg.setImageBitmap(it.image)
                 img.filterImg.clipToOutline = true
                 img.textView.text = it.filterName
                 img.filterImg.setOnClickListener {_->
-                    viewModel.applyFilter((llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2, it.filter)
+                    binding.filtersList.forEach {view->
+                        FilterViewBinding.bind(view).textView.isActivated = false
+                    }
+                    img.textView.isActivated = viewModel.applyFilter(currentPosition(), it.filter)
                 }
                 binding.filtersList.addView(img.root)
             }
@@ -111,5 +122,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         };
         handler.post(r)
     }
+
+    private fun currentPosition(): Int = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
 
 }
