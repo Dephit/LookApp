@@ -15,8 +15,10 @@ class NewLookViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(repository, savedStateHandle) {
 
+    var isAutoTorchOn: Boolean = false
     val fileList = mutableListOf<GallaryImage>()
     val selectedList = mutableListOf<File>()
+    var isCameraSelected: Boolean = true
 
     fun savePhoto() {
         if(selectedList.isNotEmpty()) {
@@ -38,6 +40,9 @@ class NewLookViewModel @ViewModelInject constructor(
             selectedList.add(file.file)
         }else {
             selectedList.remove(file.file)
+        }
+        viewModelScope.launch {
+            modelState.emit(ModelState.Success(selectedList.size))
         }
     }
 
