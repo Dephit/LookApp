@@ -80,11 +80,17 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                 if (newPosition != viewModel.lastPostion) {
                     if(allowToScroll) {
                         allowToScroll = false
+
                         viewModel.adapter.closeLastView(viewModel.lastPostion!!)
+                        try {
+                            (rv.findViewHolderForAdapterPosition(viewModel.lastPostion!!) as LookViewHolder).hideWholePost()
+                        }catch (e: Exception){
+
+                        }
                         viewModel.lastPostion = newPosition
                         binding.rv.smoothScrollToPosition(newPosition!!)
                         lifecycleScope.launch {
-                            delay(100)
+                            delay(200)
                             allowToScroll = true
                         }
                     }

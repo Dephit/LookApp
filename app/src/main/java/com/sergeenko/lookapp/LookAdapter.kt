@@ -6,6 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.models.Look
 import kotlinx.coroutines.CoroutineScope
+import java.lang.Exception
 
 class LookAdapter(
     val viewModelScope: CoroutineScope,
@@ -58,7 +59,12 @@ class LookAdapter(
     }
 
     override fun closeLastView(lastPostion: Int) {
-        notifyItemChanged(lastPostion)
+        try {
+            if(currentList?.get(lastPostion)?.type != "Лук")
+                notifyItemChanged(lastPostion)
+        }catch (e: Exception){
+
+        }
     }
 }
 

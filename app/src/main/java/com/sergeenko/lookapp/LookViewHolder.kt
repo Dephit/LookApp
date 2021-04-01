@@ -105,9 +105,9 @@ import kotlinx.coroutines.launch
     }
 
         private fun manageOwnPost(repository: Repository, look: Look) {
-            if(look.user.id == repository.getUserFromDb()?.id){
+            /*if(look.user.id == repository.getUserFromDb()?.id){
 
-            }
+            }*/
         }
 
         fun getString(total: Int): String {
@@ -371,7 +371,7 @@ import kotlinx.coroutines.launch
         }
     }
 
-    private fun hideWholePost(){
+    fun hideWholePost(){
         binding.back.visibility = View.GONE
         binding.toPost.visibility = View.VISIBLE
         binding.pageList.visibility = View.GONE
