@@ -2,6 +2,6 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true" android:state_activated="true" android:drawable="@drawable/ic_post_liked_pressed" />
     <item android:state_activated="true" android:drawable="@drawable/ic_post_liked" />
-    <item android:state_pressed="true" android:drawable="@drawable/post_dislike_pressed" />
-    <item android:drawable="@drawable/post_dislike" />
+    <item android:state_pressed="true" android:drawable="@drawable/ic_up_rose_pressed" />
+    <item android:drawable="@drawable/ic_up_rose" />
 </selector>

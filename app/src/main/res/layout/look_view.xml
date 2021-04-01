@@ -44,6 +44,17 @@
             app:layout_constraintVertical_bias="0" />
 
         <ImageView
+            android:id="@+id/fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/fill_20_drawable" />
+
+        <ImageView
             android:id="@+id/comments"
             android:layout_width="@dimen/_34sdp"
             android:layout_height="@dimen/_34sdp"
