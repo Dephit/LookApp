@@ -59,6 +59,7 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
     override fun setListeners() {
         with(binding){
             val loginManager = LoginManager.getInstance();
+
             registerFBLoginCallback(loginManager)
 
             facebookAuth.setOnClickListener {

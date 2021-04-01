@@ -66,8 +66,9 @@ import kotlinx.coroutines.launch
         this.repository = repository
         this.viewModelScope = viewModelScope
         with(binding){
-            binding.pageList.removeAllViews()
-            hideWholePost()
+            pageList.removeAllViews()
+            fill.clipToOutline = true
+            hideWholePost(look)
 
             val lp = imgView.layoutParams
             lp.height = height
@@ -349,7 +350,7 @@ import kotlinx.coroutines.launch
             }
 
             back.setOnClickListener {
-                hideWholePost()
+                hideWholePost(look)
             }
 
             autorImg.setOnClickListener {
@@ -371,19 +372,15 @@ import kotlinx.coroutines.launch
         }
     }
 
-    fun hideWholePost(){
+    fun hideWholePost(look: Look){
         binding.back.visibility = View.GONE
         binding.toPost.visibility = View.VISIBLE
         binding.pageList.visibility = View.GONE
         binding.postLikes.visibility = View.GONE
+        look.isPostOpen = false
     }
 
     private fun showWholePost(look: Look, height: Int) {
-        fun setThisAmount(tv: PostDetailedLikeSectionBinding){
-            setAmount(tv.postLikesText, look.count_likes)
-            setAmount(tv.postDislikesText, look.count_dislikes)
-            setAmount(tv.postCommentsText, look.count_comments)
-        }
         if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
             val inflayer = LayoutInflater.from(itemView.context)
             look.body.forEach {
@@ -440,6 +437,8 @@ import kotlinx.coroutines.launch
         binding.back.visibility = View.VISIBLE
         binding.pageList.visibility = View.VISIBLE
         binding.toPost.visibility = View.GONE
+
+        look.isPostOpen = true
     }
 
     private fun manageFavorite(view: View, look: Look) {

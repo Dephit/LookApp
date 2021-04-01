@@ -27,6 +27,7 @@ data class Look(
 ) : Parcelable {
 
     var previewPath = ""
+    var isPostOpen = false
 
     fun setPath(){
 

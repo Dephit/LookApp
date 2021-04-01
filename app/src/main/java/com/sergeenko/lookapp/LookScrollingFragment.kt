@@ -77,20 +77,16 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                             else -> viewModel.lastPostion
                         }
 
-                if (newPosition != viewModel.lastPostion) {
-                    if(allowToScroll) {
+                if (newPosition != viewModel.lastPostion && !isCurrentListOpen(dy)) {
+                    if(allowToScroll && recyclerView.isInTouchMode) {
                         allowToScroll = false
 
                         viewModel.adapter.closeLastView(viewModel.lastPostion!!)
-                        try {
-                            (rv.findViewHolderForAdapterPosition(viewModel.lastPostion!!) as LookViewHolder).hideWholePost()
-                        }catch (e: Exception){
 
-                        }
                         viewModel.lastPostion = newPosition
-                        binding.rv.smoothScrollToPosition(newPosition!!)
+                        binding.rv.scrollToPosition(newPosition!!)
                         lifecycleScope.launch {
-                            delay(200)
+                            delay(100)
                             allowToScroll = true
                         }
                     }
@@ -99,6 +95,14 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
             }
         })
         viewModel.collectState()
+    }
+
+    private fun isCurrentListOpen(dy: Int): Boolean {
+        return try {
+            viewModel.adapter.currentList?.get(viewModel.lastPostion!!)?.isPostOpen == true && dy < 0
+        }catch (e: Exception){
+            false
+        }
     }
 
 }

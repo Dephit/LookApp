@@ -60,7 +60,8 @@ class LookAdapter(
 
     override fun closeLastView(lastPostion: Int) {
         try {
-            if(currentList?.get(lastPostion)?.type != "Лук")
+            val look = currentList?.get(lastPostion)
+            if(look?.type != "Лук" && look?.isPostOpen == true)
                 notifyItemChanged(lastPostion)
         }catch (e: Exception){
 

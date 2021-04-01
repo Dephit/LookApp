@@ -9,7 +9,11 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavDestination
 import androidx.navigation.Navigation
+import com.facebook.login.LoginManager
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.sergeenko.lookapp.databinding.PostTapeFragmentBinding
+import com.vk.api.sdk.VK
 import com.zomato.photofilters.FilterPack
 import com.zomato.photofilters.imageprocessors.Filter
 import com.zomato.photofilters.utils.ThumbnailItem
@@ -86,6 +90,8 @@ class MenuActivity : AppCompatActivity() {
 
     private fun logOut() {
         lifecycleScope.launch {
+            LoginManager.getInstance().logOut()
+            VK.logout()
             repository.logout()
                     .catch {
                         Toast.makeText(applicationContext, it.message, Toast.LENGTH_SHORT).show()
