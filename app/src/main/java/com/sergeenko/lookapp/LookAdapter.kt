@@ -57,6 +57,9 @@ class LookAdapter(
         )
     }
 
+    override fun closeLastView(lastPostion: Int) {
+        notifyItemChanged(lastPostion)
+    }
 }
 
 

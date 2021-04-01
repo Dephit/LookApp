@@ -33,4 +33,8 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
 
     open fun setHeight(height: Int) {
     }
+
+    open fun closeLastView(lastPostion: Int) {
+
+    }
 }

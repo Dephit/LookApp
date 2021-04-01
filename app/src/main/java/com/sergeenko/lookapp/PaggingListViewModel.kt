@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 abstract class PaggingListViewModel<U>(repository: Repository, savedStateHandle: SavedStateHandle) : BaseViewModel(repository, savedStateHandle) {
 
     lateinit var adapter: MyBaseAdapter<U>
+    var isListInited = false
 
     abstract fun createAdapter(): MyBaseAdapter<U>
 
@@ -34,9 +35,11 @@ abstract class PaggingListViewModel<U>(repository: Repository, savedStateHandle:
 
     fun collectData(): MyBaseAdapter<U> {
         viewModelScope.launch {
-            lookList.collect {
-                adapter.submitList(it)
-            }
+            if(!isListInited)
+                lookList.collect {
+                    isListInited = true
+                    adapter.submitList(it)
+                }
         }
         return adapter
     }

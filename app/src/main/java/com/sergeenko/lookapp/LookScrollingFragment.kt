@@ -5,18 +5,16 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
-import android.view.WindowManager
-import androidx.core.view.forEachIndexed
-import androidx.core.view.get
-import androidx.navigation.Navigation
-import androidx.navigation.fragment.findNavController
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.LinearSnapHelper
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.RecyclerView.SmoothScroller.ScrollVectorProvider
 import com.sergeenko.lookapp.databinding.LookScrollingFragmentBinding
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -41,6 +39,11 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewModel.lastPostion?.let { binding.rv.scrollToPosition(it) }
+    }
+
     override fun bind(inflater: LayoutInflater): LookScrollingFragmentBinding {
         return LookScrollingFragmentBinding.inflate(inflater)
     }
@@ -58,17 +61,33 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         binding.rv.post {
             viewModel.setScreenHeight(binding.rv.height)
         }
-        /*val snapHelper = MySnapHelper()
-        snapHelper.attachToRecyclerView(rv)*/
-        var lastPostion = 0
+        if(viewModel.lastPostion == null)
+            viewModel.lastPostion = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+
+            var allowToScroll = true
+
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 val first: Int = llm.findFirstVisibleItemPosition()
                 val last: Int = llm.findLastVisibleItemPosition()
-                val newPosition = (first + last) / 2
-                if(newPosition != lastPostion){
-                    lastPostion = newPosition
-                    binding.rv.smoothScrollToPosition(newPosition)
+                val newPosition =
+                        when {
+                            dy > 0 -> (first + last) / 2
+                            dy < 0 -> (first + last + 1) / 2
+                            else -> viewModel.lastPostion
+                        }
+
+                if (newPosition != viewModel.lastPostion) {
+                    if(allowToScroll) {
+                        allowToScroll = false
+                        viewModel.adapter.closeLastView(viewModel.lastPostion!!)
+                        viewModel.lastPostion = newPosition
+                        binding.rv.smoothScrollToPosition(newPosition!!)
+                        lifecycleScope.launch {
+                            delay(100)
+                            allowToScroll = true
+                        }
+                    }
                 }
                 super.onScrolled(recyclerView, dx, dy)
             }
@@ -78,7 +97,33 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
 
 }
 
-class MySnapHelper(): LinearSnapHelper() {
+class MySnapHelper(): PagerSnapHelper() {
 
+    override fun findTargetSnapPosition(layoutManager: RecyclerView.LayoutManager?, velocityX: Int, velocityY: Int): Int {
+
+        if (layoutManager !is ScrollVectorProvider) {
+            return RecyclerView.NO_POSITION
+        }
+
+        val currentView = findSnapView(layoutManager) ?: return RecyclerView.NO_POSITION
+
+        val myLayoutManager = layoutManager as LinearLayoutManager
+
+        val position1 = myLayoutManager.findFirstVisibleItemPosition()
+        val position2 = myLayoutManager.findLastVisibleItemPosition()
+
+        var currentPosition = layoutManager.getPosition(currentView)
+
+        if (velocityX > 400) {
+            currentPosition = position2
+        } else if (velocityX < 400) {
+            currentPosition = position1
+        }
+
+        return if (currentPosition == RecyclerView.NO_POSITION) {
+            RecyclerView.NO_POSITION
+        } else currentPosition
+
+    }
 
 }

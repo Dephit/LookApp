@@ -18,7 +18,6 @@ import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.text.style.StyleSpan
 import android.text.style.UnderlineSpan
-import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -31,7 +30,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
-import com.google.gson.stream.JsonReader
 import com.sergeenko.lookapp.databinding.*
 import com.sergeenko.lookapp.models.Look
 import com.squareup.picasso.Callback
@@ -42,10 +40,8 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import org.json.JSONObject
-import java.io.StringReader
 
-class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private var repository: Repository? = null
     private var viewModelScope: CoroutineScope? = null
@@ -55,10 +51,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val more = getString(R.string.more)
     private var binding: LookViewBinding = LookViewBinding.bind(itemView)
 
-    fun getString(total: Int): String {
-        return itemView.context.getString(total)
-    }
-
     init {
         with(binding) {
             llm = LinearLayoutManager(itemView.context, LinearLayoutManager.HORIZONTAL, false);
@@ -67,6 +59,59 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             val snapHelper = PagerSnapHelper()
             snapHelper.attachToRecyclerView(imgView)
         }
+    }
+
+    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
+    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int){
+        this.repository = repository
+        this.viewModelScope = viewModelScope
+        with(binding){
+            binding.pageList.removeAllViews()
+            hideWholePost()
+
+            val lp = imgView.layoutParams
+            lp.height = height
+            imgView.layoutParams = lp
+
+            val lp2 = header.layoutParams
+            lp2.height = height
+            header.layoutParams = lp2
+
+            (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
+
+            setLookPost(look)
+
+            setListeners(look, height)
+            setAuthor(look)
+
+            dislike.isActivated = look.is_dislike
+            like.isActivated = look.is_like
+
+            postDilsike.isActivated = look.is_dislike
+            postLike.isActivated = look.is_like
+
+            favorite.isActivated = look.is_favorite
+
+            val itemsSize = (imgView.adapter as LookImgAdapter).list.size
+            currentItemList.forEachIndexed { index, view ->
+                if(index < itemsSize)
+                    view.visibility = View.VISIBLE
+                else
+                    view.visibility = View.GONE
+            }
+
+            manageOwnPost(repository, look)
+        }
+    }
+
+        private fun manageOwnPost(repository: Repository, look: Look) {
+            if(look.user.id == repository.getUserFromDb()?.id){
+
+            }
+        }
+
+        fun getString(total: Int): String {
+        return itemView.context.getString(total)
     }
 
     private fun setAmount(tv: TextView, amt: Int) {
@@ -82,9 +127,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         with(binding) {
             postSection.visibility = View.GONE
 
-            setAmount(likesAmount, img.count_likes)
-            setAmount(commentsAmount, img.count_comments)
-            setAmount(dislikesAmount, img.count_dislikes)
         }
     }
 
@@ -144,46 +186,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         )
     }
 
-    private fun checkFavorite(img: Look) {
-        binding.favorite.isActivated = !binding.favorite.isActivated//img.isFavorite
-    }
-
-    @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int){
-        this.repository = repository
-        this.viewModelScope = viewModelScope
-        with(binding){
-            binding.pageList.removeAllViews()
-            hideWholePost()
-
-            val lp = imgView.layoutParams
-            lp.height = height
-            imgView.layoutParams = lp
-
-            val lp2 = header.layoutParams
-            lp2.height = height
-            header.layoutParams = lp2
-
-            (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
-
-            setLookPost(look)
-
-            setListeners(look, height)
-            setAuthor(look)
-            dislike.isActivated = look.is_dislike
-            like.isActivated = look.is_like
-            favorite.isActivated = look.is_favorite
-
-            val itemsSize = (imgView.adapter as LookImgAdapter).list.size
-            currentItemList.forEachIndexed { index, view ->
-                if(index < itemsSize)
-                    view.visibility = View.VISIBLE
-                else
-                    view.visibility = View.GONE
-            }
-        }
-    }
-
     private fun setLookPost(look: Look) {
         if(look.type != "Лук"){
             setPost(look)
@@ -192,6 +194,13 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             setLook(look)
             binding.currentItemList.visibility = View.VISIBLE
         }
+        setAmount(binding.likesAmount, look.count_likes)
+        setAmount(binding.commentsAmount, look.count_comments)
+        setAmount(binding.dislikesAmount, look.count_dislikes)
+
+        setAmount(binding.postLikesText, look.count_likes)
+        setAmount(binding.postCommentsText, look.count_comments)
+        setAmount(binding.postDislikesText, look.count_dislikes)
     }
 
     private fun setPost(look: Look) {
@@ -213,9 +222,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                         }
 
                     })
-            setAmount(likesAmount, look.count_likes)
-            setAmount(commentsAmount, look.count_comments)
-            setAmount(dislikesAmount, look.count_dislikes)
         }
     }
 
@@ -226,7 +232,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val fc = object : ClickableSpan(){
             override fun onClick(widget: View) {
-                Navigation.findNavController(widget).navigate(R.id.action_lookScrollingFragment_to_commentsFragment, bundleOf("look" to look))
+                toComments(widget,look)
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -241,6 +247,10 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         spannable.setSpan(fc, indexMoreStart, indexMoreEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
         heightText.movementMethod = LinkMovementMethod.getInstance()
         heightText.text = spannable
+    }
+
+    private fun toComments(widget: View, look: Look) {
+        Navigation.findNavController(widget).navigate(R.id.action_lookScrollingFragment_to_commentsFragment, bundleOf("look" to look))
     }
 
     private fun setWhiteStannable(textID: String, toSpan: String): SpannableString {
@@ -319,8 +329,20 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 }
 
             comments.setOnClickListener {
-                  Navigation.findNavController(it).navigate(R.id.action_lookScrollingFragment_to_commentsFragment, bundleOf("look" to look))
-              }
+                toComments(it, look)
+            }
+
+            postLike.setOnClickListener {
+                like.callOnClick()
+            }
+
+            postDilsike.setOnClickListener {
+                dislike.callOnClick()
+            }
+
+            postComments.setOnClickListener {
+                comments.callOnClick()
+            }
 
             toPost.setOnClickListener {
                 showWholePost(look, height = height)
@@ -350,12 +372,18 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     private fun hideWholePost(){
-            binding.back.visibility = View.GONE
-            binding.toPost.visibility = View.VISIBLE
-            binding.pageList.visibility = View.GONE
-        }
+        binding.back.visibility = View.GONE
+        binding.toPost.visibility = View.VISIBLE
+        binding.pageList.visibility = View.GONE
+        binding.postLikes.visibility = View.GONE
+    }
 
     private fun showWholePost(look: Look, height: Int) {
+        fun setThisAmount(tv: PostDetailedLikeSectionBinding){
+            setAmount(tv.postLikesText, look.count_likes)
+            setAmount(tv.postDislikesText, look.count_dislikes)
+            setAmount(tv.postCommentsText, look.count_comments)
+        }
         if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
             val inflayer = LayoutInflater.from(itemView.context)
             look.body.forEach {
@@ -367,6 +395,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     }
                     "image" -> {
                         val tv = WholeImageBinding.inflate(inflayer)
+                        tv.image.maxHeight = (height * 0.7).toInt()
                         Picasso.get().load(it.content as String)
                                 .noPlaceholder()
                                 .into(tv.image, object : Callback{
@@ -390,14 +419,24 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     "post" -> {
                         val tv = LookViewHolder(LookViewBinding.inflate(inflayer).root)
                         val tv1 = WholePostViewBinding.inflate(inflayer)
-                        val look1 = look.copy(type = "Лук")
-                        tv.bind(look1, repository!!, viewModelScope!!, height = height)
-                        tv1.root.addView(tv.binding.root)
+                        val str = it.content.toString()
+                                .replace("=http", "=\"http")
+                                .replace(", profile=", "\", profile=")
+                                .replace(", marks=", "\", marks=")
+                                .replace("title=", "title=\"")
+                                .replace(", images=", "\", images=")
+                                .replace("created=", "created=\"")
+                                .replace(", is_like=", "\", is_like=")
+
+                        tv.bind(Gson().fromJson(str, Look::class.java), repository!!, viewModelScope!!, height = height)
+                        tv.binding.more.visibility = View.GONE
+                        tv1.card.addView(tv.binding.root)
                         binding.pageList.addView(tv1.root)
                     }
                 }
             }
         }
+        binding.postLikes.visibility = View.VISIBLE
         binding.back.visibility = View.VISIBLE
         binding.pageList.visibility = View.VISIBLE
         binding.toPost.visibility = View.GONE
@@ -425,7 +464,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private fun manageLike(view: View, look: Look) {
         fun setLike(){
             look.is_like = !look.is_like
-            view.isActivated = look.is_like
+            binding.like.isActivated = look.is_like
+            binding.postLike.isActivated = look.is_like
             if(look.is_like) {
                 look.count_likes++
                 showFavorite(look)
@@ -433,6 +473,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 if(look.is_dislike){
                     look.is_dislike = false
                     binding.dislike.isActivated = false
+                    binding.postDilsike.isActivated = false
                     look.count_dislikes--
                 }
             }else{
@@ -458,13 +499,15 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     private fun manageDislike(view: View, look: Look) {
         fun setDislike(){
             look.is_dislike = !look.is_dislike
-            view.isActivated = look.is_dislike
+            binding.dislike.isActivated = look.is_dislike
+            binding.postDilsike.isActivated = look.is_dislike
             if(look.is_dislike) {
                 look.count_dislikes++
                 showLike(R.drawable.ic_dislike_activated_pressed)
                 if (look.is_like) {
                     look.is_like = false
                     binding.like.isActivated = false
+                    binding.postLike.isActivated = false
                     look.count_likes--
                 }
             }else{
