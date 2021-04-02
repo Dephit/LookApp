@@ -37,4 +37,8 @@ abstract class MyBaseAdapter<T>(diffCallback: DiffUtil.ItemCallback<T>): PagedLi
     open fun closeLastView(lastPostion: Int) {
 
     }
+
+    open fun isPostOpen(lastPostion: Int): Boolean{
+        return false
+    }
 }

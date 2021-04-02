@@ -158,7 +158,9 @@
                     android:inputType="text"
                     android:paddingStart="@dimen/_16sdp"
                     android:paddingTop="0dp"
+                    android:paddingEnd="@dimen/_32sdp"
                     android:paddingBottom="0dp"
+                    android:text=" "
                     android:textAlignment="textStart"
                     android:textAppearance="@style/BodyText16" />
             </com.google.android.material.textfield.TextInputLayout>

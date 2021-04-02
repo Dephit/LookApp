@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.Window
+import androidx.core.view.get
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.navGraphViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -63,6 +64,8 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         }
         if(viewModel.lastPostion == null)
             viewModel.lastPostion = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
+
+        var snapHelper: PagerSnapHelper? = PagerSnapHelper()
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             var allowToScroll = true
@@ -77,6 +80,12 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                             else -> viewModel.lastPostion
                         }
 
+                if(viewModel.adapter.isPostOpen(viewModel.lastPostion!!)){
+                    snapHelper?.attachToRecyclerView(null)
+                }else{
+                    snapHelper?.attachToRecyclerView(binding.rv)
+                }
+
                 if (newPosition != viewModel.lastPostion && !isCurrentListOpen(dy)) {
                     if(allowToScroll && recyclerView.isInTouchMode) {
                         allowToScroll = false
@@ -84,7 +93,7 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                         viewModel.adapter.closeLastView(viewModel.lastPostion!!)
 
                         viewModel.lastPostion = newPosition
-                        binding.rv.scrollToPosition(newPosition!!)
+                        //binding.rv.scrollToPosition(newPosition!!)
                         lifecycleScope.launch {
                             delay(100)
                             allowToScroll = true

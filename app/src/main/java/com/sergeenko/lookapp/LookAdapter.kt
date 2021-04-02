@@ -58,6 +58,15 @@ class LookAdapter(
         )
     }
 
+    override fun isPostOpen(lastPostion: Int): Boolean {
+        return try {
+            val look = currentList?.get(lastPostion)
+            look?.type != "Лук" && look?.isPostOpen == true
+        }catch (e: Exception){
+            false
+        }
+    }
+
     override fun closeLastView(lastPostion: Int) {
         try {
             val look = currentList?.get(lastPostion)
