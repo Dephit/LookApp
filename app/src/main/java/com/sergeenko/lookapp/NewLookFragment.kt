@@ -5,11 +5,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.Window
 import androidx.camera.core.*
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
@@ -53,6 +56,24 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
                     requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
         outputDirectory = getOutputDirectory()
+    }
+
+    private fun setStatusBar() {
+        val w: Window = requireActivity().window
+        w.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        w.statusBarColor = Color.TRANSPARENT
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            w.decorView.systemUiVisibility = w.decorView.systemUiVisibility and View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR.inv() //set status text  light
+        }
+    }
+
+    fun setStatusBarBlack() {
+        val w: Window = requireActivity().window
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            w.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR //set status text  light
+        }
+        w.statusBarColor = Color.TRANSPARENT
     }
 
     override fun <T> manageSuccess(obj: T?) {
@@ -235,6 +256,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
 
     private fun setGallerySelected() {
         withBinding {
+            setStatusBarBlack()
             setNextVisibility(viewModel.selectedList.size)
             gallaryText.isActivated = false
             newPhotoText.isActivated = true
@@ -259,7 +281,8 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
     }
 
     private fun setCameraSelected() {
-        withBinding {
+        withBinding{
+            setStatusBar()
             gallaryText.isActivated = true
             newPhotoText.isActivated = false
             viewModel.isCameraSelected = true

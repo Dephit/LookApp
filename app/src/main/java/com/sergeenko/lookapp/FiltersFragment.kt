@@ -3,6 +3,9 @@ package com.sergeenko.lookapp
 import android.content.Context
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.os.Build
+import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
@@ -10,6 +13,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
+import android.view.Window
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
@@ -38,9 +42,23 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             inflater
     )
 
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        setStatusBar()
+    }
     lateinit var llm: LinearLayoutManager
 
+    private fun setStatusBar() {
+        val w: Window = requireActivity().window
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            w.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR //set status text  light
+        }
+        w.statusBarColor = Color.TRANSPARENT
+    }
+
     private fun setRV(fileList: List<FilterImage>) {
+        viewModel.width = requireActivity().window.decorView.width
         val adapter = viewModel.adapter
         llm = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.rv.layoutManager = llm
@@ -48,11 +66,6 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rv)
         adapter.setList(_fileList = fileList)
-        /*Handler(Looper.myLooper()!!).postDelayed(
-                {
-                    llm.scrollToPosition(1)
-                }, 1000
-        )*/
 
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -60,10 +73,13 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                 binding.currentItemList.forEachIndexed { _, view ->
                     view.isSelected = false
                 }
-                binding.currentItemList[newPosition].isSelected = true
-                binding.filtersList.forEachIndexed { index, view ->
-                    val b = FilterViewBinding.bind(view)
-                    b.textView.isActivated = thumbs[index].filter == viewModel.adapter.getCurrentFile(newPosition).filter
+                if(newPosition >= 0) {
+                    binding.currentItemList[newPosition].isSelected = true
+
+                    binding.filtersList.forEachIndexed { index, view ->
+                        val b = FilterViewBinding.bind(view)
+                        b.textView.isActivated = thumbs[index].filter == viewModel.adapter.getCurrentFile(newPosition).filter
+                    }
                 }
                 super.onScrolled(recyclerView, dx, dy)
             }
@@ -71,22 +87,35 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
     }
 
     override fun setListeners() {
-        withBinding {
-            setFilters()
-            val file = arguments?.getSerializable("files") as List<File>
+        setFilters()
+        val file = arguments?.getSerializable("files") as List<File>
 
-            toolbarGallary.setNavigationOnClickListener {
+        binding.toolbarGallary.setNavigationOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        setCurrentListSlider(file.size)
+
+        setRV(file.map { FilterImage(it, null) })
+
+    }
+
+    private fun setCurrentListSlider(size: Int) {
+        binding.currentItemList.forEachIndexed { index, view ->
+            if(index < size)
+                view.visibility = View.VISIBLE
+            else
+                view.visibility = View.GONE
+        }
+    }
+
+    override fun <T> manageSuccess(obj: T?) {
+        if(obj is String && obj == "Delete"){
+            if(viewModel.adapter.fileList.isNotEmpty()){
+                setCurrentListSlider(viewModel.adapter.fileList.size)
+            }else {
                 findNavController().popBackStack()
             }
-
-            currentItemList.forEachIndexed { index, view ->
-                if(index < file.size)
-                    view.visibility = View.VISIBLE
-                else
-                    view.visibility = View.GONE
-            }
-
-            setRV(file.map { FilterImage(it, null) })
         }
     }
 
@@ -128,44 +157,4 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
     private fun currentPosition(): Int = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
 
-}
-
-class CenterRecyclerView : RecyclerView {
-    constructor(context: Context) : super(context) {}
-    constructor(context: Context, attrs: AttributeSet?) : super(context, attrs) {}
-    constructor(context: Context, attrs: AttributeSet?, defStyleAttr: Int) : super(context, attrs, defStyleAttr) {}
-
-    fun updatePadding() {
-        post {
-            val displayMetrics = context.resources.displayMetrics
-            val screenWidth = displayMetrics.widthPixels
-            val screenHeight = displayMetrics.heightPixels
-            val firstViewHolder = findViewHolderForAdapterPosition(0)
-            if (firstViewHolder != null) {
-                firstViewHolder.itemView.measure(WRAP_CONTENT, WRAP_CONTENT)
-                val viewWidth = firstViewHolder.itemView.measuredWidth
-                val padding: Int
-                padding = if (screenHeight > screenWidth) {
-                    //Portrait
-                    screenWidth / 2 - viewWidth / 2
-                } else {
-                    //Landscape
-                    screenHeight / 2 - viewWidth / 2
-                }
-                setPadding(padding, 0, padding, 0)
-            } else {
-                Log.e("CenterRecyclerView", "Could not get first ViewHolder")
-            }
-        }
-    }
-
-    override fun onFinishInflate() {
-        super.onFinishInflate()
-        updatePadding()
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration?) {
-        super.onConfigurationChanged(newConfig)
-        updatePadding()
-    }
 }

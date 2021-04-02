@@ -8,15 +8,16 @@ import com.zomato.photofilters.FilterPack
 import com.zomato.photofilters.imageprocessors.Filter
 import java.io.File
 
-class FilterImageAdapter : RecyclerView.Adapter<FilterImageViewHolder>() {
+class FilterImageAdapter(val height: Int, val onDelete:()-> Unit) : RecyclerView.Adapter<FilterImageViewHolder>() {
 
     var fileList = listOf<FilterImage>()
     var selectedCount = 0
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterImageViewHolder {
-        return FilterImageViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.filter_image_view, null, false)
-        )
+        return FilterImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.filter_image_view, null, false), height) { fi ->
+            setList(fileList.filter { it.file != fi.file })
+            onDelete()
+        }
     }
 
     override fun onBindViewHolder(holder: FilterImageViewHolder, position: Int) {

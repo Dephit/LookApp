@@ -19,7 +19,13 @@ class FiltersViewModel@ViewModelInject constructor(
         //}
     }
 
+    var width = 0
+
     val adapter: FilterImageAdapter by lazy{
-        FilterImageAdapter()
+        FilterImageAdapter(width){
+            viewModelScope.launch {
+                modelState.emit(ModelState.Success("Delete"))
+            }
+        }
     }
 }

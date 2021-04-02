@@ -45,7 +45,7 @@
                     android:id="@+id/toolbar_gallary"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_50sdp"
+                    android:layout_marginTop="@dimen/_25sdp"
                     android:layout_marginEnd="@dimen/_25sdp"
                     android:background="@color/white"
                     android:minHeight="?attr/actionBarSize"
