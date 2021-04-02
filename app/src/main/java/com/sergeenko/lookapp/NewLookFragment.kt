@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import androidx.camera.core.*
@@ -204,7 +205,24 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
                 setCameraSelected()
             else
                 setGallerySelected()
-            
+
+             var xCoOrdinate: Float? = null
+             var yCoOrdinate: Float? = null
+
+            previewImage.setOnTouchListener(View.OnTouchListener { view, event ->
+                when (event.actionMasked) {
+                    MotionEvent.ACTION_DOWN -> {
+                        xCoOrdinate = view.x - event.rawX
+                        yCoOrdinate = view.y - event.rawY
+                    }
+                    MotionEvent.ACTION_MOVE -> view.animate()
+                        .x(event.rawX + xCoOrdinate!!)
+                        .y(event.rawY + yCoOrdinate!!).setDuration(0).start()
+                    else -> return@OnTouchListener false
+                }
+                true
+            })
+
             toolbar.setNavigationOnClickListener {
                 findNavController().popBackStack()
             }

@@ -64,5 +64,8 @@ data class FilterImage(
     val file: File,
     var filter: Filter? = null,
     var bitmap: Bitmap? = null,
-    var bitmapFiltered: Bitmap? = null
+    var bitmapFiltered: Bitmap? = null,
+    var scale: Float = 1f,
+    var scaleX: Float = 1f,
+    var scaleY: Float = 1f,
 )

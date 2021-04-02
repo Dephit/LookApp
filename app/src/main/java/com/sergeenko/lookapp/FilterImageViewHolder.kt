@@ -1,17 +1,26 @@
 package com.sergeenko.lookapp
 
+import android.annotation.SuppressLint
 import android.net.Uri
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.OnTouchListener
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
+import com.github.chrisbanes.photoview.PhotoViewAttacher
 import com.sergeenko.lookapp.databinding.FilterImageViewBinding
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import java.lang.Exception
 
-class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (FilterImage) -> Unit): RecyclerView.ViewHolder(itemView) {
 
+class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (FilterImage) -> Unit): RecyclerView.ViewHolder(
+    itemView
+) {
+
+    private var xCoOrdinate: Float? = null
+    private var yCoOrdinate: Float? = null
     val binding: FilterImageViewBinding = FilterImageViewBinding.bind(itemView)
+    val attache: PhotoViewAttacher = PhotoViewAttacher(binding.img)
 
     init {
         binding.root.post {
@@ -21,6 +30,7 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
         }
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     fun bind(file: FilterImage){
         if(file.bitmap == null) {
             Picasso.get()
@@ -29,10 +39,8 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
                 .into(binding.img, object : Callback {
                     override fun onSuccess() {
                         file.bitmap = binding.img.drawable.toBitmap()
-                        val lp = binding.img.layoutParams
-                        lp.width = (lp.width * 0.5).toInt()
-                        lp.height = (lp.height * 0.5).toInt()
-                        binding.img.layoutParams = lp
+                        binding.img.setScale(2f, false)
+                        attache.update()
                     }
 
                     override fun onError(e: Exception?) {
@@ -47,7 +55,33 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
                 binding.img.setImageBitmap(file.bitmapFiltered)
             }
 
+            binding.img.post {
+                /*Log.i("SCALE", "${attache.minimumScale} ${attache.maximumScale} ${file.scale}, ${file.scaleX} ${file.scaleY}")
+                binding.img.setScale(file.scale, file.scaleX, file.scaleY, false)
+                attache.setScale(file.scale, file.scaleX, file.scaleY, false)
+                attache.update()*/
+            }
         }
+
+        /*attache.setOnScaleChangeListener { scaleFactor, focusX, focusY ->
+            file.scale = scaleFactor
+            file.scaleX = focusX
+            file.scaleY = focusY
+        }*/
+
+        binding.img.setOnTouchListener(OnTouchListener { view, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    xCoOrdinate = view.x - event.rawX
+                    yCoOrdinate = view.y - event.rawY
+                }
+                MotionEvent.ACTION_MOVE -> view.animate().x(event.rawX + xCoOrdinate!!)
+                    .y(event.rawY + yCoOrdinate!!).setDuration(0).start()
+                else -> return@OnTouchListener false
+            }
+            true
+        })
+
         binding.trash.setOnClickListener {
             onDelete(file)
         }
