@@ -25,6 +25,7 @@ import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
+import androidx.core.view.isEmpty
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -105,6 +106,14 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             showDeletePopUp(it)
         }
 
+        binding.gallaryText.setOnClickListener {
+            setFilters()
+        }
+
+        binding.newPhotoText.setOnClickListener {
+            setSettings()
+        }
+
         binding.trash.setOnClickListener {
             viewModel.delete(currentPosition())
         }
@@ -139,15 +148,16 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
     }
 
     private fun setFilters() {
-        val filters: List<Filter> = FilterPack.getFilterPack(context)
-        val inflater = LayoutInflater.from(context)
+        if(binding.filtersList.isEmpty()) {
+            val filters: List<Filter> = FilterPack.getFilterPack(context)
+            val inflater = LayoutInflater.from(context)
 
-        val handler = Handler(Looper.myLooper()!!)
-        val r = Runnable {
-            val thumbImage = BitmapFactory.decodeResource(resources, R.drawable.look_mock_bg)
-            ThumbnailsManager.clearThumbs()
+            val handler = Handler(Looper.myLooper()!!)
+            val r = Runnable {
+                val thumbImage = BitmapFactory.decodeResource(resources, R.drawable.look_mock_bg)
+                ThumbnailsManager.clearThumbs()
 
-            filters.forEach { filter->
+                filters.forEach { filter ->
                     val thumbnailItem = ThumbnailItem();
                     thumbnailItem.image = thumbImage;
                     thumbnailItem.filter = filter;
@@ -155,23 +165,43 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                     ThumbnailsManager.addThumb(thumbnailItem);
                 }
 
-            thumbs = ThumbnailsManager.processThumbs(context)
-            thumbs.forEach {
-                val img = FilterViewBinding.inflate(inflater, null, false)
-                img.filterImg.setImageBitmap(it.image)
-                img.filterImg.clipToOutline = true
-                img.textView.text = it.filterName
-                img.filterImg.setOnClickListener { _->
-                    binding.filtersList.forEach { view->
-                        FilterViewBinding.bind(view).textView.isActivated = false
+                thumbs = ThumbnailsManager.processThumbs(context)
+                thumbs.forEach {
+                    val img = FilterViewBinding.inflate(inflater, null, false)
+                    img.filterImg.setImageBitmap(it.image)
+                    img.filterImg.clipToOutline = true
+                    img.textView.text = it.filterName
+                    img.filterImg.setOnClickListener { _ ->
+                        binding.filtersList.forEach { view ->
+                            FilterViewBinding.bind(view).textView.isActivated = false
+                        }
+                        img.textView.isActivated =
+                            viewModel.applyFilter(currentPosition(), it.filter)
                     }
-                    img.textView.isActivated = viewModel.applyFilter(currentPosition(), it.filter)
+                    binding.filtersList.addView(img.root)
                 }
-                binding.filtersList.addView(img.root)
-            }
 
-        };
-        handler.post(r)
+            };
+            handler.post(r)
+        }
+        binding.settings.visibility = View.GONE
+        binding.filters.visibility = View.VISIBLE
+
+        binding.newPhotoText.isActivated = true
+        binding.gallaryText.isActivated = false
+    }
+
+    private fun setSettings(){
+        binding.settings.visibility = View.VISIBLE
+        binding.filters.visibility = View.GONE
+
+        binding.newPhotoText.isActivated = false
+        binding.gallaryText.isActivated = true
+
+        binding.orientationDot.visibility = View.GONE
+        binding.contrastDot.visibility = View.GONE
+        binding.bgDot.visibility = View.GONE
+        binding.brightnessDot.visibility = View.GONE
     }
 
     private fun currentPosition(): Int = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2

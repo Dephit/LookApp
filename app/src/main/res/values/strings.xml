@@ -90,4 +90,8 @@
     <string name="new_look">Новый лук</string>
     <string name="filters_text">Фильтры</string>
     <string name="settings_text">Настройки</string>
+    <string name="orientation">Ориентация</string>
+    <string name="brightness">Яркость</string>
+    <string name="contrast">Контраст</string>
+    <string name="background">Фон</string>
 </resources>
