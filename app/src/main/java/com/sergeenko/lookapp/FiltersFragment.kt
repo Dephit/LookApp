@@ -1,6 +1,9 @@
 package com.sergeenko.lookapp
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
 import android.content.res.Configuration
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -10,10 +13,15 @@ import android.os.Handler
 import android.os.Looper
 import android.util.AttributeSet
 import android.util.Log
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.Window
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import android.widget.Toast
+import androidx.core.os.bundleOf
 import androidx.core.view.forEach
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
@@ -22,8 +30,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
+import com.sergeenko.lookapp.databinding.AdditionActionsLayoutBinding
+import com.sergeenko.lookapp.databinding.DeletePhotoBinding
 import com.sergeenko.lookapp.databinding.FilterViewBinding
 import com.sergeenko.lookapp.databinding.FiltersFragmentBinding
+import com.sergeenko.lookapp.models.Look
 import com.zomato.photofilters.FilterPack
 import com.zomato.photofilters.imageprocessors.Filter
 import com.zomato.photofilters.utils.ThumbnailItem
@@ -91,7 +102,15 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         val file = arguments?.getSerializable("files") as List<File>
 
         binding.toolbarGallary.setNavigationOnClickListener {
-            findNavController().popBackStack()
+            showDeletePopUp(it)
+        }
+
+        binding.trash.setOnClickListener {
+            viewModel.delete(currentPosition())
+        }
+
+        binding.nextText.setOnClickListener {
+            findNavController().navigate(R.id.action_filtersFragment_to_finaLookScreenFragment, bundleOf("filters" to viewModel.adapter.fileList))
         }
 
         setCurrentListSlider(file.size)
@@ -157,4 +176,29 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
     private fun currentPosition(): Int = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
 
+    private fun showDeletePopUp(view: View) {
+
+        val customLayout = DeletePhotoBinding.inflate(LayoutInflater.from(view.context))
+
+        // create an alert builder
+        val width = LinearLayout.LayoutParams.WRAP_CONTENT
+        val height = LinearLayout.LayoutParams.WRAP_CONTENT
+        val focusable = true // lets taps outside the popup also dismiss it
+
+        val window = PopupWindow(customLayout.root, width, height, focusable)
+        window.isOutsideTouchable = true
+
+
+        customLayout.yes.setOnClickListener {
+            window.dismiss()
+            findNavController().popBackStack()
+        }
+
+        customLayout.no.setOnClickListener {
+            window.dismiss()
+        }
+
+        window.contentView = customLayout.root
+        window.showAtLocation(view, Gravity.CENTER, 0, 0)
+    }
 }

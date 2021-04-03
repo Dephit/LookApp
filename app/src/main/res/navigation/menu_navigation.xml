@@ -74,5 +74,15 @@
         android:id="@+id/filtersFragment"
         android:name="com.sergeenko.lookapp.FiltersFragment"
         android:label="filters_fragment"
-        tools:layout="@layout/filters_fragment" />
+        tools:layout="@layout/filters_fragment" >
+        <action
+            android:id="@+id/action_filtersFragment_to_finaLookScreenFragment"
+            app:destination="@id/finaLookScreenFragment"
+            app:popUpTo="@id/filtersFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/finaLookScreenFragment"
+        android:name="com.sergeenko.lookapp.FinaLookScreenFragment"
+        android:label="fina_look_screen_fragment"
+        tools:layout="@layout/fina_look_screen_fragment" />
 </navigation>

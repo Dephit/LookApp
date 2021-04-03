@@ -83,6 +83,7 @@
     <string name="more_comments">комментария</string>
     <string name="delete_comment">Удалить комментарий</string>
     <string name="do_you_want_to_delet_comment">Вы действительно хотите удалть комментарий?</string>
+    <string name="do_you_want_to_delete_photo">Если вы вернетесь назад, то все изменения будут удалены. Вы хотите продолжить?</string>
     <string name="yes">Да</string>
     <string name="gallary_text">Галерея</string>
     <string name="new_photo_text">Новое фото</string>

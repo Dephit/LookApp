@@ -2,9 +2,7 @@ package com.sergeenko.lookapp
 
 import android.annotation.SuppressLint
 import android.net.Uri
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.github.chrisbanes.photoview.PhotoViewAttacher
@@ -13,7 +11,7 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
 
-class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (FilterImage) -> Unit): RecyclerView.ViewHolder(
+class FilterImageViewHolder(itemView: View, val height: Int): RecyclerView.ViewHolder(
     itemView
 ) {
 
@@ -39,8 +37,8 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
                 .into(binding.img, object : Callback {
                     override fun onSuccess() {
                         file.bitmap = binding.img.drawable.toBitmap()
-                        binding.img.setScale(2f, false)
-                        attache.update()
+                        /*binding.img.setScale(2f, false)
+                        attache.update()*/
                     }
 
                     override fun onError(e: Exception?) {
@@ -69,7 +67,7 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
             file.scaleY = focusY
         }*/
 
-        binding.img.setOnTouchListener(OnTouchListener { view, event ->
+        /*binding.img.setOnTouchListener(OnTouchListener { view, event ->
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
                     xCoOrdinate = view.x - event.rawX
@@ -80,11 +78,7 @@ class FilterImageViewHolder(itemView: View, val height: Int, val onDelete: (Filt
                 else -> return@OnTouchListener false
             }
             true
-        })
-
-        binding.trash.setOnClickListener {
-            onDelete(file)
-        }
+        })*/
 
     }
 

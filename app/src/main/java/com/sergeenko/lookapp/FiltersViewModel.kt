@@ -15,17 +15,20 @@ class FiltersViewModel@ViewModelInject constructor(
 
     fun applyFilter(position: Int, filter: Filter?): Boolean {
         //viewModelScope.launch {
-            return adapter.applyFilter(position, filter)
+        return adapter.applyFilter(position, filter)
         //}
+    }
+
+    fun delete(currentPosition: Int) {
+        adapter.delete(currentPosition)
+        viewModelScope.launch {
+            modelState.emit(ModelState.Success("Delete"))
+        }
     }
 
     var width = 0
 
     val adapter: FilterImageAdapter by lazy{
-        FilterImageAdapter(width){
-            viewModelScope.launch {
-                modelState.emit(ModelState.Success("Delete"))
-            }
-        }
+        FilterImageAdapter(width)
     }
 }
