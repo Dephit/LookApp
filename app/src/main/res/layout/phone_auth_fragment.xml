@@ -136,6 +136,7 @@
                 android:background="@drawable/button_bg"
                 android:imeOptions="actionDone"
                 android:inputType="number|text"
+                android:paddingStart="@dimen/_16sdp"
                 android:paddingTop="0dp"
                 android:paddingBottom="0dp"
                 android:singleLine="true"

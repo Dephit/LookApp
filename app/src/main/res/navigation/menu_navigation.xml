@@ -79,10 +79,19 @@
             android:id="@+id/action_filtersFragment_to_finaLookScreenFragment"
             app:destination="@id/finaLookScreenFragment"
             app:popUpTo="@id/filtersFragment" />
+        <action
+            android:id="@+id/action_filtersFragment_to_orientationFragment"
+            app:destination="@id/orientationFragment"
+            app:popUpTo="@id/filtersFragment" />
     </fragment>
     <fragment
         android:id="@+id/finaLookScreenFragment"
         android:name="com.sergeenko.lookapp.FinaLookScreenFragment"
         android:label="fina_look_screen_fragment"
         tools:layout="@layout/fina_look_screen_fragment" />
+    <fragment
+        android:id="@+id/orientationFragment"
+        android:name="com.sergeenko.lookapp.OrientationFragment"
+        android:label="orientation_fragment"
+        tools:layout="@layout/orientation_fragment" />
 </navigation>
