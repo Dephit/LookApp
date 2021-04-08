@@ -20,9 +20,9 @@ class RegistrationStepFourViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(repository, savedStateHandle) {
 
-    var chest: String? = null
-    var waist: String? = null
-    var hips: String? = null
+    var chest: String? = "66"
+    var waist: String? = "66"
+    var hips: String? = "66"
 
     fun hips(newVal: String) {
         hips = newVal

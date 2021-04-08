@@ -10,7 +10,7 @@ class RegistrationStepTwoViewModel @ViewModelInject constructor(
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(repository, savedStateHandle) {
 
-    var height: String? = null
+    var height: String? = "180"
 
     fun height(newVal: String) {
         height = newVal

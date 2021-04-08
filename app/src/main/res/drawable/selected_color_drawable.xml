@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <layer-list>
+            <item
+                android:drawable="@drawable/ic_non_selected" />
+            <item
+                android:top="5dp"
+                android:bottom="5dp"
+                android:left="3dp"
+                android:right="3dp"
+                android:drawable="@drawable/ic_agree"/>
+        </layer-list>
+    </item>
+</selector>

@@ -22,7 +22,7 @@ class RegistrationStepTwoFragment : BaseFragment<RegistrationStepTwoFragmentBind
     override fun restoreState(savedInstanceState: Bundle?) {
         withBinding {
             asd.scrollToValue(viewModel.height ?: "180")
-            next.isEnabled = viewModel.height != null
+            ///next.isEnabled = viewModel.height != null
         }
     }
 

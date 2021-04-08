@@ -365,6 +365,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="orientationFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="841" />
+                            <option name="y" value="-283" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="postFragment">
                     <value>
                       <LayoutPositions>

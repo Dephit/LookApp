@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class PhoneAuthViewModel @ViewModelInject constructor(
         private val repository: Repository,
@@ -28,12 +29,17 @@ class PhoneAuthViewModel @ViewModelInject constructor(
 
         if(modelState.value !is ModelState.Loading)
             viewModelScope.launch {
-                if(!isPhoneWithError(ph)){
-                    repository.authByPhone("${selectedCode!!.dialCode}$ph")
-                            .onStart { modelState.emit(ModelState.Loading) }
-                            .catch { modelState.emit(ModelState.Error(it.message)) }
-                            .collect { modelState.emit(ModelState.Success("${selectedCode!!.dialCode}$ph")) }
+                try {
+                    if(!isPhoneWithError(ph)){
+                        repository.authByPhone("${selectedCode!!.dialCode}$ph")
+                                .onStart { modelState.emit(ModelState.Loading) }
+                                .catch { modelState.emit(ModelState.Error(it.message)) }
+                                .collect { modelState.emit(ModelState.Success("${selectedCode!!.dialCode}$ph")) }
+                    }
+                }catch (e: Exception){
+                    modelState.emit(ModelState.Error("Ошибка"))
                 }
+
         }
     }
 
@@ -70,7 +76,7 @@ class PhoneAuthViewModel @ViewModelInject constructor(
     }
 
     fun getFullHint(): String? {
-        return selectedCode?.mask?.replace("#", "_")?.replace("+", "")?.replace(("[\\d]").toRegex(), "")
+        return " ${selectedCode?.mask?.replace("#", "_")?.replace("+", "")?.replace(("[\\d]").toRegex(), "")}"
     }
 
 }

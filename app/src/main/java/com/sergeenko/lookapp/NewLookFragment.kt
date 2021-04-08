@@ -69,7 +69,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
         }
     }
 
-    fun setStatusBarBlack() {
+    private fun setStatusBarBlack() {
         val w: Window = requireActivity().window
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             w.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_VISIBLE or View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR //set status text  light
@@ -159,6 +159,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
                 val savedUri = Uri.fromFile(photoFile)
                 val msg = "Photo capture succeeded: $savedUri"
                 galleryAddPic(savedUri)
+                viewModel.selectedList.clear()
                 viewModel.onImageAdd(GallaryImage(photoFile, true))
                 viewModel.savePhoto()
                 Log.d(TAG, msg)
@@ -208,20 +209,6 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
 
              var xCoOrdinate: Float? = null
              var yCoOrdinate: Float? = null
-
-            previewImage.setOnTouchListener(View.OnTouchListener { view, event ->
-                when (event.actionMasked) {
-                    MotionEvent.ACTION_DOWN -> {
-                        xCoOrdinate = view.x - event.rawX
-                        yCoOrdinate = view.y - event.rawY
-                    }
-                    MotionEvent.ACTION_MOVE -> view.animate()
-                        .x(event.rawX + xCoOrdinate!!)
-                        .y(event.rawY + yCoOrdinate!!).setDuration(0).start()
-                    else -> return@OnTouchListener false
-                }
-                true
-            })
 
             toolbar.setNavigationOnClickListener {
                 findNavController().popBackStack()

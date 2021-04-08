@@ -26,7 +26,7 @@ class RegistrationStepThreeFragment : BaseFragment<RegistrationStepThreeFragment
     override fun restoreState(savedInstanceState: Bundle?) {
         withBinding {
             weightPicker.scrollToValue(viewModel.weight ?: "66")
-            next.isEnabled = viewModel.weight != null
+            //next.isEnabled = viewModel.weight != null
         }
     }
 

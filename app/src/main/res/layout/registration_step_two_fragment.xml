@@ -128,8 +128,9 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="@dimen/_89sdp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/picker_sel_bg"
             app:layout_constraintBottom_toBottomOf="@+id/asd"
             app:layout_constraintEnd_toEndOf="parent"
@@ -214,7 +215,7 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:backgroundTintMode="add"
-            android:enabled="false"
+            android:enabled="true"
             android:text="@string/next"
             app:backgroundTint="@android:color/transparent"
             app:backgroundTintMode="add"

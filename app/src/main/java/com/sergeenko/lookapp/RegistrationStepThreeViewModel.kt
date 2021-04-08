@@ -9,7 +9,7 @@ class RegistrationStepThreeViewModel @ViewModelInject constructor(
     private val repository: Repository,
     @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(repository, savedStateHandle) {
-    var weight: String? = null
+    var weight: String? = "66"
 
     fun weight(newVal: String) {
         weight = newVal

@@ -1,47 +1,42 @@
 package com.sergeenko.lookapp
 
-import android.content.ClipData
-import android.content.ClipboardManager
+
 import android.content.Context
-import android.content.Intent
-import android.content.res.Configuration
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.AttributeSet
 import android.util.Log
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.view.Window
 import android.widget.LinearLayout
 import android.widget.PopupWindow
-import android.widget.Toast
 import androidx.core.os.bundleOf
-import androidx.core.view.forEach
-import androidx.core.view.forEachIndexed
-import androidx.core.view.get
-import androidx.core.view.isEmpty
+import androidx.core.view.*
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
-import com.sergeenko.lookapp.databinding.AdditionActionsLayoutBinding
 import com.sergeenko.lookapp.databinding.DeletePhotoBinding
 import com.sergeenko.lookapp.databinding.FilterViewBinding
 import com.sergeenko.lookapp.databinding.FiltersFragmentBinding
-import com.sergeenko.lookapp.models.Look
 import com.zomato.photofilters.FilterPack
 import com.zomato.photofilters.imageprocessors.Filter
 import com.zomato.photofilters.utils.ThumbnailItem
 import com.zomato.photofilters.utils.ThumbnailsManager
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
+import kotlin.math.abs
 
 
 @AndroidEntryPoint
@@ -54,12 +49,11 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             inflater
     )
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         setStatusBar()
     }
-    lateinit var llm: LinearLayoutManager
+    lateinit var llm: CustomGridLayoutManager
 
     private fun setStatusBar() {
         val w: Window = requireActivity().window
@@ -71,27 +65,48 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
     private fun setRV(fileList: List<FilterImage>) {
         viewModel.width = requireActivity().window.decorView.width
+        llm = CustomGridLayoutManager(context, RecyclerView.HORIZONTAL, false)
         val adapter = viewModel.adapter
-        llm = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
         binding.rv.layoutManager = llm
         binding.rv.adapter = adapter
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rv)
-        adapter.setList(_fileList = fileList)
+        adapter.canScroll = { llm.canScrollHorizontally() }
+
+        if(adapter.fileList.isEmpty()){
+            adapter.setList(_fileList = fileList)
+        }
 
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val newPosition = currentPosition()
-                binding.currentItemList.forEachIndexed { _, view ->
-                    view.isSelected = false
-                }
-                if(newPosition >= 0) {
-                    binding.currentItemList[newPosition].isSelected = true
-
-                    binding.filtersList.forEachIndexed { index, view ->
-                        val b = FilterViewBinding.bind(view)
-                        b.textView.isActivated = thumbs[index].filter == viewModel.adapter.getCurrentFile(newPosition).filter
+                try {
+                    val newPosition = currentPosition()
+                    binding.currentItemList.forEachIndexed { _, view ->
+                        view.isSelected = false
                     }
+                    if (newPosition >= 0) {
+                        val currentFile = viewModel.adapter.getCurrentFile(newPosition)
+                        binding.currentItemList[newPosition].isSelected = true
+
+                        currentFile.backgroundColor?.let {
+                            binding.rv.setBackgroundColor(Color.parseColor(it))
+                            binding.imgLayout.setBackgroundColor(Color.parseColor(it))
+                        } ?: run {
+                            binding.rv.setBackgroundColor(Color.parseColor(currentFile.oldBackgroundColor))
+                            binding.imgLayout.setBackgroundColor(Color.parseColor(currentFile.oldBackgroundColor))
+                        }
+
+                        (binding.colorRv.adapter as ColorAdapter).updateSelectedColor(currentFile.backgroundColor)
+
+                        binding.filtersList.forEachIndexed { index, view ->
+                            val b = FilterViewBinding.bind(view)
+                            b.textView.isActivated =
+                                    thumbs[index].filter == currentFile.filter
+                        }
+                        checkChanges()
+                    }
+                } catch (e: Exception) {
+
                 }
                 super.onScrolled(recyclerView, dx, dy)
             }
@@ -99,27 +114,199 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
     }
 
     override fun setListeners() {
-        setFilters()
+        binding.settings.post {
+            viewModel.setState(SettngsScreenState.Filters)
+        }
+
         val file = arguments?.getSerializable("files") as List<File>
 
         binding.toolbarGallary.setNavigationOnClickListener {
-            showDeletePopUp(it)
+            if(viewModel.screenState is SettngsScreenState.Filters || viewModel.screenState is SettngsScreenState.Settings) {
+                showDeletePopUp(it)
+            }else {
+                when (viewModel.screenState) {
+                    is SettngsScreenState.Orientation -> {
+                        viewModel.adapter.clearOrientation(currentPosition())
+                    }
+                    is SettngsScreenState.Brightness -> {
+                        viewModel.adapter.clearBrightness(currentPosition())
+                    }
+                    is SettngsScreenState.Contrast -> {
+                        viewModel.adapter.clearContrast(currentPosition())
+                    }
+                    is SettngsScreenState.Background -> {
+                        viewModel.adapter.clearBackground(currentPosition())
+                    }
+                }
+                viewModel.setState(SettngsScreenState.Settings)
+            }
         }
 
         binding.gallaryText.setOnClickListener {
-            setFilters()
+            viewModel.setState(SettngsScreenState.Filters)
         }
 
         binding.newPhotoText.setOnClickListener {
-            setSettings()
+            viewModel.setState(SettngsScreenState.Settings)
         }
 
         binding.trash.setOnClickListener {
             viewModel.delete(currentPosition())
         }
 
+        binding.orientation.setOnClickListener {
+            viewModel.setState(SettngsScreenState.Orientation)
+        }
+
+        binding.brightness.setOnClickListener {
+            viewModel.setState(SettngsScreenState.Brightness)
+        }
+
+        binding.contrast.setOnClickListener {
+            viewModel.setState(SettngsScreenState.Contrast)
+        }
+
+        binding.background.setOnClickListener {
+            viewModel.setState(SettngsScreenState.Background)
+        }
+
         binding.nextText.setOnClickListener {
-            findNavController().navigate(R.id.action_filtersFragment_to_finaLookScreenFragment, bundleOf("filters" to viewModel.adapter.fileList))
+            if(viewModel.screenState is SettngsScreenState.Filters || viewModel.screenState is SettngsScreenState.Settings) {
+                lifecycleScope.launch {
+                    binding.loading.visibility = View.VISIBLE
+                    val list = mutableListOf<Bitmap?>()
+                    viewModel.adapter.fileList.forEachIndexed { index, filterImage ->
+                        binding.rv.scrollToPosition(index)
+                        delay(50)
+                        list.add(loadBitmapFromView(binding.rv))
+                    }
+                    findNavController().navigate(
+                            R.id.action_filtersFragment_to_finaLookScreenFragment, bundleOf(
+                            "filters" to list
+                    )
+                    )
+                    binding.loading.visibility = View.GONE
+                }
+            }else {
+                when (viewModel.screenState) {
+                    is SettngsScreenState.Orientation -> {
+                        viewModel.adapter.saveOrientation(currentPosition())
+                    }
+                    is SettngsScreenState.Brightness -> {
+                        viewModel.adapter.saveBrightness(currentPosition())
+                    }
+                    is SettngsScreenState.Contrast -> {
+                        viewModel.adapter.saveContrast(currentPosition())
+                    }
+                    is SettngsScreenState.Background -> {
+                        viewModel.adapter.saveBG(currentPosition())
+                    }
+                }
+                viewModel.setState(SettngsScreenState.Settings)
+            }
+        }
+
+        binding.rotationX.setOnClickListener {
+            setRotationMode(RotationMode.RotationX)
+            binding.rotationXText.text = viewModel.getCurrentRotation(currentPosition())
+
+            binding.rotationXOpen.visibility = View.VISIBLE
+            binding.rotationXClosed.visibility = View.GONE
+
+            binding.rotationZOpen.visibility = View.GONE
+            binding.rotationZClosed.visibility = View.VISIBLE
+
+            binding.rotationYOpen.visibility = View.GONE
+            binding.rotationYClosed.visibility = View.VISIBLE
+        }
+
+        binding.closeRotation.setOnClickListener {
+            setRotationMode(RotationMode.None)
+            binding.rotationXOpen.visibility = View.GONE
+            binding.rotationXClosed.visibility = View.VISIBLE
+        }
+
+        binding.rotationY.setOnClickListener {
+            setRotationMode(RotationMode.RotationY)
+            binding.rotationYText.text = viewModel.getCurrentRotation(currentPosition())
+
+            binding.rotationXOpen.visibility = View.GONE
+            binding.rotationXClosed.visibility = View.VISIBLE
+
+            binding.rotationZOpen.visibility = View.GONE
+            binding.rotationZClosed.visibility = View.VISIBLE
+
+            binding.rotationYOpen.visibility = View.VISIBLE
+            binding.rotationYClosed.visibility = View.GONE
+        }
+
+        binding.closeRotationY.setOnClickListener {
+            setRotationMode(RotationMode.None)
+            binding.rotationYOpen.visibility = View.GONE
+            binding.rotationYClosed.visibility = View.VISIBLE
+        }
+
+        binding.rotationZ.setOnClickListener {
+            setRotationMode(RotationMode.RotationZ)
+            binding.rotationZText.text = viewModel.getCurrentRotation(currentPosition())
+
+            binding.rotationXOpen.visibility = View.GONE
+            binding.rotationXClosed.visibility = View.VISIBLE
+
+            binding.rotationZOpen.visibility = View.VISIBLE
+            binding.rotationZClosed.visibility = View.GONE
+
+            binding.rotationYOpen.visibility = View.GONE
+            binding.rotationYClosed.visibility = View.VISIBLE
+        }
+
+        binding.closeRotationZ.setOnClickListener {
+            setRotationMode(RotationMode.None)
+            binding.rotationZOpen.visibility = View.GONE
+            binding.rotationZClosed.visibility = View.VISIBLE
+        }
+
+        binding.slider.addOnChangeListener { _, value, _ ->
+            val progressWidth = binding.slider.width / 200 * (abs(value) - 1)
+            val image9Width = (binding.imageView9.x + (binding.imageView9.width / 2))
+
+            binding.imageView10.updateLayoutParams {
+                val w = (progressWidth).toInt()
+                width = if(w !in -1..1) w else 1
+            }
+            binding.imageView10.x = if (value < 0) image9Width - (progressWidth).toInt() else image9Width
+
+            lifecycleScope.launch {
+                viewModel.adapter.addBrightness(currentPosition(), value.toInt())
+            }
+
+            binding.brightnessValueText.text = value.toInt().toString()
+        }
+
+        binding.sliderContrast.addOnChangeListener { _, value, _ ->
+            val progressWidth = binding.sliderContrast.width / 200 * (abs(value - 50) * 2 - 1)
+            val image9Width = (binding.imageView11.x + (binding.imageView11.width / 2))
+
+            binding.imageView12.updateLayoutParams {
+                val w = (progressWidth).toInt()
+                width = if(w !in -1..1) w else 1
+            }
+            binding.imageView12.x = if (value < 50) image9Width - (progressWidth).toInt() else image9Width
+
+            lifecycleScope.launch {
+                viewModel.adapter.addContrast(currentPosition(),
+                        when {
+                            value <= 50 -> value / 50
+                            value <= 60 -> value / 40
+                            value <= 70 -> value / 30
+                            value <= 80 -> value / 20
+                            else -> value / 10
+                        }
+
+                )
+            }
+
+            binding.contrastValueText.text = value.toInt().toString()
         }
 
         setCurrentListSlider(file.size)
@@ -144,10 +331,39 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             }else {
                 findNavController().popBackStack()
             }
+        }else if(obj is SettngsScreenState){
+            Log.i("CREENSTATE", obj.toString())
+            if(obj is SettngsScreenState.Orientation){
+                if(this::llm.isInitialized)
+                    llm.setScrollEnabled(false)
+                setOrientation()
+            }else {
+                if(this::llm.isInitialized)
+                    llm.setScrollEnabled(true)
+                when(obj){
+                    is SettngsScreenState.Filters -> {
+                        setFilters()
+                    }
+                    is SettngsScreenState.Settings -> {
+                        setSettings()
+                    }
+                    is SettngsScreenState.Brightness -> {
+                        setBrightness()
+                    }
+                    is SettngsScreenState.Contrast -> {
+                        setContrast()
+                    }
+                    is SettngsScreenState.Background -> {
+                        setBackground()
+                    }
+                }
+            }
         }
     }
 
     private fun setFilters() {
+        setNormalToolbar()
+
         if(binding.filtersList.isEmpty()) {
             val filters: List<Filter> = FilterPack.getFilterPack(context)
             val inflater = LayoutInflater.from(context)
@@ -158,9 +374,9 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                 ThumbnailsManager.clearThumbs()
 
                 filters.forEach { filter ->
-                    val thumbnailItem = ThumbnailItem();
-                    thumbnailItem.image = thumbImage;
-                    thumbnailItem.filter = filter;
+                    val thumbnailItem = ThumbnailItem()
+                    thumbnailItem.image = thumbImage
+                    thumbnailItem.filter = filter
                     thumbnailItem.filterName = filter.name
                     ThumbnailsManager.addThumb(thumbnailItem);
                 }
@@ -189,19 +405,188 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
         binding.newPhotoText.isActivated = true
         binding.gallaryText.isActivated = false
+
+    }
+
+    private fun setNormalToolbar() {
+        binding.toolbarTitleGallary.text = getString(R.string.new_look)
+        binding.nextText.text = getString(R.string.next)
+
+        binding.orientationLayout.visibility = View.GONE
+        binding.contrastLayout.visibility = View.GONE
+        binding.brightnessLayout.visibility = View.GONE
+        binding.backgroundLayout.visibility = View.GONE
+        binding.tabs.visibility = View.VISIBLE
+    }
+
+    private fun setOrientation(){
+        if(binding.orientationRv.isEmpty()){
+            setOrientationRv()
+        }
+
+        binding.rotationXOpen.visibility = View.GONE
+        binding.rotationXClosed.visibility = View.VISIBLE
+
+        binding.rotationZOpen.visibility = View.GONE
+        binding.rotationZClosed.visibility = View.VISIBLE
+
+        binding.rotationYOpen.visibility = View.GONE
+        binding.rotationYClosed.visibility = View.VISIBLE
+
+        binding.toolbarTitleGallary.text = getString(R.string.orientation)
+        binding.nextText.text = getString(R.string.save)
+
+        binding.tabs.visibility = View.GONE
+
+        binding.filters.visibility = View.GONE
+        binding.settings.visibility = View.GONE
+        binding.orientationLayout.visibility = View.VISIBLE
+        binding.brightnessLayout.visibility = View.GONE
+        binding.contrastLayout.visibility = View.GONE
+        binding.backgroundLayout.visibility = View.GONE
+    }
+
+    private fun setOrientationRv() {
+        val adapter = viewModel.orientationAdapter
+        binding.orientationRv.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        binding.orientationRv.adapter = adapter
+        binding.orientationRv.scrollToPosition(5000)
+
+        binding.orientationRv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                if (viewModel.screenState == SettngsScreenState.Orientation) {
+                    lifecycleScope.launch {
+                        if (viewModel.adapter.rotationMode == RotationMode.RotationX) {
+                            binding.rotationXText.text = if (dx > 0) {
+                                viewModel.adapter.rotate(currentPosition(), 2.5f).toString()
+                            } else {
+                                viewModel.adapter.rotate(currentPosition(), -2.5f).toString()
+                            }
+                        } else if (viewModel.adapter.rotationMode == RotationMode.RotationY) {
+                            binding.rotationYText.text = if (dx > 0) {
+                                viewModel.adapter.rotateY(currentPosition(), 2.5f).toString()
+                            } else {
+                                viewModel.adapter.rotateY(currentPosition(), -2.5f).toString()
+                            }
+                        } else if (viewModel.adapter.rotationMode == RotationMode.RotationZ) {
+                            binding.rotationZText.text = if (dx > 0) {
+                                viewModel.adapter.rotateZ(currentPosition(), 2.5f).toString()
+                            } else {
+                                viewModel.adapter.rotateZ(currentPosition(), -2.5f).toString()
+                            }
+                        }
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy)
+            }
+        })
+    }
+
+    private fun setBrightness(){
+        binding.slider.value = viewModel.adapter.getCurrentFile(currentPosition()).brightness.toFloat()
+        binding.brightnessValueText.text = viewModel.adapter.getCurrentFile(currentPosition()).brightness.toString()
+
+        binding.toolbarTitleGallary.text = getString(R.string.brightness)
+        binding.nextText.text = getString(R.string.save)
+
+        binding.tabs.visibility = View.GONE
+
+        binding.filters.visibility = View.GONE
+        binding.settings.visibility = View.GONE
+        binding.orientationLayout.visibility = View.GONE
+        binding.brightnessLayout.visibility = View.VISIBLE
+        binding.backgroundLayout.visibility = View.GONE
+        binding.contrastLayout.visibility = View.GONE
+    }
+
+    private fun setContrast(){
+        val value = viewModel.adapter.getCurrentFile(currentPosition()).contrast
+        val v2 = when {
+            value * 50 <= 50 -> value * 50
+            value * 40 <= 60 -> value * 40
+            value * 30 <= 70 -> value * 30
+            value * 20 <= 80 -> value * 20
+            else -> value * 10
+        }
+        binding.sliderContrast.value = v2
+        binding.contrastValueText.text = v2.toInt().toString()
+
+        binding.toolbarTitleGallary.text = getString(R.string.contrast)
+        binding.nextText.text = getString(R.string.save)
+
+        binding.tabs.visibility = View.GONE
+
+        binding.filters.visibility = View.GONE
+        binding.settings.visibility = View.GONE
+        binding.orientationLayout.visibility = View.GONE
+        binding.contrastLayout.visibility = View.VISIBLE
+        binding.brightnessLayout.visibility = View.GONE
+        binding.backgroundLayout.visibility = View.GONE
+    }
+
+    private fun setBackground(){
+        binding.toolbarTitleGallary.text = getString(R.string.background)
+        binding.nextText.text = getString(R.string.save)
+
+        if(binding.colorRv.isEmpty()){
+            setColorRv()
+        }
+
+        binding.tabs.visibility = View.GONE
+
+        binding.filters.visibility = View.GONE
+        binding.settings.visibility = View.GONE
+        binding.orientationLayout.visibility = View.GONE
+        binding.contrastLayout.visibility = View.GONE
+        binding.brightnessLayout.visibility = View.GONE
+        binding.backgroundLayout.visibility = View.VISIBLE
+    }
+
+    private fun setColorRv() {
+        val adapter = ColorAdapter{ color: String ->
+            lifecycleScope.launch {
+                val parsedColor = Color.parseColor(color)
+                viewModel.adapter.setBackground(currentPosition(), color)
+                binding.rv.setBackgroundColor(parsedColor)
+                binding.imgLayout.setBackgroundColor(parsedColor)
+            }
+        }
+        binding.colorRv.layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        binding.colorRv.adapter = adapter
     }
 
     private fun setSettings(){
-        binding.settings.visibility = View.VISIBLE
+        setRotationMode(RotationMode.None)
+
+        setNormalToolbar()
+
         binding.filters.visibility = View.GONE
+        binding.settings.visibility = View.VISIBLE
 
         binding.newPhotoText.isActivated = false
         binding.gallaryText.isActivated = true
 
-        binding.orientationDot.visibility = View.GONE
-        binding.contrastDot.visibility = View.GONE
-        binding.bgDot.visibility = View.GONE
-        binding.brightnessDot.visibility = View.GONE
+        checkChanges()
+    }
+
+    private fun setRotationMode(none: RotationMode) {
+        viewModel.adapter.rotationMode = none
+        if(none is RotationMode.None){
+            binding.orientationRv.visibility = View.GONE
+            binding.imageView6.visibility = View.GONE
+            binding.imageView7.visibility = View.GONE
+        }else{
+            binding.orientationRv.visibility = View.VISIBLE
+            binding.imageView6.visibility = View.VISIBLE
+            binding.imageView7.visibility = View.VISIBLE
+        }
+    }
+
+    private fun checkChanges() {
+        binding.orientationDot.visibility = if(viewModel.adapter.hasOrientationChanges(currentPosition())) View.VISIBLE else View.GONE
+        binding.contrastDot.visibility = if(viewModel.adapter.hasContrastChanges(currentPosition())) View.VISIBLE else View.GONE
+        binding.bgDot.visibility = if(viewModel.adapter.hasBackgroundChanges(currentPosition())) View.VISIBLE else View.GONE
+        binding.brightnessDot.visibility = if(viewModel.adapter.hasBrightnesChanges(currentPosition())) View.VISIBLE else View.GONE
     }
 
     private fun currentPosition(): Int = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
@@ -230,5 +615,31 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 
         window.contentView = customLayout.root
         window.showAtLocation(view, Gravity.CENTER, 0, 0)
+    }
+
+    private fun loadBitmapFromView(v: View): Bitmap? {
+        return try{
+            val b = Bitmap.createBitmap(v.width, v.height, Bitmap.Config.ARGB_8888)
+            val c = Canvas(b)
+            v.layout(v.left, v.top, v.right, v.bottom)
+            v.draw(c)
+            b
+        }catch (e: Exception){
+            Log.e("Bitmap_error", e.message.toString())
+            null
+         }
+    }
+}
+
+class CustomGridLayoutManager(context: Context?, horizontal: Int, b: Boolean) : LinearLayoutManager(context, horizontal, b) {
+    private var isScrollEnabled = true
+
+    fun setScrollEnabled(flag: Boolean) {
+        isScrollEnabled = flag
+    }
+
+    override fun canScrollHorizontally():  Boolean {
+        //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
+        return isScrollEnabled && super.canScrollHorizontally()
     }
 }

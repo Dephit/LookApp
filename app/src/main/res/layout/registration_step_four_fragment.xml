@@ -176,6 +176,7 @@
             android:text="@string/i_dont_know"
             android:textAppearance="@style/BodyText11"
             android:textColor="@color/pink_pressed"
+            android:visibility="gone"
             app:layout_constraintBottom_toTopOf="@+id/next"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.5"
@@ -185,8 +186,9 @@
 
         <ImageView
             android:id="@+id/imageView"
-            android:layout_width="@dimen/_89sdp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/picker_sel_bg"
             app:layout_constraintBottom_toBottomOf="@id/waist_picker"
             app:layout_constraintEnd_toEndOf="parent"
@@ -196,8 +198,9 @@
 
         <ImageView
             android:id="@+id/imageView4"
-            android:layout_width="@dimen/_89sdp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/picker_sel_bg"
             app:layout_constraintBottom_toBottomOf="@id/waist_picker"
             app:layout_constraintEnd_toEndOf="@+id/set_your_waist_text"
@@ -207,8 +210,9 @@
 
         <ImageView
             android:id="@+id/imageView3"
-            android:layout_width="@dimen/_89sdp"
-            android:layout_height="@dimen/_40sdp"
+            android:layout_width="@dimen/_80sdp"
+            android:layout_height="@dimen/_34sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
             android:src="@drawable/picker_sel_bg"
             app:layout_constraintBottom_toBottomOf="@id/chest_picker"
             app:layout_constraintEnd_toEndOf="parent"
@@ -329,7 +333,7 @@
             android:layout_marginEnd="@dimen/_16sdp"
             android:layout_marginBottom="@dimen/_10sdp"
             android:backgroundTintMode="add"
-            android:enabled="false"
+            android:enabled="true"
             android:text="@string/next"
             app:backgroundTint="@android:color/transparent"
             app:backgroundTintMode="add"

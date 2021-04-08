@@ -5,13 +5,26 @@ import androidx.hilt.lifecycle.ViewModelInject
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.recyclerview.widget.RecyclerView
 import com.zomato.photofilters.imageprocessors.Filter
 import kotlinx.coroutines.launch
+
+sealed class SettngsScreenState(){
+    object Orientation: SettngsScreenState()
+    object Brightness: SettngsScreenState()
+    object Background: SettngsScreenState()
+    object Contrast: SettngsScreenState()
+    object Settings: SettngsScreenState()
+    object Filters: SettngsScreenState()
+}
 
 class FiltersViewModel@ViewModelInject constructor(
         private val repository: Repository,
         @Assisted private val savedStateHandle: SavedStateHandle
 ) : BaseViewModel(repository, savedStateHandle) {
+
+    val orientationAdapter = OrientationAdapter()
+    var screenState: SettngsScreenState = SettngsScreenState.Filters
 
     fun applyFilter(position: Int, filter: Filter?): Boolean {
         //viewModelScope.launch {
@@ -23,6 +36,25 @@ class FiltersViewModel@ViewModelInject constructor(
         adapter.delete(currentPosition)
         viewModelScope.launch {
             modelState.emit(ModelState.Success("Delete"))
+        }
+    }
+
+    fun setState(orientation: SettngsScreenState) {
+        screenState = orientation
+        viewModelScope.launch {
+            modelState.emit(ModelState.Success(orientation))
+        }
+    }
+
+    fun getCurrentRotation(currentPosition: Int): CharSequence? {
+        return try {
+            when (adapter.rotationMode) {
+                is RotationMode.RotationX -> { adapter.getCurrentFile(currentPosition).rotationX.toString() }
+                is RotationMode.RotationY -> { adapter.getCurrentFile(currentPosition).rotationY.toString() }
+                else -> { adapter.getCurrentFile(currentPosition).rotationZ.toString() }
+            }
+        }catch (e: Exception){
+            "0.0"
         }
     }
 
