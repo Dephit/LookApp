@@ -1,10 +1,11 @@
 package com.sergeenko.lookapp
 
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import java.io.File
 
 data class GallaryImage(
-        val file: File,
+        val file: Uri,
         var isSelected: Boolean = false,
         var drawable: Drawable? = null
 )

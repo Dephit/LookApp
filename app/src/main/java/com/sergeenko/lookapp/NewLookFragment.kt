@@ -160,7 +160,7 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
                 val msg = "Photo capture succeeded: $savedUri"
                 galleryAddPic(savedUri)
                 viewModel.selectedList.clear()
-                viewModel.onImageAdd(GallaryImage(photoFile, true))
+                viewModel.onImageAdd(GallaryImage(savedUri, true))
                 viewModel.savePhoto()
                 Log.d(TAG, msg)
             }

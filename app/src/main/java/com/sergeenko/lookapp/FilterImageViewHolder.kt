@@ -44,7 +44,7 @@ class FilterImageViewHolder(itemView: View, val height: Int): RecyclerView.ViewH
     fun bind(file: FilterImage, canScroll: ()-> Boolean){
         if(file.bitmap == null) {
             Picasso.get()
-                .load(Uri.fromFile(file.file))
+                .load(file.file)
                 .placeholder(R.drawable.look_img_background)
                 .into(binding.img, object : Callback {
                     override fun onSuccess() {

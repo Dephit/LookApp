@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Canvas
 import android.graphics.Color
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -118,7 +119,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             viewModel.setState(SettngsScreenState.Filters)
         }
 
-        val file = arguments?.getSerializable("files") as List<File>
+        val file = arguments?.getParcelableArrayList<Uri>("files")
 
         binding.toolbarGallary.setNavigationOnClickListener {
             if(viewModel.screenState is SettngsScreenState.Filters || viewModel.screenState is SettngsScreenState.Settings) {
@@ -309,7 +310,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
             binding.contrastValueText.text = value.toInt().toString()
         }
 
-        setCurrentListSlider(file.size)
+        setCurrentListSlider(file!!.size)
 
         setRV(file.map { FilterImage(it, null) })
 

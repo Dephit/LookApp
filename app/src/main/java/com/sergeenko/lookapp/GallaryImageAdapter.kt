@@ -1,11 +1,12 @@
 package com.sergeenko.lookapp
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import java.io.File
 
-class GallaryImageAdapter(val onImageSelected: (File) -> Unit, val onImageAdd: (GallaryImage) -> Unit) : RecyclerView.Adapter<GallaryImageViewHolder>() {
+class GallaryImageAdapter(val onImageSelected: (Uri) -> Unit, val onImageAdd: (GallaryImage) -> Unit) : RecyclerView.Adapter<GallaryImageViewHolder>() {
 
     var fileList = listOf<GallaryImage>()
     var selectedCount = 0

@@ -17,7 +17,7 @@ class NewLookViewModel @ViewModelInject constructor(
 
     var isAutoTorchOn: Boolean = false
     val fileList = mutableListOf<GallaryImage>()
-    val selectedList = mutableListOf<File>()
+    val selectedList = mutableListOf<Uri>()
     var isCameraSelected: Boolean = true
 
     fun savePhoto() {
@@ -46,9 +46,9 @@ class NewLookViewModel @ViewModelInject constructor(
         }
     }
 
-    private fun selectImage(file: File){
+    private fun selectImage(file: Uri){
         viewModelScope.launch {
-            modelState.emit(ModelState.Success(Uri.fromFile(file)))
+            modelState.emit(ModelState.Success(file))
         }
     }
 
@@ -59,7 +59,7 @@ class NewLookViewModel @ViewModelInject constructor(
                 dcimPath.list { dir, name ->
                     File("${dir.absolutePath}/${name}").listFiles()?.forEach {
                         if(it.name.contains(".jpg") || it.name.contains(".jpeg") || it.name.contains(".png"))
-                            fileList.add(GallaryImage(it, false))
+                            fileList.add(GallaryImage(Uri.fromFile(it), false))
                     }
                     return@list true
                 }

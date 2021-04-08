@@ -12,12 +12,12 @@ class GallaryImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) 
 
     val binding: GallaryImageViewBinding = GallaryImageViewBinding.bind(itemView)
 
-    fun bind(file: GallaryImage, onImageSelected: (File) -> Unit, onImageAdd: (GallaryImage) -> Unit, selectedCount: Int){
+    fun bind(file: GallaryImage, onImageSelected: (Uri) -> Unit, onImageAdd: (GallaryImage) -> Unit, selectedCount: Int){
         if(file.drawable != null){
             binding.img.setImageDrawable(file.drawable)
         }else{
             Picasso.get()
-                    .load(Uri.fromFile(file.file))
+                    .load(file.file)
                     .placeholder(R.drawable.look_img_background)
                     .into(binding.img, object : Callback{
                         override fun onSuccess() {

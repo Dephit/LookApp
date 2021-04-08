@@ -1,6 +1,7 @@
 package com.sergeenko.lookapp
 
 import android.graphics.*
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -264,7 +265,7 @@ class FilterImageAdapter(val height: Int) : RecyclerView.Adapter<FilterImageView
 }
 
 data class FilterImage(
-        val file: File,
+        val file: Uri,
         var filter: Filter? = null,
         var bitmap: Bitmap? = null,
         var bitmapFiltered: Bitmap? = null,
