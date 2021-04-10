@@ -67,6 +67,9 @@ class FilterImageViewHolder(itemView: View, val height: Int): RecyclerView.ViewH
             file.backgroundColor?.let { it1 ->
                 binding.img.setBackgroundColor(Color.parseColor(it1))
                 binding.background.setBackgroundColor(Color.parseColor(it1))
+            } ?: run{
+                binding.img.setBackgroundColor(Color.parseColor(file.oldBackgroundColor))
+                binding.background.setBackgroundColor(Color.parseColor(file.oldBackgroundColor))
             }
 
             binding.img.animate()

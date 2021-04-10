@@ -1,5 +1,6 @@
 package com.sergeenko.lookapp
 
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
@@ -11,17 +12,22 @@ import java.io.File
 class GallaryImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) {
 
     val binding: GallaryImageViewBinding = GallaryImageViewBinding.bind(itemView)
+    /*var drawable: Drawable? = null*/
 
     fun bind(file: GallaryImage, onImageSelected: (Uri) -> Unit, onImageAdd: (GallaryImage) -> Unit, selectedCount: Int){
         if(file.drawable != null){
             binding.img.setImageDrawable(file.drawable)
         }else{
+            binding.progressBar6.visibility = View.VISIBLE
             Picasso.get()
                     .load(file.file)
                     .placeholder(R.drawable.look_img_background)
                     .into(binding.img, object : Callback{
                         override fun onSuccess() {
-                            file.drawable = binding.img.drawable
+                            /*if(drawable != binding.img.drawable) {
+                                drawable = binding.img.drawable
+                            }*/
+                            binding.progressBar6.visibility = View.GONE
                         }
 
                         override fun onError(e: Exception?) {
@@ -48,6 +54,7 @@ class GallaryImageViewHolder(itemView: View): RecyclerView.ViewHolder(itemView) 
             onImageSelected(file.file)
         }
     }
+
 
 }
 

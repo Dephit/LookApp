@@ -72,7 +72,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         binding.rv.adapter = adapter
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rv)
-        adapter.canScroll = { llm.canScrollHorizontally() }
+        adapter.canScroll = { viewModel.screenState != SettngsScreenState.Orientation }//llm.canScrollHorizontally() }
 
         if(adapter.fileList.isEmpty()){
             adapter.setList(_fileList = fileList)
@@ -339,22 +339,30 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                     llm.setScrollEnabled(false)
                 setOrientation()
             }else {
-                if(this::llm.isInitialized)
-                    llm.setScrollEnabled(true)
                 when(obj){
                     is SettngsScreenState.Filters -> {
+                        if(this::llm.isInitialized)
+                            llm.setScrollEnabled(true)
                         setFilters()
                     }
                     is SettngsScreenState.Settings -> {
+                        if(this::llm.isInitialized)
+                            llm.setScrollEnabled(true)
                         setSettings()
                     }
                     is SettngsScreenState.Brightness -> {
+                        if(this::llm.isInitialized)
+                            llm.setScrollEnabled(false)
                         setBrightness()
                     }
                     is SettngsScreenState.Contrast -> {
+                        if(this::llm.isInitialized)
+                            llm.setScrollEnabled(false)
                         setContrast()
                     }
                     is SettngsScreenState.Background -> {
+                        if(this::llm.isInitialized)
+                            llm.setScrollEnabled(false)
                         setBackground()
                     }
                 }
