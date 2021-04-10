@@ -1,6 +1,8 @@
 package com.sergeenko.lookapp
 
 import android.util.Log
+import com.sergeenko.lookapp.interfaces.Api
+import com.sergeenko.lookapp.interfaces.Repository
 import com.sergeenko.lookapp.models.*
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.Dispatchers.IO
@@ -188,7 +190,7 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }.flowOn(IO)
     }
 
-    override fun getLook(a: Int, i: Int, requestedLoadSize: Int): FakeLook{
+    override fun getLook(a: Int, i: Int, requestedLoadSize: Int): FakeLook {
         val isPost = Random.nextBoolean()
         return FakeLook(a, i, requestedLoadSize, isPost,
             List(if (isPost) 1 else Random.nextInt(1, 10)) {

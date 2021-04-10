@@ -1,0 +1,13 @@
+package com.sergeenko.lookapp.viewModels
+
+import androidx.hilt.Assisted
+import androidx.hilt.lifecycle.ViewModelInject
+import androidx.lifecycle.SavedStateHandle
+import com.sergeenko.lookapp.interfaces.Repository
+
+class FinaLookScreenViewModel  @ViewModelInject constructor(
+        private val repository: Repository,
+        @Assisted private val savedStateHandle: SavedStateHandle
+) : BaseViewModel(repository, savedStateHandle) {
+
+}

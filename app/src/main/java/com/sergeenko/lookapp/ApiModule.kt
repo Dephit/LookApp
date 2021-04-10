@@ -2,10 +2,9 @@ package com.sergeenko.lookapp
 
 import android.content.Context
 import androidx.room.Room
-import com.sergeenko.lookapp.models.BrandDao
-import com.sergeenko.lookapp.models.CodeDao
-import com.sergeenko.lookapp.models.CurrencyDao
-import com.sergeenko.lookapp.models.TypeDao
+import com.sergeenko.lookapp.interfaces.Api
+import com.sergeenko.lookapp.interfaces.Repository
+import com.sergeenko.lookapp.models.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout9"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CommentsFragment">
+    tools:context=".fragments.CommentsFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".CommentsFragment">
+        tools:context=".fragments.CommentsFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"
@@ -150,7 +150,7 @@
                 app:layout_constraintTop_toTopOf="@+id/avatar"
                 app:layout_constraintVertical_bias="0">
 
-                <com.sergeenko.lookapp.ZanyDoubleText
+                <com.sergeenko.lookapp.fragments.ZanyDoubleText
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_32sdp"
                     android:background="@drawable/button_bg"

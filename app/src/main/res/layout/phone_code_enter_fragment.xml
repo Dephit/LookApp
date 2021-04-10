@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".PhoneCodeEnterFragment">
+    tools:context=".fragments.PhoneCodeEnterFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -15,7 +15,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".PhoneCodeEnterFragment">
+        tools:context=".fragments.PhoneCodeEnterFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"
@@ -107,7 +107,7 @@
             app:layout_constraintTop_toBottomOf="@+id/phone_text"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.fragments.ZanyEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_bg"
@@ -141,7 +141,7 @@
             app:layout_constraintStart_toEndOf="@+id/code_1"
             app:layout_constraintTop_toBottomOf="@+id/phone_text">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.fragments.ZanyEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_bg"
@@ -176,7 +176,7 @@
             app:layout_constraintTop_toBottomOf="@+id/phone_text"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.fragments.ZanyEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_bg"
@@ -212,7 +212,7 @@
             app:layout_constraintTop_toBottomOf="@+id/phone_text"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.fragments.ZanyEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_bg"
@@ -250,7 +250,7 @@
             app:layout_constraintTop_toBottomOf="@+id/phone_text"
             app:layout_constraintVertical_bias="0">
 
-            <com.sergeenko.lookapp.ZanyEditText
+            <com.sergeenko.lookapp.fragments.ZanyEditText
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/button_bg"

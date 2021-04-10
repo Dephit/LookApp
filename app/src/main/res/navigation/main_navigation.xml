@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/authFragment"
-        android:name="com.sergeenko.lookapp.AuthFragment"
+        android:name="com.sergeenko.lookapp.fragments.AuthFragment"
         android:label="auth_fragment"
         tools:layout="@layout/auth_fragment" >
         <action
@@ -28,7 +28,7 @@
     </fragment>
     <fragment
         android:id="@+id/phoneAuthFragment"
-        android:name="com.sergeenko.lookapp.PhoneAuthFragment"
+        android:name="com.sergeenko.lookapp.fragments.PhoneAuthFragment"
         android:label="phone_auth_fragment"
         tools:layout="@layout/phone_auth_fragment" >
         <action
@@ -42,13 +42,13 @@
     </fragment>
     <fragment
         android:id="@+id/choseCodeFragment"
-        android:name="com.sergeenko.lookapp.ChoseCodeFragment"
+        android:name="com.sergeenko.lookapp.fragments.ChoseCodeFragment"
         android:label="chose_code_fragment"
 
         tools:layout="@layout/chose_code_fragment" />
     <fragment
         android:id="@+id/phoneCodeEnterFragment"
-        android:name="com.sergeenko.lookapp.PhoneCodeEnterFragment"
+        android:name="com.sergeenko.lookapp.fragments.PhoneCodeEnterFragment"
         android:label="phone_code_enter_fragment"
         tools:layout="@layout/phone_code_enter_fragment" >
         <action
@@ -58,7 +58,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerLoginFragment"
-        android:name="com.sergeenko.lookapp.RegisterLoginFragment"
+        android:name="com.sergeenko.lookapp.fragments.RegisterLoginFragment"
         android:label="register_login_fragment"
         tools:layout="@layout/register_login_fragment" >
         <action
@@ -68,12 +68,12 @@
     </fragment>
     <fragment
         android:id="@+id/postTapeFragment"
-        android:name="com.sergeenko.lookapp.PostTapeFragment"
+        android:name="com.sergeenko.lookapp.fragments.PostTapeFragment"
         android:label="post_tape_fragment"
         tools:layout="@layout/post_tape_fragment" />
     <fragment
         android:id="@+id/registrationStepOneFragment"
-        android:name="com.sergeenko.lookapp.RegistrationStepOneFragment"
+        android:name="com.sergeenko.lookapp.fragments.RegistrationStepOneFragment"
         android:label="registration_step_one_fragment"
         tools:layout="@layout/registration_step_one_fragment" >
         <action
@@ -83,7 +83,7 @@
     </fragment>
     <fragment
         android:id="@+id/registrationStepTwoFragment"
-        android:name="com.sergeenko.lookapp.RegistrationStepTwoFragment"
+        android:name="com.sergeenko.lookapp.fragments.RegistrationStepTwoFragment"
         android:label="registration_step_two_fragment"
         tools:layout="@layout/registration_step_two_fragment" >
         <action
@@ -93,7 +93,7 @@
     </fragment>
     <fragment
         android:id="@+id/registrationStepThreeFragment"
-        android:name="com.sergeenko.lookapp.RegistrationStepThreeFragment"
+        android:name="com.sergeenko.lookapp.fragments.RegistrationStepThreeFragment"
         android:label="registration_step_three_fragment"
         tools:layout="@layout/registration_step_three_fragment" >
         <action
@@ -103,7 +103,7 @@
     </fragment>
     <fragment
         android:id="@+id/registrationStepFourFragment"
-        android:name="com.sergeenko.lookapp.RegistrationStepFourFragment"
+        android:name="com.sergeenko.lookapp.fragments.RegistrationStepFourFragment"
         android:label="registration_step_four_fragment"
         tools:layout="@layout/registration_step_four_fragment" >
         <action

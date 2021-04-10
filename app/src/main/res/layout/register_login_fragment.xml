@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RegisterLoginFragment">
+    tools:context=".fragments.RegisterLoginFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout4"
@@ -16,7 +16,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".RegisterLoginFragment">
+        tools:context=".fragments.RegisterLoginFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"

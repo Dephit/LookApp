@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ChoseCodeFragment">
+    tools:context=".fragments.ChoseCodeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout3"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="@dimen/_minus25sdp"
-        tools:context=".ChoseCodeFragment">
+        tools:context=".fragments.ChoseCodeFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"

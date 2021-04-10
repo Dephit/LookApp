@@ -19,7 +19,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.LookApp">
-        <activity android:name=".MenuActivity"
+        <activity android:name=".activities.MenuActivity"
             android:screenOrientation="sensorPortrait"
             android:windowSoftInputMode="stateVisible|adjustResize|stateHidden"
             >
@@ -40,7 +40,7 @@
             android:theme="@style/Theme.LookApp"
             android:windowSoftInputMode="stateVisible|adjustResize|stateHidden" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".activities.SplashActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

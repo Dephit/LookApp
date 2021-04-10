@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout11"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FinaLookScreenFragment" >
+    tools:context=".fragments.FinaLookScreenFragment" >
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/frameLayout2"
@@ -18,7 +18,7 @@
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:context=".PhoneAuthFragment">
+        tools:context=".fragments.PhoneAuthFragment">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/card_view"

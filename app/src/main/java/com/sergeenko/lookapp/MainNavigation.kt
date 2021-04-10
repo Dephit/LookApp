@@ -3,11 +3,10 @@ package com.sergeenko.lookapp
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
-import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatDelegate
+import com.sergeenko.lookapp.activities.BaseActivity
 import com.vk.api.sdk.VK
-import com.vk.api.sdk.auth.VKAccessToken
 import com.vk.api.sdk.auth.VKAuthCallback
 import com.vk.api.sdk.auth.VKScope
 import dagger.hilt.android.AndroidEntryPoint

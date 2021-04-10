@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
-        android:name="com.sergeenko.lookapp.CommentsFragment"
+        android:name="com.sergeenko.lookapp.fragments.CommentsFragment"
         android:label="comments_fragment"
         tools:layout="@layout/comments_fragment" >
         <action
@@ -35,17 +35,17 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.sergeenko.lookapp.ProfileFragment"
+        android:name="com.sergeenko.lookapp.fragments.ProfileFragment"
         android:label="profile_fragment"
         tools:layout="@layout/profile_fragment" />
     <fragment
         android:id="@+id/postFragment"
-        android:name="com.sergeenko.lookapp.PostFragment"
+        android:name="com.sergeenko.lookapp.fragments.PostFragment"
         android:label="post_fragment"
         tools:layout="@layout/post_fragment" />
     <fragment
         android:id="@+id/newLookFragment"
-        android:name="com.sergeenko.lookapp.NewLookFragment"
+        android:name="com.sergeenko.lookapp.fragments.NewLookFragment"
         android:label="new_look_fragment"
         tools:layout="@layout/new_look_fragment" >
         <action
@@ -63,7 +63,7 @@
         app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/newPostFragment"
-        android:name="com.sergeenko.lookapp.NewPostFragment"
+        android:name="com.sergeenko.lookapp.fragments.NewPostFragment"
         android:label="new_post_fragment"
         tools:layout="@layout/new_post_fragment" />
     <action
@@ -72,7 +72,7 @@
         app:popUpToInclusive="true" />
     <fragment
         android:id="@+id/filtersFragment"
-        android:name="com.sergeenko.lookapp.FiltersFragment"
+        android:name="com.sergeenko.lookapp.fragments.FiltersFragment"
         android:label="filters_fragment"
         tools:layout="@layout/filters_fragment" >
         <action
@@ -86,12 +86,12 @@
     </fragment>
     <fragment
         android:id="@+id/finaLookScreenFragment"
-        android:name="com.sergeenko.lookapp.FinaLookScreenFragment"
+        android:name="com.sergeenko.lookapp.fragments.FinaLookScreenFragment"
         android:label="fina_look_screen_fragment"
         tools:layout="@layout/fina_look_screen_fragment" />
     <fragment
         android:id="@+id/orientationFragment"
-        android:name="com.sergeenko.lookapp.OrientationFragment"
+        android:name="com.sergeenko.lookapp.fragments.OrientationFragment"
         android:label="orientation_fragment"
         tools:layout="@layout/orientation_fragment" />
 </navigation>
