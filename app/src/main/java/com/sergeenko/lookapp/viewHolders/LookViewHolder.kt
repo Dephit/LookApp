@@ -30,8 +30,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.Gson
+import com.sergeenko.lookapp.R
 import com.sergeenko.lookapp.adapters.LookImgAdapter
 import com.sergeenko.lookapp.databinding.*
+import com.sergeenko.lookapp.interfaces.Repository
 import com.sergeenko.lookapp.models.Look
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso

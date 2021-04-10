@@ -16,8 +16,7 @@ import java.io.File
 
 class NewLookViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
 
     var isAutoTorchOn: Boolean = false
     val fileList = mutableListOf<GallaryImage>()

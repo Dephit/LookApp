@@ -26,8 +26,7 @@ import kotlinx.coroutines.withContext
 
 class CommentsViewModel  @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : PaggingListViewModel<Comment>(repository, savedStateHandle) {
+) : PaggingListViewModel<Comment>(repository) {
 
     private var commentToRespond: Comment? = null
     var selectedComment: Comment? = null
@@ -138,7 +137,7 @@ class CommentsViewModel  @ViewModelInject constructor(
         }
     }
 
-    suspend fun isMyPost(): Boolean {
+    fun isMyPost(): Boolean {
         if(repository.getUserFromDb()?.data?.id == selectedComment?.user?.id){
             return true
         }

@@ -21,8 +21,7 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class AuthViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
 
     fun logWithVk(token: VKAccessToken) {
         logIn(token.accessToken.trim(), "vkontakte")

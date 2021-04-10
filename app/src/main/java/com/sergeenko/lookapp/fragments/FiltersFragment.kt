@@ -47,13 +47,9 @@ import kotlin.math.abs
 
 @AndroidEntryPoint
 class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
-
-    private var thumbs: MutableList<ThumbnailItem> = mutableListOf()
     override val viewModel: FiltersViewModel by viewModels()
 
-    override fun bind(inflater: LayoutInflater): FiltersFragmentBinding = FiltersFragmentBinding.inflate(
-            inflater
-    )
+    override fun bind(inflater: LayoutInflater): FiltersFragmentBinding = FiltersFragmentBinding.inflate(inflater)
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -70,14 +66,14 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
     }
 
     private fun setRV(fileList: List<FilterImage>) {
-        viewModel.width = requireActivity().window.decorView.width
+        viewModel.adapter.width = requireActivity().window.decorView.width
         llm = CustomGridLayoutManager(context, RecyclerView.HORIZONTAL, false)
         val adapter = viewModel.adapter
         binding.rv.layoutManager = llm
         binding.rv.adapter = adapter
         val snapHelper = PagerSnapHelper()
         snapHelper.attachToRecyclerView(binding.rv)
-        adapter.canScroll = { viewModel.screenState != SettngsScreenState.Orientation }//llm.canScrollHorizontally() }
+        adapter.canScroll = { viewModel.screenState != SettngsScreenState.Orientation }
 
         if(adapter.fileList.isEmpty()){
             adapter.setList(_fileList = fileList)
@@ -107,7 +103,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
                         binding.filtersList.forEachIndexed { index, view ->
                             val b = FilterViewBinding.bind(view)
                             b.textView.isActivated =
-                                    thumbs[index].filter == currentFile.filter
+                                    viewModel.thumbs[index].filter == currentFile.filter
                         }
                         checkChanges()
                     }
@@ -379,40 +375,25 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         setNormalToolbar()
 
         if(binding.filtersList.isEmpty()) {
-            val filters: List<Filter> = FilterPack.getFilterPack(context)
             val inflater = LayoutInflater.from(context)
+            val thumbImage = BitmapFactory.decodeResource(resources, R.drawable.look_mock_bg)
 
-            val handler = Handler(Looper.myLooper()!!)
-            val r = Runnable {
-                val thumbImage = BitmapFactory.decodeResource(resources, R.drawable.look_mock_bg)
+            lifecycleScope.launch {
                 ThumbnailsManager.clearThumbs()
 
-                filters.forEach { filter ->
-                    val thumbnailItem = ThumbnailItem()
-                    thumbnailItem.image = thumbImage
-                    thumbnailItem.filter = filter
-                    thumbnailItem.filterName = filter.name
-                    ThumbnailsManager.addThumb(thumbnailItem);
+                FilterPack.getFilterPack(context).forEach {
+                    ThumbnailsManager.addThumb(ThumbnailItem().apply {
+                                image = thumbImage
+                                filter = it
+                                filterName = it.name
+                            })
                 }
 
-                thumbs = ThumbnailsManager.processThumbs(context)
-                thumbs.forEach {
-                    val img = FilterViewBinding.inflate(inflater, null, false)
-                    img.filterImg.setImageBitmap(it.image)
-                    img.filterImg.clipToOutline = true
-                    img.textView.text = it.filterName
-                    img.filterImg.setOnClickListener { _ ->
-                        binding.filtersList.forEach { view ->
-                            FilterViewBinding.bind(view).textView.isActivated = false
-                        }
-                        img.textView.isActivated =
-                            viewModel.applyFilter(currentPosition(), it.filter)
-                    }
-                    binding.filtersList.addView(img.root)
+                viewModel.thumbs = ThumbnailsManager.processThumbs(context)
+                viewModel.thumbs.forEach {
+                    binding.filtersList.addView(bindFilterViewBinding(inflater, it).root)
                 }
-
-            };
-            handler.post(r)
+            }
         }
         binding.settings.visibility = View.GONE
         binding.filters.visibility = View.VISIBLE
@@ -420,6 +401,21 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
         binding.newPhotoText.isActivated = true
         binding.gallaryText.isActivated = false
 
+    }
+
+    private fun bindFilterViewBinding(inflater: LayoutInflater, it: ThumbnailItem): FilterViewBinding {
+        val viewBinding = FilterViewBinding.inflate(inflater, null, false)
+        viewBinding.filterImg.setImageBitmap(it.image)
+        viewBinding.filterImg.clipToOutline = true
+        viewBinding.textView.text = it.filterName
+        viewBinding.filterImg.setOnClickListener { _ ->
+            binding.filtersList.forEach { view ->
+                FilterViewBinding.bind(view).textView.isActivated = false
+            }
+            viewBinding.textView.isActivated =
+                    viewModel.applyFilter(currentPosition(), it.filter)
+        }
+        return viewBinding
     }
 
     private fun setNormalToolbar() {

@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.sergeenko.lookapp.LookViewHolder
 import com.sergeenko.lookapp.models.ModelState
 import com.sergeenko.lookapp.R
 import com.sergeenko.lookapp.interfaces.Repository
 import com.sergeenko.lookapp.models.Look
 import com.sergeenko.lookapp.viewHolders.LookErrorViewHolder
+import com.sergeenko.lookapp.viewHolders.LookViewHolder
 import kotlinx.coroutines.CoroutineScope
 import java.lang.Exception
 

@@ -9,19 +9,21 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.viewHolders.FilterImageViewHolder
 import com.sergeenko.lookapp.R
 import com.zomato.photofilters.imageprocessors.Filter
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import javax.inject.Inject
 
 
-class FilterImageAdapter(val height: Int) : RecyclerView.Adapter<FilterImageViewHolder>() {
+class FilterImageAdapter @Inject constructor() : RecyclerView.Adapter<FilterImageViewHolder>() {
 
+    var width: Int = 0
+    lateinit var scope: CoroutineScope
     var canScroll: () -> Boolean = { true }
     var fileList = listOf<FilterImage>()
-    var selectedCount = 0
     var rotationMode: RotationMode = RotationMode.None
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FilterImageViewHolder {
-        return FilterImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.filter_image_view, null, false), height)
+        return FilterImageViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.filter_image_view, null, false), width, scope)
     }
 
     fun delete(currentId: Int){
@@ -271,8 +273,7 @@ data class FilterImage(
         var bitmapFiltered: Bitmap? = null,
         var scale: Float = 1f,
         var xCoord: Float = 0f,
-        var yCoord: Float = 0f,
-        var view: View? = null
+        var yCoord: Float = 0f
 ) {
 
     var rotationX: Float = 0f

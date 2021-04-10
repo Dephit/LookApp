@@ -7,7 +7,6 @@ import com.sergeenko.lookapp.interfaces.Repository
 
 class FinaLookScreenViewModel  @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
 
 }

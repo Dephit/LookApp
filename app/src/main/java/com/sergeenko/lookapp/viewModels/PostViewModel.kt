@@ -9,9 +9,8 @@ import com.sergeenko.lookapp.models.Img
 
 class PostViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle,
         private val countryCodeDao: CodeDao
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
 
     fun getImg(): Img {
         return repository.getImg(0,0,0, 0, false)

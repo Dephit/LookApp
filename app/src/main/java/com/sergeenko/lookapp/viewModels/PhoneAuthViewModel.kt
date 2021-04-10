@@ -19,9 +19,8 @@ import java.lang.Exception
 
 class PhoneAuthViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle,
         private val countryCodeDao: CodeDao
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
 
     var phone: String = ""
     var selectedCode: Code? = null

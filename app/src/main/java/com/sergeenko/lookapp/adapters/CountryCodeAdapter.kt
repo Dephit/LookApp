@@ -7,8 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import com.sergeenko.lookapp.viewHolders.CountryCodeViewHolder
 import com.sergeenko.lookapp.R
 import com.sergeenko.lookapp.models.Code
+import javax.inject.Inject
 
-class CountryCodeAdapter : PagedListAdapter<Code, CountryCodeViewHolder>(DIFF_CALLBACK) {
+class CountryCodeAdapter @Inject constructor() : PagedListAdapter<Code, CountryCodeViewHolder>(DIFF_CALLBACK) {
 
     override fun onBindViewHolder(holder: CountryCodeViewHolder, position: Int) {
         getItem(position)?.let { holder.bind(it) {

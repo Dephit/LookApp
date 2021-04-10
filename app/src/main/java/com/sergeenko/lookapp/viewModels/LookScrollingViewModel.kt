@@ -14,8 +14,7 @@ import com.sergeenko.lookapp.models.Look
 
 class LookScrollingViewModel @ViewModelInject constructor(
         val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle,
-) : PaggingListViewModel<Look>(repository, savedStateHandle) {
+) : PaggingListViewModel<Look>(repository) {
 
     var lastPostion: Int? = null
 

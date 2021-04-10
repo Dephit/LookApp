@@ -18,9 +18,8 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 @FlowPreview
 class RegisterLoginViewModel @ViewModelInject constructor(
-        private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+        private val repository: Repository
+) : BaseViewModel(repository) {
 
     var email: String = ""
     private val errorFlow: MutableStateFlow<String> = MutableStateFlow("")

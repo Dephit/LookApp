@@ -7,8 +7,7 @@ import com.sergeenko.lookapp.interfaces.Repository
 
 class RegistrationStepThreeViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+) : BaseViewModel(repository) {
     var weight: String? = "66"
 
     fun weight(newVal: String) {

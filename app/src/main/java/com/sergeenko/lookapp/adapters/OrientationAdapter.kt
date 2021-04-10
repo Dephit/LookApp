@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.sergeenko.lookapp.viewHolders.OrientationViewHolder
 import com.sergeenko.lookapp.R
+import javax.inject.Inject
 
 sealed class RotationMode{
     object RotationZ : RotationMode()
@@ -13,9 +14,9 @@ sealed class RotationMode{
     object None : RotationMode()
 }
 
-class OrientationAdapter : RecyclerView.Adapter<OrientationViewHolder>() {
+class OrientationAdapter @Inject constructor() : RecyclerView.Adapter<OrientationViewHolder>() {
 
-    var list = List(10000) {}
+    var list = List(20) {}
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): OrientationViewHolder {
         return OrientationViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.orientation_view, null, false))
@@ -26,7 +27,7 @@ class OrientationAdapter : RecyclerView.Adapter<OrientationViewHolder>() {
     }
 
     override fun getItemCount(): Int {
-        return list.size
+        return Int.MAX_VALUE
     }
 
 }

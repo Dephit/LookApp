@@ -10,9 +10,10 @@ import com.sergeenko.lookapp.adapters.FilterImageAdapter
 import com.sergeenko.lookapp.adapters.OrientationAdapter
 import com.sergeenko.lookapp.adapters.RotationMode
 import com.zomato.photofilters.imageprocessors.Filter
+import com.zomato.photofilters.utils.ThumbnailItem
 import kotlinx.coroutines.launch
 
-sealed class SettngsScreenState(){
+sealed class SettngsScreenState{
     object Orientation: SettngsScreenState()
     object Brightness: SettngsScreenState()
     object Background: SettngsScreenState()
@@ -23,16 +24,19 @@ sealed class SettngsScreenState(){
 
 class FiltersViewModel@ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+        val orientationAdapter: OrientationAdapter,
+        val adapter: FilterImageAdapter,
+) : BaseViewModel(repository) {
 
-    val orientationAdapter = OrientationAdapter()
     var screenState: SettngsScreenState = SettngsScreenState.Filters
+    var thumbs: MutableList<ThumbnailItem> = mutableListOf()
+
+    init {
+        adapter.scope = viewModelScope
+    }
 
     fun applyFilter(position: Int, filter: Filter?): Boolean {
-        //viewModelScope.launch {
         return adapter.applyFilter(position, filter)
-        //}
     }
 
     fun delete(currentPosition: Int) {
@@ -59,11 +63,5 @@ class FiltersViewModel@ViewModelInject constructor(
         }catch (e: Exception){
             "0.0"
         }
-    }
-
-    var width = 0
-
-    val adapter: FilterImageAdapter by lazy{
-        FilterImageAdapter(width)
     }
 }

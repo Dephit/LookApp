@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
 class PhoneCodeEnterViewModel @ViewModelInject constructor(
-        private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+        private val repository: Repository
+) : BaseViewModel(repository) {
 
     @ExperimentalCoroutinesApi
     fun sendCodeAgain(phone: String?) {

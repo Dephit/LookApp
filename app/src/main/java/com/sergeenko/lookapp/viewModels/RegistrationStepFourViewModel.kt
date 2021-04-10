@@ -13,9 +13,8 @@ import kotlinx.coroutines.launch
 
 @ExperimentalCoroutinesApi
 class RegistrationStepFourViewModel @ViewModelInject constructor(
-        private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+        private val repository: Repository
+) : BaseViewModel(repository) {
 
     var chest: String? = "66"
     var waist: String? = "66"

@@ -9,8 +9,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
 open class BaseViewModel constructor(
-        private val repository: Repository,
-        private val savedStateHandle: SavedStateHandle
+        private val repository: Repository
 ): ViewModel(), BaseViewModelInterface {
 
     @ExperimentalCoroutinesApi

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
-abstract class PaggingListViewModel<U>(repository: Repository, savedStateHandle: SavedStateHandle) : BaseViewModel(repository, savedStateHandle) {
+abstract class PaggingListViewModel<U>(repository: Repository) : BaseViewModel(repository) {
 
     lateinit var adapter: MyBaseAdapter<U>
     var isListInited = false

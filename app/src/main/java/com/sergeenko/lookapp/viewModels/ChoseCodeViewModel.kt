@@ -21,9 +21,9 @@ import kotlinx.coroutines.launch
 @ExperimentalCoroutinesApi
 class ChoseCodeViewModel @ViewModelInject constructor(
         private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle,
-        private val countryCodeDao: CodeDao
-) : BaseViewModel(repository, savedStateHandle) {
+        private val countryCodeDao: CodeDao,
+        private val adapter: CountryCodeAdapter
+) : BaseViewModel(repository) {
 
     fun choseCountryCode() {
         val countryCode = adapter.currentList?.find { countryCode -> countryCode.isSelected}
@@ -54,10 +54,6 @@ class ChoseCodeViewModel @ViewModelInject constructor(
                 }
         }
         return adapter
-    }
-
-    private val adapter: CountryCodeAdapter by lazy {
-        CountryCodeAdapter()
     }
 
     private val countryCodeFlow: Flow<PagedList<Code>> =

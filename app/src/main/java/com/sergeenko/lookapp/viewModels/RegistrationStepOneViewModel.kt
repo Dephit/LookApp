@@ -6,9 +6,8 @@ import androidx.lifecycle.SavedStateHandle
 import com.sergeenko.lookapp.interfaces.Repository
 
 class RegistrationStepOneViewModel @ViewModelInject constructor(
-        private val repository: Repository,
-        @Assisted private val savedStateHandle: SavedStateHandle
-) : BaseViewModel(repository, savedStateHandle) {
+        private val repository: Repository
+) : BaseViewModel(repository) {
 
     var gender: String? = null
     var genderNum: Int? = null
