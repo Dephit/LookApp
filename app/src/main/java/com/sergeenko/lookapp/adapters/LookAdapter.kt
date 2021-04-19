@@ -16,8 +16,12 @@ import java.lang.Exception
 class LookAdapter(
         val viewModelScope: CoroutineScope,
         val repository: Repository,
-        private val onError: () -> Unit,
+        private val onError: () -> Unit
 ) : MyBaseAdapter<Look>(DIFF_CALLBACK) {
+
+    var disableScroll = {
+
+    }
 
     private var h: Int = 0
     private val DATA_VIEW_TYPE = 1
@@ -25,7 +29,7 @@ class LookAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository, height = h) } }
+            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository, height = h, disableScroll = disableScroll) } }
             is LookErrorViewHolder -> { holder.bind(getState(), onError) }
         }
     }
@@ -57,7 +61,7 @@ class LookAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return if (getState() !is ModelState.Error<*> && getState() !is ModelState.Loading && itemCount > 0) LookViewHolder(
-            LayoutInflater.from(parent.context).inflate(R.layout.look_view, parent, false),
+            LayoutInflater.from(parent.context).inflate(R.layout.look_view, parent, false)
         ) else LookErrorViewHolder(
             LayoutInflater.from(parent.context).inflate(R.layout.look_error_view, parent, false)
         )

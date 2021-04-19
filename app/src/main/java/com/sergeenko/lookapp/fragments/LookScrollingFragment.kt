@@ -11,8 +11,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.SmoothScroller.ScrollVectorProvider
+import com.sergeenko.lookapp.adapters.LookAdapter
 import com.sergeenko.lookapp.databinding.LookScrollingFragmentBinding
 import com.sergeenko.lookapp.fragments.BaseFragment
+import com.sergeenko.lookapp.fragments.CustomGridLayoutManager
 import com.sergeenko.lookapp.viewModels.LookScrollingViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
@@ -57,7 +59,11 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
     }
 
     private fun setRV(rv: RecyclerView) {
-        val llm = LinearLayoutManager(context)
+        val llm = CustomGridLayoutManager(context, RecyclerView.VERTICAL, false)
+        (viewModel.adapter as LookAdapter).disableScroll = {
+            llm.setScrollEnabled(false)
+        }
+        llm.setScrollEnabled(false)
         rv.layoutManager = llm
         rv.adapter = viewModel.collectData()
         binding.rv.post {
@@ -66,13 +72,13 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         if(viewModel.lastPostion == null)
             viewModel.lastPostion = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
 
-        var snapHelper: PagerSnapHelper? = PagerSnapHelper()
-        binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+        //val snapHelper = PagerSnapHelper()
+        /*binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             var allowToScroll = true
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                val first: Int = llm.findFirstVisibleItemPosition()
+               *//* val first: Int = llm.findFirstVisibleItemPosition()
                 val last: Int = llm.findLastVisibleItemPosition()
                 val newPosition =
                         when {
@@ -82,9 +88,11 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                         }
 
                 if(viewModel.adapter.isPostOpen(viewModel.lastPostion!!)){
-                    snapHelper?.attachToRecyclerView(null)
+                    //llm.setScrollEnabled(false)
+                    snapHelper.attachToRecyclerView(null)
                 }else{
-                    snapHelper?.attachToRecyclerView(binding.rv)
+                    //llm.setScrollEnabled(true)
+                    snapHelper.attachToRecyclerView(binding.rv)
                 }
 
                 if (newPosition != viewModel.lastPostion && !isCurrentListOpen(dy)) {
@@ -100,10 +108,10 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
                             allowToScroll = true
                         }
                     }
-                }
+                }*//*
                 super.onScrolled(recyclerView, dx, dy)
             }
-        })
+        })*/
         viewModel.collectState()
     }
 

@@ -25,6 +25,7 @@ import android.widget.*
 import androidx.core.os.bundleOf
 import androidx.core.view.forEachIndexed
 import androidx.core.view.get
+import androidx.core.view.updateLayoutParams
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -44,14 +45,14 @@ import kotlinx.coroutines.flow.onCompletion
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 
-    class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private var repository: Repository? = null
     private var viewModelScope: CoroutineScope? = null
 
     var handler: Handler = Handler(Looper.myLooper()!!)
     private var llm: LinearLayoutManager
-    val more = getString(R.string.more)
+    private val more = getString(R.string.more)
     private var binding: LookViewBinding = LookViewBinding.bind(itemView)
 
     init {
@@ -65,27 +66,27 @@ import kotlinx.coroutines.launch
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int){
+    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int, disableScroll: ()-> Unit){
         this.repository = repository
         this.viewModelScope = viewModelScope
         with(binding){
             pageList.removeAllViews()
             fill.clipToOutline = true
-            hideWholePost(look)
+            hideWholePost(look, height)
 
-            val lp = imgView.layoutParams
-            lp.height = height
-            imgView.layoutParams = lp
+            imgView.updateLayoutParams {
+                this.height = height
+            }
 
-            val lp2 = header.layoutParams
-            lp2.height = height
-            header.layoutParams = lp2
+            header.updateLayoutParams {
+                this.height = height
+            }
 
             (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
 
             setLookPost(look)
 
-            setListeners(look, height)
+            setListeners(look, height, disableScroll)
             setAuthor(look)
 
             dislike.isActivated = look.is_dislike
@@ -290,7 +291,7 @@ import kotlinx.coroutines.launch
         }
     }
 
-    private fun setListeners(look: Look, height: Int) {
+    private fun setListeners(look: Look, height: Int, disableScroll: ()-> Unit) {
         with(binding) {
             like.setOnClickListener {
                 manageLike(it, look)
@@ -349,11 +350,11 @@ import kotlinx.coroutines.launch
             }
 
             toPost.setOnClickListener {
-                showWholePost(look, height = height)
+                showWholePost(look, height = height, disableScroll)
             }
 
             back.setOnClickListener {
-                hideWholePost(look)
+                hideWholePost(look, height)
             }
 
             autorImg.setOnClickListener {
@@ -375,15 +376,24 @@ import kotlinx.coroutines.launch
         }
     }
 
-    fun hideWholePost(look: Look){
+    private fun hideWholePost(look: Look, height: Int){
         binding.back.visibility = View.GONE
         binding.toPost.visibility = View.VISIBLE
         binding.pageList.visibility = View.GONE
         binding.postLikes.visibility = View.GONE
+
+        binding.imgView.updateLayoutParams {
+            this.height = height
+        }
+
+        binding.header.updateLayoutParams {
+            this.height = height
+        }
+
         look.isPostOpen = false
     }
 
-    private fun showWholePost(look: Look, height: Int) {
+    private fun showWholePost(look: Look, height: Int, disableScroll: ()-> Unit) {
         if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
             val inflayer = LayoutInflater.from(itemView.context)
             look.body.forEach {
@@ -428,7 +438,7 @@ import kotlinx.coroutines.launch
                                 .replace("created=", "created=\"")
                                 .replace(", is_like=", "\", is_like=")
 
-                        tv.bind(Gson().fromJson(str, Look::class.java), repository!!, viewModelScope!!, height = height)
+                        tv.bind(Gson().fromJson(str, Look::class.java), repository!!, viewModelScope!!, height = height, disableScroll)
                         tv.binding.more.visibility = View.GONE
                         tv1.card.addView(tv.binding.root)
                         binding.pageList.addView(tv1.root)
@@ -441,7 +451,16 @@ import kotlinx.coroutines.launch
         binding.pageList.visibility = View.VISIBLE
         binding.toPost.visibility = View.GONE
 
+        binding.imgView.updateLayoutParams {
+            this.height = (height * 0.7f).toInt()
+        }
+
+        binding.header.updateLayoutParams {
+            this.height = (height * 0.7f).toInt()
+        }
+
         look.isPostOpen = true
+        disableScroll()
     }
 
     private fun manageFavorite(view: View, look: Look) {

@@ -50,7 +50,7 @@ class AuthViewModel @ViewModelInject constructor(
                         }
 
             } catch (e: ApiException) {
-                //modelState.emit(ModelState.Error(e.localizedMessage))
+                modelState.emit(ModelState.Success(null))
             }
         }
     }

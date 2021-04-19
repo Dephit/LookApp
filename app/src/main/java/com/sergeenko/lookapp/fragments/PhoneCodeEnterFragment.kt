@@ -16,6 +16,7 @@ import android.view.inputmethod.InputConnectionWrapper
 import android.widget.EditText
 import android.widget.TextView
 import androidx.core.widget.addTextChangedListener
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.navGraphViewModels
@@ -36,9 +37,7 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class PhoneCodeEnterFragment : BaseFragment<PhoneCodeEnterFragmentBinding>() {
 
-    override val viewModel: PhoneCodeEnterViewModel by navGraphViewModels(R.id.main_navigation) {
-        defaultViewModelProviderFactory
-    }
+    override val viewModel: PhoneCodeEnterViewModel by viewModels()
 
     override fun <T> manageSuccess(obj: T?) {
         if(obj is SocialResponse) {

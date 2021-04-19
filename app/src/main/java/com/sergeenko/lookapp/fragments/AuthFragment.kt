@@ -37,6 +37,7 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.util.*
 
 
+
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class AuthFragment : BaseFragment<AuthFragmentBinding>() {
@@ -45,6 +46,7 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
     private lateinit var mGoogleSignInClient: GoogleSignInClient
     private lateinit var gso: GoogleSignInOptions
     private lateinit var fbCallbackManager: CallbackManager
+    var showVk = false
 
     override val viewModel: AuthViewModel by navGraphViewModels(R.id.main_navigation) {
         defaultViewModelProviderFactory
@@ -66,34 +68,48 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
             registerFBLoginCallback(loginManager)
 
             facebookAuth.setOnClickListener {
-                facebookAuth.showPinkProgress()
+                disableButtons()
+                //facebookAuth.showPinkProgress()
                 loginManager.logInWithReadPermissions(this@AuthFragment, listOf("public_profile", "email"));
             }
 
             googleAuth.setOnClickListener {
-                googleAuth.showPinkProgress()
+                disableButtons()
+                        //googleAuth.showPinkProgress()
                 val signInIntent: Intent = mGoogleSignInClient.signInIntent
                 startActivityForResult(signInIntent, RC_SIGN_IN)
             }
+
             vkAuth.setOnClickListener {
-                vkAuth.showPinkProgress()
+                disableButtons()
+                showVk = true
+                //vkAuth.showPinkProgress()
                 (requireActivity() as MainNavigation).vkLogin(manageVkResponse())
             }
             setSpannableText(binding.authWithPhone, R.string.auth_with_phone)
         }
     }
 
+
+
     override fun <T> manageSuccess(obj: T?) {
         if(obj is SocialResponse){
+            disableButtons()
             startMainActivity(obj, R.id.action_authFragment_to_registerLoginFragment)
             viewModel.restoreState()
+        }else{
+            enableButtons()
         }
+
     }
 
     override fun <T> manageError(error: T?) {
         if(error is String){
             showToast(error)
         }
+        binding.googleAuth.isEnabled = true
+        binding.facebookAuth.isEnabled = true
+        binding.vkAuth.isEnabled = true
         super.manageError(error)
     }
 
@@ -101,14 +117,17 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
         loginManager.registerCallback(fbCallbackManager, object : FacebookCallback<LoginResult?> {
             override fun onSuccess(loginResult: LoginResult?) {
                 binding.facebookAuth.hideProgress(R.string.facebook_text)
+                disableButtons()
                 viewModel.logWithFacebook(loginResult)
             }
 
             override fun onCancel() {
+                enableButtons()
                 binding.facebookAuth.hideProgress(R.string.facebook_text)
             }
 
             override fun onError(exception: FacebookException) {
+                enableButtons()
                 binding.facebookAuth.hideProgress(R.string.facebook_text)
             }
         })
@@ -117,9 +136,25 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
 
     override fun onResume() {
         super.onResume()
-        if(binding.vkAuth.isProgressActive()){
+        if(showVk){
+            enableButtons()
+            showVk = false
             binding.vkAuth.hideProgress(R.string.vk_text)
         }
+    }
+
+    fun enableButtons(){
+        binding.googleAuth.isEnabled = true
+        binding.facebookAuth.isEnabled = true
+        binding.vkAuth.isEnabled = true
+        binding.authWithPhone.isEnabled = true
+    }
+
+    fun disableButtons(){
+        binding.googleAuth.isEnabled = false
+        binding.facebookAuth.isEnabled = false
+        binding.vkAuth.isEnabled = false
+        binding.authWithPhone.isEnabled = false
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -132,6 +167,8 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
         if (requestCode == RC_SIGN_IN) {
             val task: Task<GoogleSignInAccount> = GoogleSignIn.getSignedInAccountFromIntent(data)
             handleSignInResult(task)
+        }else{
+            enableButtons()
         }
     }
 
@@ -139,10 +176,12 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
         return object: VKAuthCallback {
             override fun onLogin(token: VKAccessToken) {
                 binding.vkAuth.hideProgress(R.string.vk_text)
+                disableButtons()
                 viewModel.logWithVk(token)
             }
 
             override fun onLoginFailed(errorCode: Int) {
+                enableButtons()
                 binding.vkAuth.hideProgress(R.string.vk_text)
             }
         }
@@ -182,8 +221,14 @@ class AuthFragment : BaseFragment<AuthFragmentBinding>() {
     }
 
 
+
+
     private fun logInWithPhone() {
-        findNavController().navigate(R.id.action_authFragment_to_phoneAuthFragment)
+        try {
+            findNavController().navigate(R.id.action_authFragment_to_phoneAuthFragment)
+        }catch (e: Exception){
+
+        }
     }
 
     override fun bind(inflater: LayoutInflater): AuthFragmentBinding {

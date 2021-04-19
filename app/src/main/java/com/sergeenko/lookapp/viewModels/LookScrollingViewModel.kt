@@ -28,8 +28,14 @@ class LookScrollingViewModel @ViewModelInject constructor(
         lookList = LivePagedListBuilder(newsDataSourceFactory, config).build().asFlow()
     }
 
+    var disableScroll = {
+
+    }
+
     override fun createAdapter(): MyBaseAdapter<Look> {
-        return LookAdapter(viewModelScope = viewModelScope, repository = repository) { retry() }
+        return LookAdapter(viewModelScope = viewModelScope, repository = repository,
+            { retry() },
+        )
     }
 
     override fun getDataSourceFactory(): MyDataSource<Look> {
