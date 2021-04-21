@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/lookScrollingFragment"
-        android:name="com.sergeenko.lookapp.LookScrollingFragment"
+        android:name="com.sergeenko.lookapp.fragments.LookScrollingFragment"
         android:label="look_scrolling_fragment"
         tools:layout="@layout/look_scrolling_fragment" >
         <action

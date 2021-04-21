@@ -642,6 +642,7 @@ class FiltersFragment : BaseFragment<FiltersFragmentBinding>() {
 }
 
 class CustomGridLayoutManager(context: Context?, horizontal: Int, b: Boolean) : LinearLayoutManager(context, horizontal, b) {
+
     private var isScrollEnabled = true
 
     fun setScrollEnabled(flag: Boolean) {
@@ -651,5 +652,10 @@ class CustomGridLayoutManager(context: Context?, horizontal: Int, b: Boolean) : 
     override fun canScrollHorizontally():  Boolean {
         //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
         return isScrollEnabled && super.canScrollHorizontally()
+    }
+
+    override fun canScrollVertically(): Boolean {
+        //Similarly you can customize "canScrollHorizontally()" for managing horizontal scroll
+        return isScrollEnabled && super.canScrollVertically()
     }
 }

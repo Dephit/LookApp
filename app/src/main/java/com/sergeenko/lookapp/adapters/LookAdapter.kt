@@ -19,7 +19,7 @@ class LookAdapter(
         private val onError: () -> Unit
 ) : MyBaseAdapter<Look>(DIFF_CALLBACK) {
 
-    var disableScroll = {
+    var disableScroll: (Boolean) -> Unit = {
 
     }
 
@@ -29,7 +29,7 @@ class LookAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
-            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository, height = h, disableScroll = disableScroll) } }
+            is LookViewHolder -> { getItem(position)?.let { holder.bind(it, viewModelScope = viewModelScope, repository = repository, h = h, disableScroll = disableScroll) } }
             is LookErrorViewHolder -> { holder.bind(getState(), onError) }
         }
     }

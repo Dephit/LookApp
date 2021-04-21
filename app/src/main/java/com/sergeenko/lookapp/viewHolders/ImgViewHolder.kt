@@ -30,6 +30,21 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
         }
     }
 
+    fun formatWithThousandsSeparator(num: Int): String {
+        val numAsString = num.toString();
+        var str = ""
+
+
+        for (i in numAsString.indices) {
+            if(i % 3 == 1){
+                str += "${numAsString[i]} "
+            }else {
+                str += numAsString[i]
+            }
+        }
+        return str
+    }
+
     private fun loadImg(img: Image) {
         showDots(img)
         Picasso.get()
@@ -38,9 +53,6 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
             .error(R.drawable.background_splash)
             .into(binding.lookImg, object : Callback {
                 override fun onSuccess() {
-                    binding.lookImg.post {
-                        binding.lookImg.clipToOutline = true
-                    }
                     binding.progressBar.visibility = View.GONE
                 }
 
@@ -81,7 +93,7 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
                 .into(price.logo)
 
             price.title.text = mark.label
-            price.price.text = "${mark.price} ${mark.currency}"
+            price.price.text = "${formatWithThousandsSeparator(mark.price)} ${mark.currency}"
         }
         binding.totalText.text = "${getString(R.string.total)} - ${img.total} ${getString(R.string.ruble)}"
     }

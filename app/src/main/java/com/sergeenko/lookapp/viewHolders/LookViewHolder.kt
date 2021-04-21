@@ -23,9 +23,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.core.os.bundleOf
-import androidx.core.view.forEachIndexed
-import androidx.core.view.get
-import androidx.core.view.updateLayoutParams
+import androidx.core.view.*
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.PagerSnapHelper
@@ -66,27 +64,25 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     }
 
     @SuppressLint("SetTextI18n", "UseCompatLoadingForDrawables")
-    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, height: Int, disableScroll: ()-> Unit){
+    fun bind(look: Look, repository: Repository, viewModelScope: CoroutineScope, h: Int, disableScroll: (Boolean) -> Unit){
         this.repository = repository
         this.viewModelScope = viewModelScope
         with(binding){
             pageList.removeAllViews()
-            fill.clipToOutline = true
-            hideWholePost(look, height)
+            hideWholePost(look, h, disableScroll)
 
             imgView.updateLayoutParams {
-                this.height = height
+                this.height = h
             }
 
             header.updateLayoutParams {
-                this.height = height
+                this.height = h
             }
 
             (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
 
             setLookPost(look)
-
-            setListeners(look, height, disableScroll)
+            setListeners(look, h, disableScroll)
             setAuthor(look)
 
             dislike.isActivated = look.is_dislike
@@ -218,9 +214,6 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                     .error(R.drawable.background_splash)
                     .into(preview, object : Callback {
                         override fun onSuccess() {
-                            preview.post {
-                                preview.clipToOutline = true
-                            }
                         }
 
                         override fun onError(e: Exception?) {
@@ -237,7 +230,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         val fc = object : ClickableSpan(){
             override fun onClick(widget: View) {
-                toComments(widget,look)
+                toComments(widget, look)
             }
 
             override fun updateDrawState(ds: TextPaint) {
@@ -291,7 +284,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun setListeners(look: Look, height: Int, disableScroll: ()-> Unit) {
+    private fun setListeners(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         with(binding) {
             like.setOnClickListener {
                 manageLike(it, look)
@@ -354,7 +347,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             back.setOnClickListener {
-                hideWholePost(look, height)
+                hideWholePost(look, height, disableScroll)
             }
 
             autorImg.setOnClickListener {
@@ -376,7 +369,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun hideWholePost(look: Look, height: Int){
+    private fun hideWholePost(look: Look, height: Int, disableScroll: (Boolean) -> Unit){
         binding.back.visibility = View.GONE
         binding.toPost.visibility = View.VISIBLE
         binding.pageList.visibility = View.GONE
@@ -391,26 +384,29 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         look.isPostOpen = false
+        binding.cv.radius = 0f
+        disableScroll(true)
     }
 
-    private fun showWholePost(look: Look, height: Int, disableScroll: ()-> Unit) {
+    private fun showWholePost(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
-            val inflayer = LayoutInflater.from(itemView.context)
+            val inflater = LayoutInflater.from(itemView.context)
+            binding.cv.radius = itemView.context.resources.getDimension(R.dimen._25sdp)
             look.body.forEach {
                 when (it.type) {
                     "text" -> {
-                        val tv = WholeTextViewBinding.inflate(inflayer)
+                        val tv = WholeTextViewBinding.inflate(inflater)
                         tv.text.text = it.content as String
                         binding.pageList.addView(tv.root)
                     }
                     "image" -> {
-                        val tv = WholeImageBinding.inflate(inflayer)
+                        val tv = WholeImageBinding.inflate(inflater)
                         tv.image.maxHeight = (height * 0.7).toInt()
                         Picasso.get().load(it.content as String)
                                 .noPlaceholder()
-                                .into(tv.image, object : Callback{
+                                .into(tv.image, object : Callback {
                                     override fun onSuccess() {
-                                        if(tv.image.height > height * 0.7){
+                                        if (tv.image.height > height * 0.7) {
                                             val lp = tv.image.layoutParams
                                             lp.height = (height * 0.7).toInt()
                                             tv.image.layoutParams = lp
@@ -427,8 +423,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                         binding.pageList.addView(tv.root)
                     }
                     "post" -> {
-                        val tv = LookViewHolder(LookViewBinding.inflate(inflayer).root)
-                        val tv1 = WholePostViewBinding.inflate(inflayer)
+                        val tv = LookViewHolder(LookViewBinding.inflate(inflater).root)
+                        val tv1 = WholePostViewBinding.inflate(inflater)
                         val str = it.content.toString()
                                 .replace("=http", "=\"http")
                                 .replace(", profile=", "\", profile=")
@@ -438,7 +434,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                                 .replace("created=", "created=\"")
                                 .replace(", is_like=", "\", is_like=")
 
-                        tv.bind(Gson().fromJson(str, Look::class.java), repository!!, viewModelScope!!, height = height, disableScroll)
+                        tv.bind(Gson().fromJson(str, Look::class.java), repository!!, viewModelScope!!, h = height, disableScroll)
                         tv.binding.more.visibility = View.GONE
                         tv1.card.addView(tv.binding.root)
                         binding.pageList.addView(tv1.root)
@@ -460,7 +456,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         look.isPostOpen = true
-        disableScroll()
+        disableScroll(false)
     }
 
     private fun manageFavorite(view: View, look: Look) {
@@ -640,5 +636,5 @@ inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinlin
     }
 
     window.contentView = customLayout.root
-    window.showAtLocation(view, Gravity.TOP, x.toInt(), 0)
+    window.showAtLocation(view, Gravity.TOP,x.toInt(), 0)
 }
