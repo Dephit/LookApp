@@ -19,6 +19,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.os.bundleOf
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,6 +30,8 @@ import com.sergeenko.lookapp.viewModels.NewLookViewModel
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -164,6 +167,10 @@ class NewLookFragment : BaseFragment<NewLookFragmentBinding>() {
                 viewModel.selectedList.clear()
                 viewModel.onImageAdd(GallaryImage(savedUri, true))
                 viewModel.savePhoto()
+                lifecycleScope.launch {
+                    delay(1000)
+                    viewModel.selectedList.clear()
+                }
                 Log.d(TAG, msg)
             }
         })

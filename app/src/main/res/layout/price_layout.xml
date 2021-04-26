@@ -59,6 +59,7 @@
         android:text="5200 p"
         android:textAppearance="@style/BodyText11"
         android:textColor="@color/pink"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0"

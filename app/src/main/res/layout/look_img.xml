@@ -23,6 +23,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/fill"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:background="@drawable/look_img_background"
+            android:visibility="visible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/look_fill_draw" />
+
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/dots_section"
             android:layout_width="match_parent"
@@ -54,6 +67,7 @@
                 android:layout_marginBottom="@dimen/_16sdp"
                 android:textAppearance="@style/BodyText13"
                 android:textColor="@color/white"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0"

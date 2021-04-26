@@ -81,7 +81,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
             (imgView.adapter as LookImgAdapter).updateList(look.images) { setTouched(it) }
 
-            setLookPost(look)
+            setLookPost(look, h, disableScroll)
             setListeners(look, h, disableScroll)
             setAuthor(look)
 
@@ -126,8 +126,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
     private fun setLook(img: Look) {
         with(binding) {
+            fill.visibility = View.GONE
             postSection.visibility = View.GONE
-
         }
     }
 
@@ -187,9 +187,9 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         )
     }
 
-    private fun setLookPost(look: Look) {
+    private fun setLookPost(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         if(look.type != "Лук"){
-            setPost(look)
+            setPost(look, height, disableScroll)
             binding.currentItemList.visibility = View.INVISIBLE
         }else{
             setLook(look)
@@ -204,10 +204,33 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         setAmount(binding.postDislikesText, look.count_dislikes)
     }
 
-    private fun setPost(look: Look) {
+    private fun setPost(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         with(binding){
             imgView.visibility = View.GONE
             toPost.visibility = View.VISIBLE
+            fill.visibility = View.VISIBLE
+
+            /*preview.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
+            object : OnSwipeTouchListener(itemView.context) {
+
+                override fun onSwipeTop() {
+                    super.onSwipeTop()
+                }
+
+                override fun onSwipeBottom() {
+                    super.onSwipeBottom()
+                }
+
+                override fun onSwipeLeft() {
+                    showWholePost(look, height, disableScroll)
+                    super.onSwipeLeft()
+                }
+
+                override fun onSwipeRight() {
+                    super.onSwipeRight()
+                }
+            })*/
+
             Picasso.get()
                     .load(look.preview)
                     .noPlaceholder()
@@ -223,7 +246,27 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun setSpannableText(look: Look, heightText: TextView, textID: String, toSpan: String) {
+    private fun setSpannableText(spannable: Spannable, look: Look, heightText: TextView, textID: String, toSpan: String) {
+        val fc = object : ClickableSpan(){
+            override fun onClick(widget: View) {
+                toComments(widget, look)
+            }
+
+            override fun updateDrawState(ds: TextPaint) {
+                ds.linkColor = Color.WHITE
+            }
+        }
+
+        val indexMoreStart = textID.indexOf(more)
+        val indexMoreEnd = textID.indexOf(more) + more.length
+
+        spannable.setSpan(UnderlineSpan(), indexMoreStart, indexMoreEnd, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        spannable.setSpan(fc, indexMoreStart, indexMoreEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+        heightText.movementMethod = LinkMovementMethod.getInstance()
+        heightText.text = spannable
+    }
+
+    private fun setMoreSpannableText(look: Look, heightText: TextView, textID: String, toSpan: String) {
         val spannable = SpannableString(textID)
 
         setWhiteStannable(textID, toSpan)
@@ -262,6 +305,16 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         return spannable
     }
 
+
+    private fun setFatStannable(spannable: Spannable, toSpan: String) {
+        val ss = StyleSpan(Typeface.BOLD)
+
+        val indexStart = spannable.indexOf(toSpan)
+        val indexEnd = spannable.indexOf(toSpan) + toSpan.length
+
+        spannable.setSpan(ss, indexStart, indexEnd, Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+
     @SuppressLint("SetTextI18n")
     private fun setAuthor(look: Look) {
         Picasso.get()
@@ -272,22 +325,35 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         if(look.type != "Лук"){
             val lookText = "${look.user.username}\n${look.created}"
             binding.authorNick.text = lookText
-            binding.authorNick.text = setWhiteStannable(lookText, look.user.username)
+            val spannable = setWhiteStannable(lookText, look.user.username)
+
+            binding.authorNick.text = spannable
+
             binding.postText.text = look.title
         }else {
             var t = look.title
-            if (t.length + look.user.username.length > 50){
-                t = t.removeRange(t.length - " $more".length, t.length)
+            try {
+                if (t.length + look.user.username.length > 50) {
+                    t = t.removeRange(t.length - " $more".length, t.length)
+                }
+            }catch (e: Exception){
+
             }
+
             val text = "${look.user.username} $t $more"
-            setSpannableText(look, binding.authorNick, text, look.user.username)
+
+            val spannable = SpannableString(text)
+            setSpannableText(spannable, look, binding.authorNick, text, look.user.username)
+            setFatStannable(spannable, look.user.username)
+            binding.authorNick.text = spannable
+
         }
     }
 
     private fun setListeners(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         with(binding) {
             like.setOnClickListener {
-                manageLike(it, look)
+                manageLike(it, look, height, disableScroll)
             }
 
             more.setOnClickListener { v->
@@ -323,8 +389,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             dislike.setOnClickListener {
-                    manageDislike(it, look)
-                }
+                manageDislike(it, look, height, disableScroll)
+            }
 
             comments.setOnClickListener {
                 toComments(it, look)
@@ -388,10 +454,10 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         disableScroll(true)
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     private fun showWholePost(look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         if(binding.pageList.childCount == 0 && look.body.isNotEmpty()) {
             val inflater = LayoutInflater.from(itemView.context)
-            binding.cv.radius = itemView.context.resources.getDimension(R.dimen._25sdp)
             look.body.forEach {
                 when (it.type) {
                     "text" -> {
@@ -447,6 +513,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         binding.pageList.visibility = View.VISIBLE
         binding.toPost.visibility = View.GONE
 
+        binding.cv.radius = itemView.context.resources.getDimension(R.dimen._25sdp)
+
         binding.imgView.updateLayoutParams {
             this.height = (height * 0.7f).toInt()
         }
@@ -456,6 +524,49 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         look.isPostOpen = true
+
+        var canDo = false
+
+        /*binding.root.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
+        object : OnSwipeTouchListener(itemView.context, 100, 100) {
+
+            var canDo = false
+
+            override fun onSwipeTop() {
+                val diff: Int = binding.sv.getChildAt(binding.sv.childCount - 1).bottom - (binding.sv.height + binding.sv.scrollY)
+
+                if (diff == 0) {
+                    Handler(Looper.myLooper()!!).postDelayed(
+                            {
+                                canDo = true
+                            }, 250
+                    )
+                }
+                if (diff == 0 && canDo) {
+                    hideWholePost(look, height, disableScroll)
+                }
+                super.onSwipeTop()
+            }
+
+            override fun onSwipeBottom() {
+                canDo = false
+                Handler(Looper.myLooper()!!).postDelayed(
+                        {
+                            canDo = false
+                        }, 250
+                )
+                super.onSwipeBottom()
+            }
+
+            override fun onSwipeLeft() {
+                super.onSwipeLeft()
+            }
+
+            override fun onSwipeRight() {
+                super.onSwipeRight()
+            }
+        })*/
+
         disableScroll(false)
     }
 
@@ -474,12 +585,14 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                         Toast.makeText(view.context, getString(R.string.cant_send_query), Toast.LENGTH_SHORT).show()
                     }
                     ?.onCompletion { view.isEnabled = true }
-                    ?.collect {  }
+                    ?.collect {
+                        look.favorite_id = it
+                    }
         }
     }
 
-    private fun manageLike(view: View, look: Look) {
-        fun setLike(){
+    private fun manageLike(view: View, look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
+        fun setLike(height: Int, disableScroll: (Boolean) -> Unit) {
             look.is_like = !look.is_like
             binding.like.isActivated = look.is_like
             binding.postLike.isActivated = look.is_like
@@ -497,15 +610,15 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 look.count_likes--
                 hideFavorite()
             }
-            setLookPost(look)
+            setLookPost(look, height, disableScroll)
         }
 
         viewModelScope?.launch {
-            setLike()
+            setLike(height, disableScroll)
             repository?.like(like = look.is_like, postID = look.id)
                     ?.onStart { view.isEnabled = false }
                     ?.catch {
-                        setLike()
+                        setLike(height, disableScroll)
                         Toast.makeText(view.context, getString(R.string.cant_send_query), Toast.LENGTH_SHORT).show()
                     }
                     ?.onCompletion { view.isEnabled = true }
@@ -513,7 +626,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
     }
 
-    private fun manageDislike(view: View, look: Look) {
+    private fun manageDislike(view: View, look: Look, height: Int, disableScroll: (Boolean) -> Unit) {
         fun setDislike(){
             look.is_dislike = !look.is_dislike
             binding.dislike.isActivated = look.is_dislike
@@ -531,7 +644,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 look.count_dislikes--
                 hideFavorite()
             }
-            setLookPost(look)//setLook(look)
+            setLookPost(look, height, disableScroll)//setLook(look)
         }
 
         viewModelScope?.launch {
@@ -560,6 +673,10 @@ inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinlin
     val window = PopupWindow(customLayout.root, width, height, focusable)
     window.isOutsideTouchable = true
 
+    customLayout.addToFavText.text = if(img.is_favorite)
+        view.context.getString(R.string.delete_from_favorite)
+    else
+        view.context.getString(R.string.add_to_fav_text)
 
     customLayout.complain.setOnClickListener {
         if(img.is_claim){
@@ -636,5 +753,5 @@ inline fun showAdditionalPostActions(view: View, x: Float, img: Look, crossinlin
     }
 
     window.contentView = customLayout.root
-    window.showAtLocation(view, Gravity.TOP,x.toInt(), 0)
+    window.showAtLocation(view, Gravity.TOP, x.toInt(), 0)
 }

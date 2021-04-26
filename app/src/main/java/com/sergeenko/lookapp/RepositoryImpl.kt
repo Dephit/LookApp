@@ -274,14 +274,15 @@ class RepositoryImpl(val api: Api, private val database: AppDatabase): Repositor
         }.flowOn(IO)
     }
 
-    override fun favorite(like: Boolean, post: Look): Flow<Boolean> {
+    override fun favorite(like: Boolean, post: Look): Flow<Int> {
         return flow {
-            if(like){
-                api.addToFavorite(auth = token, postId = post.id)
+            val answer = if(like){
+                api.addToFavorite(auth = token, postId = post.id).data.favorite_id
             }else{
                 api.deleteFromFavorite(auth = token, postId = post.favorite_id)
+                -1
             }
-            emit(true)
+            emit(answer)
         }.flowOn(IO)
     }
 

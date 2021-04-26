@@ -114,6 +114,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/_8sdp"
                     android:layout_marginEnd="@dimen/_48sdp"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="@string/share_post_text"
                     android:textAppearance="@style/BodyText16"
                     android:textColor="@color/black_pressed"

@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.textfield.TextInputEditText
 import com.sergeenko.lookapp.R
+import com.sergeenko.lookapp.adapters.CommentsAdapter
 import com.sergeenko.lookapp.databinding.AdditionalActionsCommentLayoutBinding
 import com.sergeenko.lookapp.databinding.CommentsFragmentBinding
 import com.sergeenko.lookapp.models.Comment
@@ -33,6 +34,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.Dispatchers.Main
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -75,6 +77,11 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
                 setAnswerToSelectedComment(obj.first as String)
                 //binding.commentsView.smoothScrollToPosition(obj.second as Int)
                 showComments()
+                lifecycleScope.launch {
+                    delay(500)
+                    binding.commentsView.smoothScrollToPosition(obj.second as Int)
+                    //(viewModel.adapter as CommentsAdapter).currentList?.indexOf(viewModel.selectedComment)?.let { it1 -> binding.commentsView.scrollToPosition(it1) }
+                }
             }
             is Comment -> {
                 showCommentEdit()
@@ -153,6 +160,10 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
             }
             var lastLength = 0
             var canDoDoubleTap = 0
+
+            commentInput.editText?.setOnClickListener {}
+
+
             commentInput.editText?.addTextChangedListener {
                 if(lastLength > it!!.length){
                     if(canDoDoubleTap == 1 && it.toString() <= viewModel.userText) {

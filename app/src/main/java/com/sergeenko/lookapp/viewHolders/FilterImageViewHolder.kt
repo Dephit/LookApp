@@ -136,6 +136,7 @@ class FilterImageViewHolder(itemView: View, val width: Int, private val scope: C
         }else {
             binding.img.setImageBitmap(file.bitmapFiltered)
         }
+        binding.progressBar.visibility = View.GONE
     }
 
     private fun setBackgroundColor(file: FilterImage) {

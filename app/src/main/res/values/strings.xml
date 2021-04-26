@@ -109,4 +109,5 @@
     <string name="publish_also">Опубликовать также</string>
     <string name="instagram_text">Instagram</string>
     <string name="allow_comments_text">Разрешить комментарии</string>
+    <string name="delete_from_favorite">Убрать из избранного</string>
 </resources>

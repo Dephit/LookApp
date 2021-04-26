@@ -167,11 +167,12 @@
 
             <ImageView
                 android:id="@+id/send_button"
-                android:layout_width="@dimen/_16sdp"
-                android:layout_height="@dimen/_16sdp"
+                android:layout_width="@dimen/_22sdp"
+                android:layout_height="@dimen/_22sdp"
                 android:layout_marginTop="@dimen/_2sdp"
-                android:layout_marginEnd="@dimen/_10sdp"
+                android:layout_marginEnd="@dimen/_6sdp"
 
+                android:padding="@dimen/_4sdp"
                 android:src="@drawable/send_button_drawable"
                 app:layout_constraintBottom_toBottomOf="@+id/comment_input"
                 app:layout_constraintEnd_toEndOf="@+id/comment_input"

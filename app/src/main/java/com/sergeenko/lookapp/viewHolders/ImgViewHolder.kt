@@ -8,6 +8,7 @@ import com.sergeenko.lookapp.R
 import com.sergeenko.lookapp.databinding.LookImgBinding
 import com.sergeenko.lookapp.databinding.PriceLayoutBinding
 import com.sergeenko.lookapp.models.Image
+import com.sergeenko.lookapp.models.Mark
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 
@@ -30,19 +31,18 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
         }
     }
 
-    fun formatWithThousandsSeparator(num: Int): String {
-        val numAsString = num.toString();
+    private fun formatWithThousandsSeparator(num: Int): String {
+        val numAsString = num.toString().reversed()
         var str = ""
 
-
         for (i in numAsString.indices) {
-            if(i % 3 == 1){
-                str += "${numAsString[i]} "
+            if(i % 3 == 0){
+                str += " ${numAsString[i]}"
             }else {
                 str += numAsString[i]
             }
         }
-        return str
+        return str.reversed()
     }
 
     private fun loadImg(img: Image) {
@@ -68,7 +68,10 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
     @SuppressLint("SetTextI18n")
     private fun showDots(img: Image) {
         val inflater = LayoutInflater.from(binding.root.context)
-        img.marks.forEach {mark->
+        /*val list = */
+        /*list.add(Mark(coordinate_x = 40, coordinate_y = 20))
+        list*/
+        img.marks.forEach { mark->
             val price = PriceLayoutBinding.inflate(inflater)
             val imgView = ImageView(binding.root.context)
             imgView.setImageResource(R.drawable.ic_look_dot)
@@ -77,24 +80,28 @@ class ImgViewHolder(itemView: View) : LookViewViewHolder(itemView) {
             binding.root.post {
                 imgView.x = binding.lookImg.width * (mark.coordinate_x / 100f)
                 imgView.y = binding.lookImg.height * (mark.coordinate_y / 100f)
-                val width = (price.root.width * 0.89f)
+                val width = (price.root.width)
                 if(imgView.x - width > 0)
-                    price.root.x = (imgView.x - width)
+                    price.root.x = (imgView.x - width + imgView.width / 2)
                 else {
-                    price.root.x = (imgView.x + 2)
+                    price.root.x = (imgView.x + imgView.width / 2)
                     price.imageView8.scaleX = -1f
                 }
                 price.root.y = imgView.y - (price.root.height / 2 * 0.76f)
             }
 
-            Picasso.get()
-                .load(mark.brand_image)
-                .noPlaceholder()
-                .into(price.logo)
+            try {
+                Picasso.get()
+                        .load(mark.brand_image)
+                        .noPlaceholder()
+                        .into(price.logo)
+            }catch (e: Exception){
+
+            }
 
             price.title.text = mark.label
             price.price.text = "${formatWithThousandsSeparator(mark.price)} ${mark.currency}"
         }
-        binding.totalText.text = "${getString(R.string.total)} - ${img.total} ${getString(R.string.ruble)}"
+        binding.totalText.text = "${getString(R.string.total)} - ${formatWithThousandsSeparator(img.total)} ${getString(R.string.ruble)}"
     }
 }
