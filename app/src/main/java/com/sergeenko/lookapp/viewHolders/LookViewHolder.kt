@@ -210,7 +210,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             toPost.visibility = View.VISIBLE
             fill.visibility = View.VISIBLE
 
-            /*preview.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
+            preview.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
             object : OnSwipeTouchListener(itemView.context) {
 
                 override fun onSwipeTop() {
@@ -229,7 +229,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
                 override fun onSwipeRight() {
                     super.onSwipeRight()
                 }
-            })*/
+            })
 
             Picasso.get()
                     .load(look.preview)
@@ -421,14 +421,20 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             }
 
             imgView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                var lastPosition = 0
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    val first: Int = llm.findFirstVisibleItemPosition()
-                    val last: Int = llm.findLastVisibleItemPosition()
-                    val newPosition = (first + last) / 2
                     currentItemList.forEachIndexed { _, view ->
                         view.isSelected = false
                     }
-                    currentItemList[newPosition].isSelected = true
+                    try {
+                        val first: Int = llm.findFirstCompletelyVisibleItemPosition()
+                        val last: Int = llm.findLastCompletelyVisibleItemPosition()
+                        val newPosition = (first + last) / 2
+                        currentItemList[newPosition].isSelected = true
+                        lastPosition = newPosition
+                    }catch (e: Exception){
+                        currentItemList[lastPosition].isSelected = true
+                    }
                     super.onScrolled(recyclerView, dx, dy)
                 }
             })
@@ -527,8 +533,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         var canDo = false
 
-        /*binding.root.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
-        object : OnSwipeTouchListener(itemView.context, 100, 100) {
+        binding.sv.setOnTouchListener(@SuppressLint("ClickableViewAccessibility")
+        object : OnSwipeTouchListener(itemView.context, 50, 50) {
 
             var canDo = false
 
@@ -565,7 +571,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             override fun onSwipeRight() {
                 super.onSwipeRight()
             }
-        })*/
+        })
 
         disableScroll(false)
     }

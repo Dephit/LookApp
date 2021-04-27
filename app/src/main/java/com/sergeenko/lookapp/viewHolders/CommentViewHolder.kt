@@ -280,7 +280,7 @@ class CommentViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView) {
                 }
             }
             spannable.setSpan(fc, start, end, flag)
-            spannable.setSpan(fc2, end, endTwo, flag)
+            spannable.setSpan(fc2, start, endTwo, flag)
         }
 
         val indexStart = textID.indexOf(toSpan)
@@ -301,7 +301,16 @@ class CommentViewHolder(itemView: View) :RecyclerView.ViewHolder(itemView) {
            try {
                setPinkSpannable(textID.indexOf("@"), textID.length)
            }catch (e: Exception){
+               val fc2 = object : ClickableSpan(){
+                   override fun onClick(widget: View) {
+                       onCommentPress(binding)
+                   }
 
+                   override fun updateDrawState(ds: TextPaint) {
+                       ds.linkColor = Color.GREEN
+                   }
+               }
+               spannable.setSpan(fc2, 0, textID.length - 1, flag)
            }
         }
 

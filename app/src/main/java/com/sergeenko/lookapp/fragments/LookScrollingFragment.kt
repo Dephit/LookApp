@@ -62,7 +62,7 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         (viewModel.adapter as LookAdapter).disableScroll = {
             llm.setScrollEnabled(it)
         }
-        //llm.setScrollEnabled(false)
+        llm.setScrollEnabled(false)
         rv.layoutManager = llm
         rv.adapter = viewModel.collectData()
         binding.rv.post {

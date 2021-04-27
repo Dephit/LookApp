@@ -75,12 +75,10 @@ class CommentsFragment : BaseFragment<CommentsFragmentBinding>() {
             is Pair<*, *> -> {
                 (binding.commentInput.editText as ZanyDoubleText).setPrevView(obj.first.toString())
                 setAnswerToSelectedComment(obj.first as String)
-                //binding.commentsView.smoothScrollToPosition(obj.second as Int)
                 showComments()
                 lifecycleScope.launch {
-                    delay(500)
+                    delay(750)
                     binding.commentsView.smoothScrollToPosition(obj.second as Int)
-                    //(viewModel.adapter as CommentsAdapter).currentList?.indexOf(viewModel.selectedComment)?.let { it1 -> binding.commentsView.scrollToPosition(it1) }
                 }
             }
             is Comment -> {
