@@ -112,5 +112,6 @@ class MenuActivity : AppCompatActivity() {
                 binding.bottomNavigationView.visibility = View.VISIBLE
             }
         }
+        binding.newPostLook.visibility = View.GONE
     }
 }

@@ -18,7 +18,11 @@ open class OnSwipeTouchListener(
 
 
     override fun onTouch(v: View, event: MotionEvent?): Boolean {
-        return gestureDetector.onTouchEvent(event)
+        return try{
+            gestureDetector.onTouchEvent(event)
+        }catch (e: Exception){
+            false
+        }
     }
 
     private inner class GestureListener : GestureDetector.SimpleOnGestureListener() {

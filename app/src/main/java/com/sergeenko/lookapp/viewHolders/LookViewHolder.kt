@@ -456,6 +456,7 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         }
 
         look.isPostOpen = false
+        binding.preview.scaleType = ImageView.ScaleType.FIT_CENTER
         binding.cv.radius = 0f
         disableScroll(true)
     }
@@ -528,6 +529,8 @@ class LookViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         binding.header.updateLayoutParams {
             this.height = (height * 0.7f).toInt()
         }
+
+        binding.preview.scaleType = ImageView.ScaleType.CENTER_CROP
 
         look.isPostOpen = true
 

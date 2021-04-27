@@ -3,6 +3,7 @@ package com.sergeenko.lookapp.fragments
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.Window
 import androidx.lifecycle.lifecycleScope
@@ -62,7 +63,6 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
         (viewModel.adapter as LookAdapter).disableScroll = {
             llm.setScrollEnabled(it)
         }
-        llm.setScrollEnabled(false)
         rv.layoutManager = llm
         rv.adapter = viewModel.collectData()
         binding.rv.post {
@@ -72,6 +72,7 @@ class LookScrollingFragment : BaseFragment<LookScrollingFragmentBinding>() {
             viewModel.lastPostion = (llm.findFirstVisibleItemPosition() + llm.findLastVisibleItemPosition()) / 2
 
         val snapHelper = PagerSnapHelper()
+
         binding.rv.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 
             var allowToScroll = true
